@@ -9,8 +9,6 @@ script:
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
-  git remote add upstream "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
-  git fetch upstream &&
   gutenberg build &&
   sudo pip install ghp-import &&
   ghp-import -n public && 
