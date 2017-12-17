@@ -1,5 +1,3 @@
-language: rust
-
 before_script:
   - curl -s -L https://github.com/Keats/gutenberg/releases/download/v0.2.2/gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C /usr/local/bin
 
