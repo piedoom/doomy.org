@@ -44,6 +44,9 @@ We're almost done.  We just need some scripts in a `.travis.yml` file to tell Tr
 before_script:
   - curl -s -L https://github.com/Keats/gutenberg/releases/download/v0.2.2/gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C /usr/local/bin
 
+script:
+  - gutenberg build
+
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
@@ -64,6 +67,9 @@ before_script:
   # version may have been released.  Check the Gutenberg release page
   # on Github for more. 
   - curl -s -L https://github.com/Keats/gutenberg/releases/download/v0.2.2/gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C /usr/local/bin
+
+script:
+  - gutenberg build
 
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
