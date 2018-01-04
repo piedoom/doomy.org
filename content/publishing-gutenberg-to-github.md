@@ -8,7 +8,7 @@ tags = ["rust"]
 # Gutenberg & Static Site generators
 If you're familiar with Github, you're most likely also aware of the Github Pages tool that allows users to publish static sites.  This is particularly useful for docs or a blog.  By default, Github uses Jekyll (A ruby based static site generator), but you can use whatever you want provided you have an `index.html` file in the root of a branch called `gh-pages`. 
 
-I recently came across a project called [Gutenberg](https://www.getgutenberg.io/) by [https://github.com/Keats/gutenberg](Keats) and other contributors.  I was initially interested in the project because I like the Rust programming language, but Gutenberg has the additional value of having everything-you-need in a single executable.
+I recently came across a project called [Gutenberg](https://www.getgutenberg.io/) by [Keats](https://github.com/Keats/gutenberg) and other contributors.  I was initially interested in the project because I like the Rust programming language, but Gutenberg has the additional value of having everything-you-need in a single executable.
 
 This means that you don't need to fiddle with RVM or Python on your local machine to get started - you just need a [single executable](https://www.getgutenberg.io/documentation/getting-started/installation/).  Being said, Gutenberg is opinionated, so don't expect a billion preprocessors bundled.  You get Tera - a fine templating markup - as well as an SCSS preprocessor.  If for some reason you love to torture yourself with CoffeeScript or Babel, you'll have to do that stuff on your own. 
 
