@@ -58,8 +58,6 @@ after_success: |
 
 Lets take a look at that file again, but with comments.
 
-https://github.com/Keats/gutenberg/releases
-
 ```yaml
 before_script:
   # download gutenberg's executable, unzip it, and add it to our binaries.  
