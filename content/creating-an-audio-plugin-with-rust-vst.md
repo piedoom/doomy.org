@@ -349,25 +349,20 @@ We're making a big change to the code, but it'll be our last for now.  Let's go 
 </div>
 
 ```rust
-// `vst` uses macros, so we'll need to specify that we're using them!
 #[macro_use]
 extern crate vst;
 extern crate rand;
 
 use vst::plugin::{Info, Plugin, Category};
 use vst::buffer::AudioBuffer;
-// we're adding two new `use` statements here
 use vst::event::Event;
 use vst::api::Events;
 use rand::random;
 
 #[derive(Default)]
 struct Whisper {
-    // We added a counter in our plugin struct.  It's important to note
-    // that this value is wrapped in a Cell, which allows us to have 
-    // interior mutability.  If you're unsure what that means, check out this:
-    // https://ricardomartins.cc/2016/06/08/interior-mutability
-    notes: std::cell::Cell<u8>
+    // We added a counter in our plugin struct.  Thanks to [https://gist.github.com/MathiasLengler/ac5d1076294915347cf0aa749e908e3e](MathiasLengler) for a correction in this code.
+    notes: u8
 }
 
 // We're implementing a trait `Plugin` that does all the VST-y stuff for us.
@@ -412,10 +407,10 @@ impl Plugin for Whisper {
                     match ev.data[0] {
 
                         // if note on, increment our counter
-                        144 => self.notes.set(self.notes.get() + 1u8),
+                        144 => self.notes += 1u8,
 
                         // if note off, decrement our counter
-                        128 => self.notes.set(self.notes.get() - 1u8),
+                        128 => self.notes -= 1u8,
                         _ => (),
                     }
                     // if we cared about the pitch of the note, it's stored in `ev.data[1]`.
@@ -441,7 +436,7 @@ impl Plugin for Whisper {
             for (_, output_sample) in input_buffer.iter().zip(output_buffer) {
 
                 // if our notes incrementer is greater than 0, that means a note is currently being pressed.
-                if self.notes.get() > 0 {
+                if self.notes > 0 {
 
                     // Finally, we change the value of each individual sample if a note is on
                     *output_sample = (random::<f32>() - 0.5f32) * 2f32;
@@ -463,28 +458,18 @@ Hopefully by now you have a rough understanding of how to create VSTs and modify
 
 The source code can be found [on Github here](https://github.com/piedoom/rust-noise-vst-tutorial).
 
+# Fixes
+If you find an issue with the above code, let me know.  The best way is to [open an issue](https://github.com/piedoom/rust-noise-vst-tutorial/issues/new) on the example repository.  
+
+- Thanks to [Mathias Lengler](https://github.com/MathiasLengler) for their [fix](https://www.reddit.com/r/rust/comments/7o1qnp/creating_a_simple_synthesizer_vst_plugin_in_rust/ds6hm82/?utm_content=permalink&utm_medium=front&utm_source=reddit&utm_name=rust) regarding an unnecessary usage of `Cell`
+
 # Extra resources
 If you're totally sold on building VSTs with Rust, check out [the official Rust VST Telegram chat](https://tinyurl.com/ya5ff5ef).  We're a friendly community who are eager to advise new users and help maintain better code.   
 
 If you're coming from something like JUCE and miss the abstraction, check out my [rsynth](https://github.com/resamplr/rsynth) project.  It helps abstract a lot of what we did in this tutorial with stuff like voice managers.  Note that it's super-alpha-in-development-broken code and needs a lot of work, but at least check out the examples.
 
-<div id="disqus_thread"></div>
-<script>
-/**
-*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-/*
-var disqus_config = function () {
-this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-*/
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://vaporsoft-net.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-                            
+# Next time
+In the future, we'll create more complex applications, like a multi-voice tonal synth with band-limited sawtooth waves.  We'll also explore how to create a minimal GUI within Rust VST using your host's built in controls.  
+
+# Contacting me
+You can reach me on Mozilla's Rust IRC at `doomy` or `_doomy`.  You can also add me on telegram [@piedoomy](https://t.me/piedoomy), where I'm most certain to respond.
