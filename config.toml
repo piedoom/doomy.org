@@ -10,6 +10,9 @@ highlight_code = true
 
 theme = "feather"
 
+generate_categories_pages = true
+generate_tags_pages = true
+
 [extra]
 disqus_code = "<div id='disqus_thread'></div><script> var disqus_config = function () { }; (function() { var d = document, s = d.createElement('script'); s.src = 'https://vaporsoft-net.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href='https://disqus.com/?ref_noscript'>comments powered by Disqus.</a></noscript>"
 
