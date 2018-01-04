@@ -361,7 +361,7 @@ use rand::random;
 
 #[derive(Default)]
 struct Whisper {
-    // We added a counter in our plugin struct.  Thanks to [https://gist.github.com/MathiasLengler/ac5d1076294915347cf0aa749e908e3e](MathiasLengler) for a correction in this code.
+    // We added a counter in our plugin struct.  Thanks to Mathias Lengler for a correction in this code.
     notes: u8
 }
 
