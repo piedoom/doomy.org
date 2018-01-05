@@ -333,6 +333,8 @@ Well, our `random` function gives us a number between `0.0` and `1.0`, instead o
 ## Performance
 This method is poorly optimized, due to calling the `random` function for every sample.  This tutorial won't delve into optimization, but if you want to look at a possible solution, check out [this example](https://github.com/resamplr/rsynth/blob/master/examples/test_synth.rs).
 
+When building other plugins, be sure to test and/or distribute your builds with the [`--release`](https://doc.rust-lang.org/cargo/guide/creating-a-new-project.html) flag.  This turns on certain optimizations that will help your plugin be more performant, at the cost of longer build times.
+
 # Adding events
 If you build and test your synth now, you'll see that it outputs horrible white noise, *all of the time*.  Most VST instruments respond to MIDI input, e.g. notes on a piano.  Instead of having our instrument produce noise all the time, let's make it so it only produces noise when a note is pressed.
 
@@ -460,8 +462,11 @@ The source code can be found [on Github here](https://github.com/piedoom/rust-no
 
 # Fixes
 If you find an issue with the above code, let me know.  The best way is to [open an issue](https://github.com/piedoom/rust-noise-vst-tutorial/issues/new) on the example repository.  
+Thanks to: 
 
-- Thanks to [Mathias Lengler](https://github.com/MathiasLengler) for their [fix](https://www.reddit.com/r/rust/comments/7o1qnp/creating_a_simple_synthesizer_vst_plugin_in_rust/ds6hm82/?utm_content=permalink&utm_medium=front&utm_source=reddit&utm_name=rust) regarding an unnecessary usage of `Cell`
+- [Mathias Lengler](https://github.com/MathiasLengler) for their [fix](https://www.reddit.com/r/rust/comments/7o1qnp/creating_a_simple_synthesizer_vst_plugin_in_rust/ds6hm82/?utm_content=permalink&utm_medium=front&utm_source=reddit&utm_name=rust) regarding an unnecessary usage of `Cell`.
+
+- [Adolfo Ochagavía](https://github.com/aochagavia) for [their insight](https://github.com/piedoom/vaporsoft/pull/1) in adding the `--release` flag to cargo builds to further optimize code. 
 
 # Extra resources
 If you're totally sold on building VSTs with Rust, check out [the official Rust VST Telegram chat](https://tinyurl.com/ya5ff5ef).  We're a friendly community who are eager to advise new users and help maintain better code.   
