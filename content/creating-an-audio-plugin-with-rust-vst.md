@@ -175,7 +175,7 @@ If you don't have a VST host, go ahead and use the aptly named [VST host](http:/
 Believe it or not, we already have something we can compile and load into a host.  Go ahead and build your project.
 
 ```
-cargo build
+cargo build --release
 ```
 
 If all goes well, you should have a successful build.  A file named `whisper.dll` should be present in your `target/debug` directory.  This is our VST file.
