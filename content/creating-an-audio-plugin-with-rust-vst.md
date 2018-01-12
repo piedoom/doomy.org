@@ -143,9 +143,8 @@ impl Plugin for Whisper {
             // Used by hosts to differentiate between plugins.
             unique_id: 1337, 
 
-            // We don't need inputs. However, due to a thing with `zip`
-            // (possibly a bug) we need inputs to iterate our output!
-            inputs: 2,
+            // We don't need inputs
+            inputs: 0,
 
             // We do need two outputs though.  This is default, but let's be 
             // explicit anyways.
@@ -209,22 +208,22 @@ Let's take a look back at our `lib.rs` file, and define a new function.
 
 fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
 
-  // We loop through all buffers.  We specified that we will have
-  // 2 inputs, and we'll have 2 outputs.  `buffer.zip()` makes sure 
-  // we loop through everything.
-  for (input_buffer, output_buffer) in buffer.zip() {
+    // `buffer.split()` gives us a tuple containing the 
+    // input and output buffers.  We only care about the
+    // output, so we can ignore the input by using `_`.
+    let (_, output_buffer) = buffer.split();
 
-    // Now, we loop through each individual sample in each buffer.
-    // We use an underscore `_` for the first value in our tuple, as
-    // it will contain input samples (which don't exist).  The underscore
-    // lets us use our conventional `zip` method while still showing we 
-    // don't want to use the variable.
-      for (_, output_sample) in input_buffer.iter().zip(output_buffer) {
-
-        // Finally, we change the value of each individual sample.
-          *output_sample = 0f32;
-      }
-  }
+    // Now, we want to loop over our output channels.  This
+    // includes our left and right channels (or more, if you
+    // are working with surround sound).
+    for output_channel in output_buffer.into_iter() {
+        // Let's iterate over every sample in our channel.
+        for output_sample in output_channel {
+            // For every sample, we want to add a random value from
+            // -1.0 to 1.0.
+            *output_sample = 0f32;
+        }
+    }
 }
 
 // ...
@@ -283,9 +282,8 @@ impl Plugin for Whisper {
             // Used by hosts to differentiate between plugins.
             unique_id: 1337, 
 
-            // We don't need inputs, but we're putting one in anyways because of a weird 
-            // thing with `zip`.
-            inputs: 2,
+            // We don't need inputs
+            inputs: 0,
 
             // We do need two outputs though.  This is default, but let's be 
             // explicit anyways.
@@ -301,19 +299,19 @@ impl Plugin for Whisper {
 
     fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
         
-        // We loop through all buffers.  We specified that we will have
-        // 2 inputs, and we'll have 2 outputs.  `buffer.zip()` makes sure 
-        // we loop through everything.
-        for (input_buffer, output_buffer) in buffer.zip() {
+        // `buffer.split()` gives us a tuple containing the 
+        // input and output buffers.  We only care about the
+        // output, so we can ignore the input by using `_`.
+        let (_, output_buffer) = buffer.split();
 
-          // Now, we loop through each individual sample in each buffer.
-          // We use an underscore `_` for the first value in our tuple, as
-          // it will contain input samples (which don't exist).  The underscore
-          // lets us use our conventional `zip` method while still showing we 
-          // don't want to use the variable.
-            for (_, output_sample) in input_buffer.iter().zip(output_buffer) {
-
-              // Finally, we change the value of each individual sample.
+        // Now, we want to loop over our output channels.  This
+        // includes our left and right channels (or more, if you
+        // are working with surround sound).
+        for output_channel in output_buffer.into_iter() {
+            // Let's iterate over every sample in our channel.
+            for output_sample in output_channel {
+                // For every sample, we want to add a random value from
+                // -1.0 to 1.0.
                 *output_sample = (random::<f32>() - 0.5f32) * 2f32;
             }
         }
@@ -363,7 +361,8 @@ use rand::random;
 
 #[derive(Default)]
 struct Whisper {
-    // We added a counter in our plugin struct.  Thanks to Mathias Lengler for a correction in this code.
+    // We added a counter in our plugin struct.  
+    // Thanks to Mathias Lengler for a correction in this code.
     notes: u8
 }
 
@@ -376,9 +375,8 @@ impl Plugin for Whisper {
             // Used by hosts to differentiate between plugins.
             unique_id: 1337, 
 
-            // We don't need inputs, but we're putting one in anyways because of a weird 
-            // thing with `zip`.
-            inputs: 2,
+            // We don't need inputs
+            inputs: 0,
 
             // We do need two outputs though.  This is default, but let's be 
             // explicit anyways.
@@ -424,25 +422,25 @@ impl Plugin for Whisper {
     }
 
     fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+        // We only want to process *anything* if a note is
+        // being held.  Else, we can return early and skip
+        // processing anything!
+        if self.notes == 0 { return }
         
-        // We loop through all buffers.  We specified that we will have
-        // 2 inputs, and we'll have 2 outputs.  `buffer.zip()` makes sure 
-        // we loop through everything.
-        for (input_buffer, output_buffer) in buffer.zip() {
+        // `buffer.split()` gives us a tuple containing the 
+        // input and output buffers.  We only care about the
+        // output, so we can ignore the input by using `_`.
+        let (_, output_buffer) = buffer.split();
 
-            // Now, we loop through each individual sample in each buffer.
-            // We use an underscore `_` for the first value in our tuple, as
-            // it will contain input samples (which don't exist).  The underscore
-            // lets us use our conventional `zip` method while still showing we 
-            // don't want to use the variable.
-            for (_, output_sample) in input_buffer.iter().zip(output_buffer) {
-
-                // if our notes incrementer is greater than 0, that means a note is currently being pressed.
-                if self.notes > 0 {
-
-                    // Finally, we change the value of each individual sample if a note is on
-                    *output_sample = (random::<f32>() - 0.5f32) * 2f32;
-                }
+        // Now, we want to loop over our output channels.  This
+        // includes our left and right channels (or more, if you
+        // are working with surround sound).
+        for output_channel in output_buffer.into_iter() {
+            // Let's iterate over every sample in our channel.
+            for output_sample in output_channel {
+                // For every sample, we want to add a random value from
+                // -1.0 to 1.0.
+                *output_sample = (random::<f32>() - 0.5f32) * 2f32;
             }
         }
     }
@@ -458,15 +456,17 @@ Please again note that this is a *very* rudimentary system, and it's very specif
 # Takeaways and source code
 Hopefully by now you have a rough understanding of how to create VSTs and modify audio buffers in Rust.  In the future, I hope to expound on certain subjects, like creating controls or creating effects.
 
-The source code can be found [on Github here](https://github.com/piedoom/rust-noise-vst-tutorial).
+The source code can be found [on Github here](https://github.com/resamplr/rust-noise-vst-tutorial).
 
 # Fixes
-If you find an issue with the above code, let me know.  The best way is to [open an issue](https://github.com/piedoom/rust-noise-vst-tutorial/issues/new) on the example repository.  
+If you find an issue with the above code, let me know.  The best way is to [open an issue](https://github.com/resamplr/rust-noise-vst-tutorial/issues/new) on the example repository.  
 Thanks to: 
 
 - [Mathias Lengler](https://github.com/MathiasLengler) for their [fix](https://www.reddit.com/r/rust/comments/7o1qnp/creating_a_simple_synthesizer_vst_plugin_in_rust/ds6hm82/?utm_content=permalink&utm_medium=front&utm_source=reddit&utm_name=rust) regarding an unnecessary usage of `Cell`.
 
-- [Adolfo Ochagavía](https://github.com/aochagavia) for [their insight](https://github.com/piedoom/vaporsoft/pull/1) in adding the `--release` flag to cargo builds to further optimize code. 
+- [Adolfo Ochagavía](https://github.com/aochagavia) for [their insight](https://github.com/resamplr/vaporsoft/pull/1) in adding the `--release` flag to cargo builds to further optimize code. 
+
+- [Alex Zywicki](https://github.com/zyvitski) for their [fix](https://github.com/resamplr/rust-noise-vst-tutorial/commit/810e9f4640ee28530bba1fe19d5d6ef12fec134f) for refactoring the code without the need for an input buffer.
 
 # Extra resources
 If you're totally sold on building VSTs with Rust, check out [the official Rust VST Telegram chat](https://tinyurl.com/ya5ff5ef).  We're a friendly community who are eager to advise new users and help maintain better code.   
