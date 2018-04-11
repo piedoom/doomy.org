@@ -3,7 +3,7 @@ title = "Kontakt: A Case Study"
 
 # The date of the post.
 # 2 formats are allowed: YYYY-MM-DD (2012-10-02) and RFC3339 (2002-10-02T15:00:00Z)
-date = "2017-10-04"
+date = 2017-10-04
 
 # An overarching category name for that page, allowing you to group pages with it
 category = "design"

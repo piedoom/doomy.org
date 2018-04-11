@@ -1,6 +1,6 @@
 +++
 title = "Creating a simple synthesizer VST plugin in Rust"
-date = "2018-1-3"
+date = 2018-01-03
 category = "tutorial"
 tags = ["rust", "audio", "vst"]
 +++

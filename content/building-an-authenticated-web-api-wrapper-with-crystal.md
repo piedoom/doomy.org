@@ -1,6 +1,6 @@
 +++
 title = "Building an authenticated web API wrapper with Crystal"
-date = "2016-09-20"
+date = 2016-09-20
 category = "design"
 +++
 

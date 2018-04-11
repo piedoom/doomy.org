@@ -1,6 +1,6 @@
 +++
 title = "The GPL sucks."
-date = "2016-10-15"
+date = 2016-10-15
 category = "opinion"
 tags = ["programming", "legal"]
 +++

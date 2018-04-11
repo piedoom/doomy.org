@@ -1,6 +1,6 @@
 +++
 title = "Redesigning crystal-lang.org"
-date = "2016-10-15"
+date = 2016-10-15
 category = "design"
 +++
 

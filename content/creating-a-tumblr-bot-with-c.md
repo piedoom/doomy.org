@@ -1,6 +1,6 @@
 +++
 title = "Creating a Tumblr Bot with C#"
-date = "2016-08-25"
+date = 2016-08-25
 category = "tutorial"
 tags = ["programming", "c#", "bot", "tumblr"]
 +++

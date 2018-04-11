@@ -1,6 +1,6 @@
 +++
 title = "Publishing asks with your Tumblr bot"
-date = "2016-08-02"
+date = 2016-08-02
 category = "tutorial"
 tags = ["programming", "ruby", "tumblr", "bot"]
 +++

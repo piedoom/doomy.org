@@ -1,6 +1,6 @@
 +++
 title = "Tumblr's usability problems - and how to fix them"
-date = "2016-08-04"
+date = 2016-08-04
 category = "design"
 tags = ["tumblr"]
 +++

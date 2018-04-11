@@ -1,6 +1,6 @@
 +++
 title = "Phantom Markdown Editor"
-date = "2016-07-25"
+date = 2016-07-25
 category = "software"
 tags = ["programming", "c#"]
 +++

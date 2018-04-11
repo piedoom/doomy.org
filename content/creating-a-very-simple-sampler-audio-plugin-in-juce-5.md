@@ -1,6 +1,6 @@
 +++
 title = "Creating a very simple sampler audio plugin in JUCE 5+"
-date = "2017-05-14"
+date = 2017-05-14
 category = "tutorial"
 tags = ["audio", "juce"]
 +++
