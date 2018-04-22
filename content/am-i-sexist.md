@@ -69,7 +69,7 @@ Yet the most insulting comment I found was this.
 
 ![](/images/am-i-sexist/bad-1.png)
 
-I can't say much more than **fuck off**.
+I can't say much more than **stop**.
 
 ----
 
