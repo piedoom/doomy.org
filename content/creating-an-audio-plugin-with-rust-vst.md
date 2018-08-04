@@ -13,7 +13,7 @@ If you know what you're looking for (e.g., if you came here from a Google search
 ## Video
 A video of this content has been provided.  If that's not your thing, you can always follow along with the text below instead.
 
-https://www.youtube.com/watch?v=_zuOQDZMqq4
+{{ youtube(bwu=true, id="zuOQDZMqq4") }}
 
 ## About
 `vst` is a crate that implements the VST 2.4 specification by Steinberg.  VSTs (Virtual Studio Technology) are audio plugins used in a variety of applications.  Its basic features are as follows:
