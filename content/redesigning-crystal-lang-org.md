@@ -1,7 +1,13 @@
 +++
 title = "Redesigning crystal-lang.org"
 date = 2016-10-15
-category = "design"
+author = "doomy"
+
+[taxonomies]
+categories = ["design"]
+
+[extra]
+tags = ["programming", "crystal"]
 +++
 
 The Crystal language's current home at crystal-lang.org is a portal where beginners and developers alike will learn about the language and access various resources.  Although certainly usable and aesthetically interesting, Crystal's website can be improved.

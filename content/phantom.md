@@ -1,7 +1,12 @@
 +++
 title = "Phantom Markdown Editor"
 date = 2016-07-25
-category = "software"
+author = "doomy"
+
+[taxonomies]
+categories = ["archived"]
+
+[extra]
 tags = ["programming", "c#"]
 +++
 

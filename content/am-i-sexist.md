@@ -1,8 +1,15 @@
 +++
 title = "Am I Sexist?  A letter to Yegor Bugayenko"
 date = 2017-07-07
-category = "opinion"
+category = "rant"
 aliases = ["am-i-sexist-a-letter-to-yegor-bugayenko"]
+author = "doomy"
+
+[taxonomies]
+categories = ["rant"]
+
+[extra]
+tags = ["programming", "rust", "audio", "vst"]
 +++
 
 > # Yes.

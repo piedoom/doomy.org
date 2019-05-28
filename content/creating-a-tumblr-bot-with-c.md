@@ -1,7 +1,12 @@
 +++
 title = "Creating a Tumblr Bot with C#"
 date = 2016-08-25
-category = "tutorial"
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
 tags = ["programming", "c#", "bot", "tumblr"]
 +++
 

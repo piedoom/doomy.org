@@ -1,7 +1,12 @@
 +++
 title = "Setting up RVM with Cygwin"
 date = 2016-08-03
-category = "tutorial"
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
 tags = ["programming", "ruby", "rvm"]
 +++
 

@@ -1,7 +1,12 @@
 +++
 title = "DoomyScreen 0.1.0.1"
 date = 2016-07-21
-category = "software"
+author = "doomy"
+
+[taxonomies]
+categories = ["archived"]
+
+[extra]
 tags = ["programming", "c#"]
 +++
 

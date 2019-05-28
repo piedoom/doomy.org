@@ -1,7 +1,13 @@
 +++
 title = "Rewriting Resamplr: Goals"
 date = 2018-03-09
-category = "development"
+author = "doomy"
+
+[taxonomies]
+categories = ["development"]
+
+[extra]
+tags = ["programming", "rust"]
 +++
 
 I started programming as a design student in college with Python and Ruby.  While great languages with purpose, I've recently found myself less and less happy with dynamically typed languages.  

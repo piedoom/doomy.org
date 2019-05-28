@@ -1,8 +1,13 @@
 +++
 title = "Automatically publishing your Gutenberg project to Github pages"
 date = 2017-12-16
-category = "tutorial"
-tags = ["rust"]
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
+tags = ["programming", "ssg", "JAMStack", "zola"]
 +++
 
 # Gutenberg & Static Site generators

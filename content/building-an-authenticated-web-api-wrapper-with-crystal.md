@@ -1,7 +1,13 @@
 +++
 title = "Building an authenticated web API wrapper with Crystal"
 date = 2016-09-20
-category = "design"
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
+tags = ["programming", "crystal"]
 +++
 
 [Crystal](https://crystal-lang.org/) is an up-and-coming language very similar to Ruby, but compiled.  It's still very young, and it's changing all the time, but I've been having some fun playing around with it.  I started writing an [API wrapper for Tumblr](https://github.com/piedoom/tumblr-crystal) (which has basically become my "Hello World" now...).  Unfortunately, the documentation for some parts of Crystal doesn't yet exist, so I learned a ton from the community.  Because there aren't really any tutorials on how to do this sort of thing yet, I'd like to share what I've learned.

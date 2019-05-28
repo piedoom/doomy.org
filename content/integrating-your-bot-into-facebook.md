@@ -1,7 +1,12 @@
 +++
 title = "Integrating your bot into Facebook"
 date = 2016-07-24
-category = "tutorial"
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
 tags = ["bot", "facebook", "ruby"]
 +++
 

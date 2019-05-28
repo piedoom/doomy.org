@@ -5,6 +5,9 @@ This is a website where I write about a variety of programming and computer-rela
 I use [Gutenberg](https://github.com/Keats/gutenberg) as a static site generator, and use Travis to push 
 new builds to the `gh-pages` branch.
 
+## Taxonomies
+Only `categories` are taxonomies at the moment. Tags seem like they should be, but they are instead under `extra`, since they are used primarily for SEO purposes.
+
 # themes
 I use my [feather](https://github.com/piedoom/feather) theme for Gutenberg.
 

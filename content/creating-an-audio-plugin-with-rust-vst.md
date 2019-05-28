@@ -1,8 +1,13 @@
 +++
 title = "Creating a simple synthesizer VST plugin in Rust"
 date = 2018-01-03
-category = "tutorial"
-tags = ["rust", "audio", "vst"]
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
+tags = ["programming", "rust", "audio", "vst"]
 +++
 
 Welcome to 2018!  A lot happened this past year - the most important of which being the 0.0.1 release of [`vst`](https://crates.io/crates/vst) on Crates.io.

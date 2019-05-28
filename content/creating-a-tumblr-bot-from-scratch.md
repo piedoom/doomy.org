@@ -1,7 +1,12 @@
 +++
 title = "Creating a Tumblr Bot from Scratch"
 date = 2016-07-22
-category = "tutorial"
+author = "doomy"
+
+[taxonomies]
+categories = ["tutorial"]
+
+[extra]
 tags = ["bot", "tumblr", "ruby"]
 +++
 
