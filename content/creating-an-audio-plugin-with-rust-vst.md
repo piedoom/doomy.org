@@ -1,6 +1,6 @@
 +++
 title = "Creating a simple synthesizer VST plugin in Rust"
-date = 2018-01-03
+date = 2018-01-03T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]

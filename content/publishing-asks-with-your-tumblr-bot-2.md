@@ -1,6 +1,6 @@
 +++
 title = "Publishing asks with your Tumblr bot"
-date = 2016-08-02
+date = 2016-08-02T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]

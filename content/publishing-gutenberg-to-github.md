@@ -1,6 +1,6 @@
 +++
 title = "Automatically publishing your Gutenberg project to Github pages"
-date = 2017-12-16
+date = 2017-12-16T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]

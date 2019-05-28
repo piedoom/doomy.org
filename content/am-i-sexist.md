@@ -1,6 +1,6 @@
 +++
 title = "Am I Sexist?  A letter to Yegor Bugayenko"
-date = 2017-07-07
+date = 2017-07-07T01:00:00.007Z
 category = "rant"
 aliases = ["am-i-sexist-a-letter-to-yegor-bugayenko"]
 author = "doomy"

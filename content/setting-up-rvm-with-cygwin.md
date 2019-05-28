@@ -1,6 +1,6 @@
 +++
 title = "Setting up RVM with Cygwin"
-date = 2016-08-03
+date = 2016-08-03T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]

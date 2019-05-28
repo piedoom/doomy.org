@@ -1,6 +1,6 @@
 +++
 title = "Integrating your bot into Facebook"
-date = 2016-07-24
+date = 2016-07-24T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]

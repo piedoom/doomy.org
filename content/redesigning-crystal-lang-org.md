@@ -1,6 +1,6 @@
 +++
 title = "Redesigning crystal-lang.org"
-date = 2016-10-15
+date = 2016-10-15T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]
