@@ -1,5 +1,5 @@
 +++
-title = "Rewriting Resamplr: Goals"
+title = "Rewriting Resamplr - Goals"
 date = 2018-03-09T01:00:00.007Z
 author = "doomy"
 
