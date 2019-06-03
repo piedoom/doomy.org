@@ -81,7 +81,7 @@ I'm by no means an expert `borrowck` charmer, so I may have made newbie errors, 
 
 Great! We have a way to read our tiled file, a state to load all its resources, and then a main state to actually build the tilemap and run the game. And just like that, my blobby red player sprite is no longer drifting in an endless blue void.
 
-![](/static/uploads/mwia2.png)
+![](/uploads/mwia2.png)
 
 ## Next Up
 
