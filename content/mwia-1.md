@@ -1,5 +1,5 @@
 +++
-title = "My Week In Amethyst"
+title = "Week In Amethyst"
 author = "doomy"
 date = 2019-05-28T01:20:22.892Z
 description = "N/A"
