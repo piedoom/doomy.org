@@ -50,4 +50,4 @@ Internet dollar-store has both boards, and apparently quite a few clones. I got 
 
 If you know a good place to get either of these boards, or others, that you think might be helpful, please let me know.
 
-![From left to right: CS32F103, STM32F103, STM32F411](/static/uploads/together.jpg)
+![From left to right: CS32F103, STM32F103, STM32F411](/uploads/together.jpg)
