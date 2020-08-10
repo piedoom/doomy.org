@@ -1,5 +1,5 @@
 +++
-title = "My Week In Amethyst 3 - 3D & Prefabs"
+title = "Week In Amethyst 3 - 3D & Prefabs"
 author = "doomy"
 template = "page.html"
 date = 2019-06-10T20:05:23.927Z
