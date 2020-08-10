@@ -13,7 +13,7 @@ collections:
     format: "toml-frontmatter"
     fields: # The fields for each document, usually in front matter
       - {label: "Title", name: "title", widget: "string"}
-      - {label: "Author", name: "author", widget: "string"}
+      - {label: "Author", name: "author", widget: "string", default: "doomy"}
       - {label: "Template", name: "template", widget: "hidden", default: "page.html"}
       - {label: "Date", name: "date", widget: "date"}
       - {label: "Description", name: "description", widget: "text"}
@@ -25,8 +25,7 @@ collections:
           - label: "Categories"
             name: "categories"
             widget: "list"
-            field:
-              - {label: "Category", name: "category", widget: "string"}
+            field: { label: "Category", name: "category", widget: "string" }
       - label: "Extra"
         name: "extra"
         widget: "object"
@@ -34,5 +33,4 @@ collections:
           - label: "Tags"
             name: "tags"
             widget: "list"
-            field:
-              - {label: "Tag", name: "tag", widget: "string"}
+            field: { label: "Tag", name: "tag", widget: "string" }
