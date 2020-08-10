@@ -44,8 +44,9 @@ I've orded 2 "Blue Pill" boards off Amazon, and they appeared to have real ST ch
 
 Internet dollar-store has both boards, and apparently quite a few clones. I got both clone F103 and real F411 boards from AliExpress. 
 
-1. [Clone CS32F103 Boards on AliExpress](https://www.aliexpress.com/item/32478120209.html?spm=a2g0s.9042311.0.0.27424c4d9N1nvk) - At less than 2 USD, these are pretty cheap. I haven't had issues with mine doing simple work, but your results may vary. The real ones aren't that much more expensive.
-2. [Recommended Purchase Link for F4 series](https://www.aliexpress.com/item/4000346695587.html?spm=a2g0s.9042311.0.0.69e74c4dGGJqfW) - The F401 and F411 ("Black Pill") maker, [WeAct](https://github.com/WeActTC/MiniF4-STM32F4x1) recommends this specific store on AliExpress.
+1. [Clone CS32F103 Boards on AliExpress](https://www.aliexpress.com/item/32478120209.html) - At less than 2 USD, these are pretty cheap. I haven't had issues with mine doing simple work, but your results may vary. The real ones aren't that much more expensive.
+2. [Recommended Purchase Link for F4 series](https://www.aliexpress.com/item/4000346695587.html) - The F401 and F411 ("Black Pill") maker, [WeAct](https://github.com/WeActTC/MiniF4-STM32F4x1) recommends this specific store on AliExpress.
+3. [Search for STM32F103 on AliExpress](https://www.aliexpress.com/wholesale?SearchText=STM32F103c8t6)
 
 ### Other places
 
