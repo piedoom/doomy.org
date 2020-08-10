@@ -17,10 +17,10 @@ By the way, I'm still a beginner in embedded. Much of what I'm sharing is either
 
 If you're running into an issue that you just can't figure out, the people in a few communities are very helpful. I owe any successes in this project to the awesome folks in the Rust world. Here are a few places you can look -
 
-- [Rust Community Discord - #embedded](https://discord.gg/VGxEtjH) - Great place for less specific questions for embedded development
-- [Rust Embedded Matrix chat](https://matrix.to/#/!BHcierreUuwCMxVqOf:matrix.org?via=matrix.org&via=chat.berline.rs&via=fairydust.space) - Very active and great for general questions regarding anything embedded related
-- [probe-rs Matrix chat](https://matrix.to/#/!vhKMWjizPZBgKeknOo:matrix.org?via=matrix.org&via=chat.berline.rs&via=oxide.computer) - Chat specifically for the `probe_rs` toolchain, including the `cargo embed/flash` commands. We'll talk more about this in a bit.
-- [RTIC Matrix chat](https://matrix.to/#/!yafYEipFNsXDdwiHMT:matrix.org?via=matrix.org&via=chat.berline.rs&via=hackerspaces.be) - Chat specifically for discussion RTIC (formerly RTFM. No, not that RTFM). We'll talk more about this later too.
+* [Rust Community Discord - #embedded](https://discord.gg/VGxEtjH) - Great place for less specific questions for embedded development
+* [Rust Embedded Matrix chat](https://matrix.to/#/!BHcierreUuwCMxVqOf:matrix.org?via=matrix.org&via=chat.berline.rs&via=fairydust.space) - Very active and great for general questions regarding anything embedded related
+* [probe-rs Matrix chat](https://matrix.to/#/!vhKMWjizPZBgKeknOo:matrix.org?via=matrix.org&via=chat.berline.rs&via=oxide.computer) - Chat specifically for the `probe_rs` toolchain, including the `cargo embed/flash` commands. We'll talk more about this in a bit.
+* [RTIC Matrix chat](https://matrix.to/#/!yafYEipFNsXDdwiHMT:matrix.org?via=matrix.org&via=chat.berline.rs&via=hackerspaces.be) - Chat specifically for discussion RTIC (formerly RTFM. No, not that RTFM). We'll talk more about this later too.
 
 ## What we'll need and where to buy it
 
@@ -28,7 +28,6 @@ For this project, I'm using two boards, but you can choose either or use a compl
 
 1. STM32F103C8T6 (AKA "Blue Pill", AKA "CS32F103C8T6", AKA "mystery surprise board!")
 2. STM32F411CEU6 (AKA "Black Pill")
-
 
 I'm not an authority on this whole "very small computers" subject, but I can offer my own, very subjective and likely unreproducable - experiences with buying these components.
 
@@ -38,7 +37,6 @@ I've orded 2 "Blue Pill" boards off Amazon, and they appeared to have real ST ch
 
 1. [STM32F103C8T6 on Amazon](https://www.amazon.com/s?k=stm32f103c8t6&i=electronics)
 2. [STM32F4... on Amazon](https://www.amazon.com/s?k=STM32F4&i=electronics&ref=nb_sb_noss)
-
 
 ### AliExpress
 
@@ -51,3 +49,5 @@ Internet dollar-store has both boards, and apparently quite a few clones. I got 
 ### Other places
 
 If you know a good place to get either of these boards, or others, that you think might be helpful, please let me know.
+
+![From left to right: CS32F103, STM32F103, STM32F411](/static/uploads/together.jpg)
