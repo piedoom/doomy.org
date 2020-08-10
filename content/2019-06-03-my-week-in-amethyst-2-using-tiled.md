@@ -1,5 +1,5 @@
 +++
-title = "My Week In Amethyst 2 - Using Tiled"
+title = "Week In Amethyst 2 - Using Tiled"
 author = "doomy"
 template = "page.html"
 date = 2019-06-03T14:27:23.927Z
