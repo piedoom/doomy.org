@@ -66,8 +66,6 @@ There's already several tutorials that go into further depth on attaching the li
 
 ### Attaching the NRF24L01
 
-The NRF24L01 module communicates over SPI, which means we will need to use capable pins specific to our board. Just google your part number and find it's associated datasheet, and parse it over... actually nah. Just search "STM32FXXX pinout diagram" on images, and you'll get a few! Here's what the STM32F103C8 (and CS32) looks like:
+The NRF24L01 module communicates over SPI, which means we will need to use capable pins specific to our board. Just google your part number and find it's associated datasheet, or just search "DEVICE_NAME pinout diagram", and you'll usually get what you're looking for. Here's what the [STM32F103C8 (and CS32) diagram](/static/uploads/the-generic-stm32f103-pinout-diagram.jpg) looks like.
 
-
-
-
+You'll also need the pins for the radio. [You can find a diagram here](https://lastminuteengineers.com/nrf24l01-arduino-wireless-communication/) on Last Minute Engineers, who also have a much more in-depth walkthrough of the NRF24L01 and its features.
