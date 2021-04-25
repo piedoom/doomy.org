@@ -6,7 +6,10 @@ date = 2021-04-25T05:45:53.416Z
 description = "Getting the cursor world position in a Bevy 3D game with Rapier"
 
 [taxonomies]
-categories = []
+categories = ["rust", "bevy"]
+
+[extra]
+tags = ["game"]
 +++
 There's a few ways already out there to capture the cursor in [Bevy](https://bevyengine.org) . If you're making a game in 2D space with an orthographic camera, there's some [code in the Bevy Cheat Book](https://bevy-cheatbook.github.io/cookbook/cursor2world.html#2d-games). If you're creating a game in 3D space, and need to select entities, there is [bevy_mod_picking](https://lib.rs/crates/bevy_mod_picking).
 
