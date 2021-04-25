@@ -1,9 +1,9 @@
 +++
-title = "Getting the cursor position in a Bevy 3D game using Rapier"
+title = "Getting the cursor world position in a Bevy 3D game with Rapier"
 author = "doomy"
 template = "page.html"
 date = 2021-04-25T05:45:53.416Z
-description = "Getting the world position of the mouse cursor in a Bevy 3D game with Rapier"
+description = "Getting the cursor world position in a Bevy 3D game with Rapier"
 
 [taxonomies]
 categories = []
