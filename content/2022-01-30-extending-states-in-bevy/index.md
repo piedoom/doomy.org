@@ -5,8 +5,9 @@ template = "page.html"
 date = 2022-01-30
 description = "Storing data within Bevy states and using SystemSets"
 draft = false
+
 [taxonomies] 
-tags = ["rust"]
+tags = ["rust", "gamedev"]
 +++
 
 > This was written for Bevy v0.6

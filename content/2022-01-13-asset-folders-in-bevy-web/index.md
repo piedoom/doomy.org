@@ -5,8 +5,9 @@ template = "page.html"
 date = 2022-01-13 
 description = "Loading folders isn't currently supported on wasm32 targets for bevy, but it can still kind of be done."
 draft = true
+
 [taxonomies] 
-tags = ["rust"]
+tags = ["rust", "gamedev"]
 +++
 
 [Bevy 0.6 released with support for targeting web](https://bevyengine.org/news/bevy-0-6/#webgl2-support) without the need for
