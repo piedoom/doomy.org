@@ -1,7 +1,6 @@
 +++
 title = "Using the M3D Micro in 2020"
 author = "doomy"
-template = "page.html"
 date = 2020-10-14T19:57:08.883Z
 description = "Updating the M3D Micro printer to work in 2020 (and hopefully beyond) with some new firmware and software"
 

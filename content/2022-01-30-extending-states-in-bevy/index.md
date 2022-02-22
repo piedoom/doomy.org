@@ -1,7 +1,6 @@
 +++
 title = "Extending states in Bevy"
 author = "doomy" 
-template = "page.html" 
 date = 2022-01-30
 description = "Storing data within Bevy states and using SystemSets"
 draft = false

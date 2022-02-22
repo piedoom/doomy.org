@@ -1,7 +1,6 @@
 +++
 title = "Loading folders in Bevy 0.6 web (sort of)"
 author = "doomy" 
-template = "page.html" 
 date = 2022-01-13 
 description = "Loading folders isn't currently supported on wasm32 targets for bevy, but it can still kind of be done."
 draft = true

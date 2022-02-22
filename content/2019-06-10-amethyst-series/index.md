@@ -1,7 +1,6 @@
 +++
 title = "Experimenting with Amethyst: A Rust game engine"
 author = "doomy"
-template = "page.html"
 date = 2019-06-10T20:05:23.927Z
 description = "Playing around with Amethyst, an ECS-based game engine for the Rust programming language"
 

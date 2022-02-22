@@ -1,7 +1,6 @@
 +++
 title = "Getting the cursor world position in a Bevy 3D game with Rapier"
 author = "doomy"
-template = "page.html"
 date = 2021-04-25T05:45:53.416Z
 description = "Getting the cursor world position in Bevy with the Rapier physics engine in 3D space"
 
