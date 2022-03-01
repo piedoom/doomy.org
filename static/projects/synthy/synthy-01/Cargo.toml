@@ -8,5 +8,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # add some dependencies here
-vst = "0.3"
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug" }
 rand = "0.8"
