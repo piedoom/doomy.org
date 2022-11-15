@@ -3,5 +3,6 @@
 title="{{page.title}}"
 link="{{page.permalink | safe}}"
 description="{{page.description | safe}}"
+{% if page.draft %}draft="true"{% endif%}
 published={{page.date}}
 {% endfor %}

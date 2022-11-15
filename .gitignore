@@ -3,3 +3,4 @@ public
 .netlify
 static/syntax-theme-dark.css
 static/syntax-theme-light.css
+.DS_Store

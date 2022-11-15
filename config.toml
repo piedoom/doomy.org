@@ -11,6 +11,11 @@ generate_tags_pages = true
 generate_feed = true
 feed_filename = "feed.toml"
 
+taxonomies = [
+    { name = "tags", feed = false},
+    { name = "categories", feed = false},
+]
+
 [markdown]
 highlight_code = true
 highlight_theme = "css"
