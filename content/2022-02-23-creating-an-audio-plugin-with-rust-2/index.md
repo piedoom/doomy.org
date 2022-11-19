@@ -44,7 +44,7 @@ So, what does this sound like?
 
 There's a few moving parts to this synth, but it is relatively easy to understand. `fundsp` does a lot of heavy lifting for us. The first part, `lfo`, describes some inputs for the `pulse` function (`pitch` and `duty`). In the `mix` block, the pulse wave — modified by those inputs — is then processed further, split into stereo channels, and given a stereo reverb effect. 
 
-With this simple syntax, we can achieve some interesting sounds! So, how can we take advantage of `fundsp` and `vst-rs` together?
+With this simple syntax, we can achieve some interesting sounds! So, how can we take advantage of `fundsp` in our audio plugins?
 
 ## Using `fundsp` to process an audio buffer
 
@@ -65,74 +65,120 @@ We use the `noise()` function of `fundsp` to generate some _bipolar_ white noise
 // 0. Hacker import //
 // ---------------- //
 use fundsp::hacker::*;
-use vst::buffer::AudioBuffer;
-use vst::prelude::*;
+use nih_plug::*;
+use std::{pin::Pin, sync::Arc};
 
 struct Synthy {
-    // -------------------------------- //
-    // 1. Dynamic dispached audio graph //
-    // -------------------------------- //
-    audio: Box<dyn AudioUnit64 + Send>,
+    // ------------- //
+    // 1. New fields //
+    // ------------- //
+    audio: Box<dyn AudioUnit64 + Send + Sync>,
+    sample_rate: f32,
+    params: Pin<Arc<SynthyParams>>,
+}
+
+#[derive(Params)]
+pub struct SynthyParams {
+    #[id = "amplitude"]
+    pub amplitude: FloatParam,
+}
+
+impl Default for SynthyParams {
+    fn default() -> Self {
+        Self {
+            amplitude: FloatParam::new("amplitude", 0.1, Range::Linear { min: 0.0, max: 1.0 }),
+        }
+    }
+}
+
+impl Default for Synthy {
+    fn default() -> Self {
+        // -------------------------- //
+        // 2. Creating an audio graph //
+        // -------------------------- //
+        let params = Arc::pin(SynthyParams::default());
+
+        let amplitude = || tag(0, params.amplitude.value as f64);
+        let audio_graph = noise() * amplitude() >> split::<U2>();
+
+        Self {
+            audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send + Sync>,
+            sample_rate: Default::default(),
+            params,
+        }
+    }
 }
 
 impl Plugin for Synthy {
-    fn new(_host: HostCallback) -> Self {
-        // ------------------------------ //
-        // 2. New audio graph description //
-        // ------------------------------ //
-        let audio_graph = noise() >> split::<U2>();
-        Self {
-            audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send>,
-        }
+    const NAME: &'static str = "synthy";
+    const VENDOR: &'static str = "rust audio";
+    const URL: &'static str = "https://vaporsoft.net";
+    const EMAIL: &'static str = "myemail@example.com";
+    const VERSION: &'static str = "0.0.1";
+    const DEFAULT_NUM_INPUTS: u32 = 0;
+    const DEFAULT_NUM_OUTPUTS: u32 = 2;
+    const ACCEPTS_MIDI: bool = true;
+
+    fn params(&self) -> Pin<&dyn Params> {
+        self.params.as_ref()
     }
 
-    fn get_info(&self) -> Info {
-        Info {
-            name: "synthy".into(),
-            vendor: "rusty".into(),
-            unique_id: 128956,
-            category: Category::Synth,
-            inputs: 0,
-            outputs: 2,
-            parameters: 0,
-            ..Info::default()
+    // --------------------------- //
+    // 3. Processing both channels //
+    // --------------------------- //
+    fn process(
+        &mut self,
+        buffer: &mut Buffer,
+        _context: &mut impl ProcessContext,
+    ) -> ProcessStatus {
+        if buffer.as_raw().len() != 2 {
+            return ProcessStatus::Error("unexpected number of buffers");
         }
-    }
+        let buffer_raw = buffer.as_raw();
+        let (left_buffer, right_buffer) = buffer_raw.split_at_mut(1);
+        for (left_chunk, right_chunk) in left_buffer[0]
+            .chunks_mut(MAX_BUFFER_SIZE)
+            .zip(right_buffer[0].chunks_mut(MAX_BUFFER_SIZE))
+        {
+            let mut left_tmp = [0f64; MAX_BUFFER_SIZE];
+            let mut right_tmp = [0f64; MAX_BUFFER_SIZE];
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
-        // ------------------------------------------- //
-        // 3. Using fundsp to process our audio buffer //
-        // ------------------------------------------- //
-        let (_, mut outputs) = buffer.split();
-        if outputs.len() == 2 {
-            let (left, right) = (outputs.get_mut(0), outputs.get_mut(1));
+            self.audio.set(0, self.params.amplitude.value as f64);
 
-            for (left_chunk, right_chunk) in left
-                .chunks_mut(MAX_BUFFER_SIZE)
-                .zip(right.chunks_mut(MAX_BUFFER_SIZE))
-            {
-                let mut right_buffer = [0f64; MAX_BUFFER_SIZE];
-                let mut left_buffer = [0f64; MAX_BUFFER_SIZE];
+            self.audio
+                .process(MAX_BUFFER_SIZE, &[], &mut [&mut left_tmp, &mut right_tmp]);
 
-                self.audio.process(
-                    MAX_BUFFER_SIZE,
-                    &[],
-                    &mut [&mut left_buffer, &mut right_buffer],
-                );
-
-                for (chunk, output) in left_chunk.iter_mut().zip(left_buffer.iter()) {
-                    *chunk = *output as f32;
-                }
-
-                for (chunk, output) in right_chunk.iter_mut().zip(right_buffer.iter()) {
-                    *chunk = *output as f32;
-                }
+            for (sample, output) in left_chunk.iter_mut().zip(left_tmp.iter()) {
+                *sample = *output as f32;
+            }
+            for (chunk, output) in right_chunk.iter_mut().zip(right_tmp.iter()) {
+                *chunk = *output as f32;
             }
         }
+
+        ProcessStatus::Normal
+    }
+
+    // ------------------ //
+    // 4. Set sample rate //
+    // ------------------ //
+    fn initialize(
+        &mut self,
+        _bus_config: &BusConfig,
+        buffer_config: &BufferConfig,
+        _context: &mut impl ProcessContext,
+    ) -> bool {
+        self.sample_rate = buffer_config.sample_rate;
+        true
     }
 }
 
-vst::plugin_main!(Synthy);
+impl Vst3Plugin for Synthy {
+    const VST3_CLASS_ID: [u8; 16] = *b"1234567891234567";
+    const VST3_CATEGORIES: &'static str = "Instrument|Synth";
+}
+
+nih_export_vst3!(Synthy);
 ```
 
 Now, let's explain what is going on here.
@@ -141,15 +187,33 @@ Now, let's explain what is going on here.
 
 `fundsp` specifies not one, but *two* preludes — `fundsp::prelude::*`, and `fundsp::hacker::*`. The hacker environment uses 64-bit precision internally, which is what we want. Because the precision of our VST is `f32`, we will need to cast values when processing later.
 
-### 1. Boxed audio graph
+### 1. New fields
 
-Our audio "graph" is hardly a graph, it's one `noise()` node. But as the graph increases in complexity, its concrete type will become difficult or impossible to manually provide. We instead store the graph as a boxed `dyn AudioUnit64` for access. It is important to initialize the graph once in our `init`, as `fundsp` graphs must maintain an internal state. We further restrict the type to require `Send`, which is a bound defined by the `Plugin` trait. 
+a. `audio_graph`
+    Our audio "graph" is hardly a graph, it's one `noise()` node controlled by amplitude, split into two channels (left and right). As the graph increases in complexity, its concrete type will become difficult or impossible to manually provide. We instead store the graph as a boxed `dyn AudioUnit64` for access. We further restrict the type to require `Send` and `Sync`, which is a bound defined by the `Plugin` trait.
+b. `sample_rate`
+    We store the plugin's sample rate, which is useful for when we calculate the time per sample later on.
 
 ### 2. New audio graph description
 
+```rs
+let params = Arc::pin(SynthyParams::default());
+
+let amplitude = || tag(0, params.amplitude.value as f64);
+let audio_graph = noise() * amplitude() >> split::<U2>();
+
+Self {
+    audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send + Sync>,
+    sample_rate: Default::default(),
+    params,
+}
+```
+
+In `fundsp`, `tag(..)`s are used to control parameters of the audio graph.
+
 We use the `new` method to construct a new audio graph. In this case, it is one `noise()` node, split into a left and right track using the `split::<U2>()` function of `fundsp`. (Without the `split`, we would only hear audio on the left side.)
 
-### 3. Using fundsp to process our audio buffer
+### 3. Processing both channels
  
 The trickiest part is getting our arbitrarily-sized output buffer of `f32` precision to work with `fundsp`'s `process` method. `fundsp` provides the `MAX_BUFFER_SIZE` constant which defines the number of samples the given audio unit can handle. At the time of writing, that number is 64. If we attempt to give the `process` method more than `MAX_BUFFER_SIZE` samples, the plugin will panic. To resolve this, we `chunk` our buffer into a `MAX_BUFFER_SIZE` length using a temporary left and right buffer. We pass those buffers as "out" parameters to our `process` method, and then assign the values of that buffer to our actual output audio buffer. 
 

@@ -42,7 +42,6 @@ egui is an excellent immediate-mode GUI written in pure Rust. (In fact, all list
 
 `baseview` manages windowing with our plugin UI. If you're familiar with winit, it is similar, but designed around the needs of audio plugins. We won't interact much with `baseview` [^baseview-egui] directly.
 
-
 ## Setting up
 
 Initialize a new Rust project with `cargo new --lib synthy`. You may choose whichever name you like, but I will refer to `synthy` in code examples. Note the `--lib` flag, which may seem counter-intuitive. VST plugins are a dynamic library, even if they seem more like standalone applications. Specifically, we use the `cdylib` `crate-type` which creates `*.so` files on Linux, `*.dylib` files on macOS, and `*.dll` files on Windows [^linkage].
@@ -240,9 +239,15 @@ To compile, use the following command:
 cargo build --release
 ```
 
-We will always tend to build in release as it offers superior performance, especially when dealing with time-sensitive operations like real-time audio.
+We will always tend to build in release as it offers superior performance, especially when dealing with time-sensitive operations like real-time audio. When finished building, you should see a `synthy.dll` file in your `target/release/` directory.
 
-When finished building, you should see a `synthy.dll` file in your `target/release/` directory. If you're on Windows, you can simply rename the file as `synthy.vst3` and load it directly into the VST host of your choice. If you're on Mac or Linux, there are extra steps to run. (TODO: what steps?)
+After compilation, we need to bundle our plugin [^tasks]. The specifics of this bundle depend on our output format and the target system. To skip all the system specifics, we can download another Rust tool to automatically bundle our plugins. In a terminal, run the following:
+
+```sh
+cargo install --git https://github.com/piedoom/plugit
+```
+
+This installs the [`plugit`](https://github.com/piedoom/plugit) executable with cargo from GitHub. We can use it to bundle our `synthy.dll` into a VST3 that our host will recognize. In the same directory as your project's `Cargo.toml`, run `plugit` with no parameters. You should receive a success message, along with a printout of the directory of your newly bundled plugin directory [^directory-structure].
 
 You can take a look at [my older article](/creating-an-audio-plugin-with-rust-vst#testing-our-bare-bones-plugin) if you need help setting up a VST host on Windows.
 
@@ -286,3 +291,7 @@ We'll be taking a look at using the `fundsp` crate to easily generate audio grap
 [^baseview-egui]: We're actually going to be using [egui-baseview](https://github.com/BillyDM/egui-baseview) and not just baseview to help us use egui specifically. In any case, the crate does the heavy lifting, and we just use egui as usual after some initialization.
 
 [^linkage]: To see more about `cdylib` and other `crate-type`s, read [the "Linkage" page of Rust's reference docs](https://doc.rust-lang.org/reference/linkage.html).
+
+[^tasks]: There is no easy way to execute post-build steps with cargo yet. While the [`xtask`](https://github.com/matklad/cargo-xtask) pattern exists, it's not as easy to get started with.
+
+[^directory-structure]: This directory _is_ the VST3. Do not try to remove the library file from within the directory structure. If you move the plugin to a different location, move the entire directory. To view more about how VST3 plugins are structured, [visit Steinberg's site](https://developer.steinberg.help/pages/viewpage.action?pageId=9798275).

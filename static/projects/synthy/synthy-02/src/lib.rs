@@ -1,105 +1,118 @@
-// ------------------------------ //
-// 0. The params module & imports //
-// ------------------------------ //
-mod params;
-
+// ---------------- //
+// 0. Hacker import //
+// ---------------- //
 use fundsp::hacker::*;
-use params::{Parameter, Parameters};
-use std::sync::Arc;
-use vst::prelude::*;
-
-const FREQ_SCALAR: f64 = 1000.;
+use nih_plug::*;
+use std::{pin::Pin, sync::Arc};
 
 struct Synthy {
-    audio: Box<dyn AudioUnit64 + Send>,
-    // ---------------------------------------- //
-    // 1. Adding a thread-safe parameters field //
-    // ---------------------------------------- //
-    parameters: Arc<Parameters>,
+    // ------------- //
+    // 1. New fields //
+    // ------------- //
+    audio: Box<dyn AudioUnit64 + Send + Sync>,
+    sample_rate: f32,
+    params: Pin<Arc<SynthyParams>>,
+}
+
+#[derive(Params)]
+pub struct SynthyParams {
+    #[id = "amplitude"]
+    pub amplitude: FloatParam,
+}
+
+impl Default for SynthyParams {
+    fn default() -> Self {
+        Self {
+            amplitude: FloatParam::new("amplitude", 0.5, Range::Linear { min: 0.0, max: 1.0 }),
+        }
+    }
+}
+
+impl Default for Synthy {
+    fn default() -> Self {
+        // ------------------------ //
+        // 2. Create an audio graph //
+        // ------------------------ //
+        let params = Arc::pin(SynthyParams::default());
+
+        let amplitude = || tag(0, params.amplitude.value as f64);
+
+        #[allow(clippy::precedence)]
+        let audio_graph = sine_hz(440.) * amplitude() >> split::<U2>();
+
+        Self {
+            audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send + Sync>,
+            sample_rate: Default::default(),
+            params,
+        }
+    }
 }
 
 impl Plugin for Synthy {
-    #[allow(clippy::precedence)]
-    fn new(_host: HostCallback) -> Self {
-        // --------------------------------------- //
-        // 2. Adding parameters to our audio graph //
-        // --------------------------------------- //
-        let Parameters { freq, modulation } = Parameters::default();
-        let hz = freq.get() as f64 * FREQ_SCALAR;
+    const NAME: &'static str = "synthy";
+    const VENDOR: &'static str = "rust audio";
+    const URL: &'static str = "https://vaporsoft.net";
+    const EMAIL: &'static str = "myemail@example.com";
+    const VERSION: &'static str = "0.0.1";
+    const DEFAULT_NUM_INPUTS: u32 = 0;
+    const DEFAULT_NUM_OUTPUTS: u32 = 2;
+    const ACCEPTS_MIDI: bool = true;
 
-        let freq = || tag(Parameter::Freq as i64, hz);
-        let modulation = || tag(Parameter::Modulation as i64, modulation.get() as f64);
-
-        let audio_graph =
-            freq() >> sine() * freq() * modulation() + freq() >> sine() >> split::<U2>();
-
-        Self {
-            audio: Box::new(audio_graph) as Box<dyn AudioUnit64 + Send>,
-            parameters: Default::default(),
-        }
+    fn params(&self) -> Pin<&dyn Params> {
+        self.params.as_ref()
     }
 
-    // ---------------------------------- //
-    // 3. Revealing parameters to our DAW //
-    // ---------------------------------- //
-    fn get_info(&self) -> Info {
-        Info {
-            name: "synthy".into(),
-            vendor: "rusty".into(),
-            unique_id: 128956,
-            category: Category::Synth,
-            inputs: 0,
-            outputs: 2,
-            parameters: 2,
-            ..Info::default()
-        }
-    }
+    // ------------------------ //
+    // 3. Process both channels //
+    // ------------------------ //
+    fn process(
+        &mut self,
+        buffer: &mut Buffer,
+        _context: &mut impl ProcessContext,
+    ) -> ProcessStatus {
+        for (_offset, mut block) in buffer.iter_blocks(MAX_BUFFER_SIZE) {
+            self.audio
+                .set(0, self.params.amplitude.plain_value() as f64);
 
-    // --------------- //
-    // 4. Housekeeping //
-    // --------------- //
-    fn get_parameter_object(&mut self) -> Arc<dyn PluginParameters> {
-        Arc::clone(&self.parameters) as Arc<dyn PluginParameters>
-    }
+            let mut left_tmp = [0f64; MAX_BUFFER_SIZE];
+            let mut right_tmp = [0f64; MAX_BUFFER_SIZE];
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
-        let (_, mut outputs) = buffer.split();
-        if outputs.len() == 2 {
-            let (left, right) = (outputs.get_mut(0), outputs.get_mut(1));
+            self.audio
+                .process(MAX_BUFFER_SIZE, &[], &mut [&mut left_tmp, &mut right_tmp]);
 
-            for (left_chunk, right_chunk) in left
-                .chunks_mut(MAX_BUFFER_SIZE)
-                .zip(right.chunks_mut(MAX_BUFFER_SIZE))
-            {
-                let mut left_buffer = [0f64; MAX_BUFFER_SIZE];
-                let mut right_buffer = [0f64; MAX_BUFFER_SIZE];
-
-                self.audio.set(
-                    Parameter::Modulation as i64,
-                    self.parameters.get_parameter(Parameter::Modulation as i32) as f64,
-                );
-
-                self.audio.set(
-                    Parameter::Freq as i64,
-                    self.parameters.get_parameter(Parameter::Freq as i32) as f64 * FREQ_SCALAR,
-                );
-
-                self.audio.process(
-                    MAX_BUFFER_SIZE,
-                    &[],
-                    &mut [&mut left_buffer, &mut right_buffer],
-                );
-
-                for (chunk, output) in left_chunk.iter_mut().zip(left_buffer.iter()) {
-                    *chunk = *output as f32;
-                }
-
-                for (chunk, output) in right_chunk.iter_mut().zip(right_buffer.iter()) {
-                    *chunk = *output as f32;
+            for (index, channel) in block.iter_mut().enumerate() {
+                let new_channel = match index {
+                    0 => left_tmp,
+                    1 => right_tmp,
+                    _ => return ProcessStatus::Error("unexpected number of channels"),
+                };
+                for (sample_index, sample) in channel.iter_mut().enumerate() {
+                    *sample = new_channel[sample_index] as f32;
                 }
             }
         }
+
+        ProcessStatus::Normal
+    }
+
+    // ------------------ //
+    // 4. Set sample rate //
+    // ------------------ //
+    fn initialize(
+        &mut self,
+        _bus_config: &BusConfig,
+        buffer_config: &BufferConfig,
+        _context: &mut impl ProcessContext,
+    ) -> bool {
+        self.sample_rate = buffer_config.sample_rate;
+        self.audio.reset(Some(buffer_config.sample_rate as f64));
+        true
     }
 }
 
-vst::plugin_main!(Synthy);
+impl Vst3Plugin for Synthy {
+    const VST3_CLASS_ID: [u8; 16] = *b"1234567891234567";
+    const VST3_CATEGORIES: &'static str = "Instrument|Synth";
+}
+
+nih_export_vst3!(Synthy);

@@ -1,7 +1,0 @@
-{% for page in pages %}
-[[pages]]
-title="{{page.title}}"
-link="{{page.permalink | safe}}"
-description="{{page.description | safe}}"
-published={{page.date}}
-{% endfor %}
