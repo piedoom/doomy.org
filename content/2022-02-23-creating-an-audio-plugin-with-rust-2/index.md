@@ -3,6 +3,7 @@ title = "Rust VST part 2: Generating a signal with fundsp"
 author = "doomy" 
 date = 2022-02-22
 description = "Creating an audio plugin with the Rust programming language: Part 2"
+draft = true
 
 [taxonomies] 
 tags = ["rust", "audio"]
