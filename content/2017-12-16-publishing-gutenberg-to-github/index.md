@@ -2,7 +2,7 @@
 title = "Automatically publishing your Gutenberg project to Github pages"
 date = 2017-12-16T01:00:00.007Z
 author = "doomy"
-description = "Using Travis CI to publish a static zola site from a git repository"
+summary = "Using Travis CI to publish a static zola site from a git repository"
 
 [taxonomies]
 tags = ["rust", "zola"]

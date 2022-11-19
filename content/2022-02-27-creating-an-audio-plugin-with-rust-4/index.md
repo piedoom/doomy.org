@@ -2,7 +2,7 @@
 title = "Rust VST part 4: creating a GUI"
 author = "doomy" 
 date = 2022-02-27
-description = "Creating an audio plugin with the Rust programming language: Part 4"
+summary = "Creating an audio plugin with the Rust programming language: Part 4"
 draft = true
 
 [taxonomies] 

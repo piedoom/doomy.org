@@ -2,7 +2,7 @@
 title = "Creating an audio plugin with Rust in 2022: Part 1 — Getting started"
 author = "doomy" 
 date = 2022-02-21
-description = "Creating an audio plugin with the Rust programming language"
+summary = "Creating an audio plugin with the Rust programming language"
 draft = true
 
 [taxonomies] 

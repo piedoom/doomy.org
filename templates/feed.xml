@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+  <pages>
+    {%- for page in pages %}
+    <title>{{ page.title }}</title>
+    <date>{{ page.date | date(format="%a, %d %b %Y %H:%M:%S %z") }}</date>
+    <permalink>{{ page.permalink | escape_xml | safe }}</permalink>
+    {% if page.summary %}<summary>{{ page.summary }}</summary>{% endif %}
+    <body>{{ page.content }}</body>
+    {% endfor %}
+  </pages>
+</root>

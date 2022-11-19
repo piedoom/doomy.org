@@ -9,6 +9,7 @@ theme = "feather"
 generate_categories_pages = true
 generate_tags_pages = true
 generate_feed = true
+feed_filename = "feed.xml"
 
 taxonomies = [
     { name = "tags", feed = false},

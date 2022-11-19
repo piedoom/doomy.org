@@ -2,7 +2,7 @@
 title = "Extending states in Bevy"
 author = "doomy" 
 date = 2022-01-30
-description = "Storing data within Bevy states and using SystemSets"
+summary = "Storing data within Bevy states and using SystemSets"
 draft = false
 
 [taxonomies] 

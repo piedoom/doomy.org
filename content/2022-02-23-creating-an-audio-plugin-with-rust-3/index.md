@@ -2,7 +2,7 @@
 title = "Rust VST part 3: reacting to MIDI"
 author = "doomy" 
 date = 2022-02-23
-description = "Creating an audio plugin with the Rust programming language: Part 3"
+summary = "Creating an audio plugin with the Rust programming language: Part 3"
 draft = true
 
 [taxonomies] 

@@ -2,7 +2,7 @@
 title = "Creating a Tumblr Bot with C#"
 date = 2016-08-25T01:00:00.007Z
 author = "doomy"
-description = "Use C# and NuGet to create our very own automated Tumblr bot"
+summary = "Use C# and NuGet to create our very own automated Tumblr bot"
 
 [taxonomies]
 tags = ["c#", "tumblr"]
