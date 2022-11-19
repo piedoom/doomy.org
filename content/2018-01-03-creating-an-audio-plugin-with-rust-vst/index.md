@@ -2,7 +2,7 @@
 title = "Creating a simple synthesizer VST plugin in Rust"
 date = 2018-01-03T01:00:00.007Z
 author = "doomy"
-summary = "Using the vst2 crate to create audio plugins in the Rust programming language."
+description = "Using the vst2 crate to create audio plugins in the Rust programming language."
 
 [taxonomies]
 tags = ["rust", "audio"]

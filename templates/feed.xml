@@ -5,7 +5,7 @@
     <title>{{ page.title }}</title>
     <date>{{ page.date | date(format="%a, %d %b %Y %H:%M:%S %z") }}</date>
     <permalink>{{ page.permalink | escape_xml | safe }}</permalink>
-    {% if page.summary %}<summary>{{ page.summary }}</summary>{% endif %}
+    {% if page.description %}<description>{{ page.description }}</description>{% endif %}
     <body>{{ page.content }}</body>
     {% endfor %}
   </pages>

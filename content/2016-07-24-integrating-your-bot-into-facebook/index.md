@@ -2,7 +2,7 @@
 title = "Integrating your bot into Facebook"
 date = 2016-07-24T01:00:00.007Z
 author = "doomy"
-summary = "Integrating your bot into the evil terrible company previously known as Facebook"
+description = "Integrating your bot into the evil terrible company previously known as Facebook"
 
 [taxonomies]
 categories = ["tutorial"]

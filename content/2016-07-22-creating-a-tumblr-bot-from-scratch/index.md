@@ -2,7 +2,7 @@
 title = "Creating a Tumblr Bot from Scratch"
 date = 2016-07-22T01:00:00.007Z
 author = "doomy"
-summary = "How to build your very own Tumblr bot using nothing but your ingenuity and some Ruby gems" 
+description = "How to build your very own Tumblr bot using nothing but your ingenuity and some Ruby gems" 
 
 [extra]
 tags = ["tumblr", "ruby"]

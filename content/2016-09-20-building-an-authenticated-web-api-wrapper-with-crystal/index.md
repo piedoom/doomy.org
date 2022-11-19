@@ -2,7 +2,7 @@
 title = "Building an authenticated web API wrapper with Crystal"
 date = 2016-09-20T01:00:00.007Z
 author = "doomy"
-summary = "Building an authenticated web API wrapper for Twitter using the Crystal programming language"
+description = "Building an authenticated web API wrapper for Twitter using the Crystal programming language"
 
 [taxonomies]
 tags = ["crystal"]
