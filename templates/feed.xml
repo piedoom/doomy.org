@@ -3,7 +3,7 @@
   <pages>
     {%- for page in pages %}
     <title>{{ page.title }}</title>
-    <date>{{ page.date | date(format="%a, %d %b %Y %H:%M:%S %z") }}</date>
+    <date>{{ page.date }}</date>
     <permalink>{{ page.permalink | escape_xml | safe }}</permalink>
     {% if page.description %}<description>{{ page.description }}</description>{% endif %}
     <body>{{ page.content }}</body>
