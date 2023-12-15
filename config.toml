@@ -3,7 +3,7 @@ base_url = "https://vaporsoft.net"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
-
+title = "doomy"
 theme = "feather"
 
 generate_categories_pages = true
@@ -12,8 +12,8 @@ generate_feed = true
 feed_filename = "feed.xml"
 
 taxonomies = [
-    { name = "tags", feed = false},
-    { name = "categories", feed = false},
+  { name = "tags", feed = false },
+  { name = "categories", feed = false },
 ]
 
 [markdown]
