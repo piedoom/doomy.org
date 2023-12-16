@@ -4,7 +4,7 @@ date = 2017-05-14T01:00:00.007Z
 author = "doomy"
 
 [taxonomies]
-tags = ["audio", "c++"]
+tags = ["audio", "cpp"]
 
 +++
 

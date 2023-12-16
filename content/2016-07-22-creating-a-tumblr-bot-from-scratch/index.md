@@ -4,7 +4,7 @@ date = 2016-07-22T01:00:00.007Z
 author = "doomy"
 description = "How to build your very own Tumblr bot using nothing but your ingenuity and some Ruby gems" 
 
-[extra]
+[taxonomies]
 tags = ["tumblr", "ruby"]
 +++
 

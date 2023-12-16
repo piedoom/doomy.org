@@ -5,9 +5,6 @@ author = "doomy"
 description = "Integrating your bot into the evil terrible company previously known as Facebook"
 
 [taxonomies]
-categories = ["tutorial"]
-
-[extra]
 tags = ["bot", "facebook", "ruby"]
 +++
 
