@@ -14,11 +14,7 @@ any extra configuration.  While upgrading my game from a previous release to
 take advantage of web, I ran into an issue where I could not use the
 [`load_folder`](https://docs.rs/bevy/0.6.0/bevy/asset/struct.AssetServer.html#method.load_folder) method.
 
-{% discord( name="doomy",
-    src="https://discord.com/channels/691052431525675048/742884593551802431/929666632790470667",
-    img="https://cdn.discordapp.com/avatars/210437037751402507/26f24a9ca99ba8a2638d6f6abedf42dc.webp?size=100",
-    date="01/09/2022") 
-%}
+
 From what I can see, load_folder is not supported with wasm currently. I was
 wondering if there is an alternative I can use that would work and would allow
 specifying directories? {% end %}
