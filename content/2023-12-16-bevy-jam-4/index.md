@@ -160,7 +160,9 @@ in-browser, because it runs like rotten garbage, clocking in a spectacular
 ~0.5FPS despite my desperate fumbling with `wasm-opt`. After playing a few other
 submissions, I suspect the issue is the shadow graphics, which
 were recently improved and look great, but might cost too much for a browser
-game.
+game. But hey, it looks really nice!
+
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/893312876?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Bevy Blast Ultra Gameplay"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
 ## The best Bevy
 
