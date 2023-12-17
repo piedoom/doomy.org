@@ -1,15 +1,11 @@
 +++
-title = "Bevy Jam 4"
+title = "I submitted a game to Bevy Jam 4 and it was pretty cool"
 author = "doomy" 
-description = "Bevy game jam 4"
+description = "Thoughts on working with Bevy in version 0.12 to make a 3D marble game"
 
 [taxonomies] 
 tags = ["rust", "gamedev", "bevy"]
 +++
-
-- how have things changed?
-- my workflow
-- what could have been better
 
 I submitted an entry to the 4th #bevy jam this December, with the theme of "
 That's a LOT of Entities!". As a big fan of the [*Marble Blast
