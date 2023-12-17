@@ -5,7 +5,7 @@ author = "doomy"
 description = "Use C# and NuGet to create our very own automated Tumblr bot"
 
 [taxonomies]
-tags = ["c#", "tumblr"]
+tags = ["cs", "tumblr", "bot"]
 +++
 
 I've made a few posts on how to create a Tumblr bot with [Ruby](https://vaporsoft.net/creating-a-tumblr-bot-from-scratch/).  Ruby is great and all, but it is definitely an odd language, and it works best on Mac/Unix computers.  Because most people have Windows, and many programmers start with Java (a language very similar to C#) I thought it would be a good idea to "port" the tutorial over.
