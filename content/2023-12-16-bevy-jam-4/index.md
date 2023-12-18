@@ -47,6 +47,10 @@ Using a single `.blend` file, I could edit all levels as different scenes, and
 create reusable prefabs. Most importantly, I could create any kind of level
 geometry that Blender could export.
 
+{{ mastodon(url="https://mastodon.social/@doomy/111526446179976498") }}
+
+> Early development footage
+
 ### Assets are still kind of tricky, but not as much
 
 Assets used to be among the more tedious game logic to implement. With the
@@ -141,6 +145,8 @@ into my game.
 
 ![Marble on rails in game](rails.png)
 
+{{ mastodon(url="https://mastodon.social/@doomy/111543692817690564") }}
+
 I've used Rapier almost exclusively in the past, and while it's matured nicely,
 it's still a library intended for general use. That means it needs the glue of
 `bevy_rapier` to translate into our game world, and the Rapier and Bevy world
@@ -162,7 +168,7 @@ submissions, I suspect the issue is the shadow graphics, which
 were recently improved and look great, but might cost too much for a browser
 game. But hey, it looks really nice!
 
-<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/893312876?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Bevy Blast Ultra Gameplay"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+<div style="padding:56.25% 0 0 0;position:relative;margin:2em 0;"><iframe src="https://player.vimeo.com/video/893312876?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Bevy Blast Ultra Gameplay"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
 ### Adjusting game settings
 

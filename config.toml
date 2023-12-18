@@ -22,3 +22,4 @@ highlight_themes_css = [
 [extra]
 feather_disqus_domain = "vaporsoft-net"
 feather_analytics = "<script async src='https://www.googletagmanager.com/gtag/js?id=UA-62288351-2'></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-62288351-2');</script>"
+feather_timezone = "America/New_York"
