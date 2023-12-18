@@ -164,6 +164,54 @@ game. But hey, it looks really nice!
 
 <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/893312876?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Bevy Blast Ultra Gameplay"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
+### Adjusting game settings
+
+I used a big `.ron` file to store many game settings. Whenever there was some scalar that affected gameplay, I tried to include it here, so I could tweak values without needing to recompile. (Also, since there's no settings UI, this is at least an option for changing sensitivity).
+
+```js
+SettingsAsset(
+    game: (
+        player: (
+            // More torque = ball goes faster
+            torque_strength: 4.8,
+            // Impulse applied to the Z AXIS
+            jump_strength: 6.0,
+            friction: 0.9,
+            // XPDBDPX calculates the mass of our collider, but /
+            // by adjusting the density we can fine-tune things
+            density: 1.0,
+            // Because theres multiple marbles, and we can't 
+            // just have one "main" player, the focal point is 
+            // actually the average of player positions. This 
+            // applies a force to marbles to keep them towards 
+            // the focus point. To keep players near the center 
+            // from vibrating, a "deadzone" is applied
+            magnetism_deadzone: 0.5,
+            // How fast the pull towards the average center
+            magnetism_strength: 1.0,
+            // How far the magnetic influence reaches
+            influence_radius: 5.0,
+        ),
+        camera: (
+            controller_sensitivity: (3.0, 1.5),
+            mouse_sensitivity: (5.0, 5.0),
+            fov: 90,
+            // lol this doesn't actually do anything anymore
+            fov_multiplier_range: RangeInclusive( start: 1.2, end: 0.9 ),
+            // Not sure why it has to be between these two 
+            // numbers, but it does work!
+            angle_range: RangeInclusive( start: 200, end: 270 ),
+            // How far away to position the camera from the 
+            // player center
+            distance: 7.0,
+        )
+    ),
+    // etc...
+)
+```
+
+I am a big fan of `Range`s in Rust. Am I the only one?
+
 ## The best Bevy
 
 Bevy is (objectively) a good game engine because Rust is (objectively) a good
