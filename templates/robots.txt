@@ -35,3 +35,4 @@ User-agent: img2dataset
 User-agent: omgili
 User-agent: omgilibot
 Disallow: /
+Sitemap: {{ get_url(path="sitemap.xml") }}
