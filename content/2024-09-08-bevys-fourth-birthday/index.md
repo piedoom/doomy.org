@@ -1,16 +1,16 @@
 +++
 title = "birthday_system.system()"
 author = "doomy"
-description = "4 years of Bevy projects, project organization, and the glorious future of Rust game development"
+description = "Half a decade of Rust game engines, Bevy, project organization, and the glorious future of Rust game development"
 draft = true
 
 [taxonomies]
 tags = ["rust", "gamedev", "bevy"]
 +++
 
-Bevy was released [4 years](https://bevyengine.org/news/bevys-fourth-birthday/#bevy-ecs-maturity) ago, and it has since evolved into a formidible engine. 4 years is a long time, but my dive into making games with Rust started earlier.
+Bevy released [4 years](https://bevyengine.org/news/bevys-fourth-birthday/#bevy-ecs-maturity) ago, and it has since evolved into a formidible engine. 4 years is a long time, but my dive into making games with Rust started earlier.
 
-5 years ago, Bevy didn't exist yet. The popular choices for Rust game engines were "[Piston](https://github.com/PistonDevelopers/piston)", a modular game engine which pioneered a ton of useful crates [^ui], and "[Amethyst](https://github.com/amethyst/amethyst)", a data-oriented, ECS-driven game engine, both of which are no longer in active development [^piston].
+5 years ago, Bevy didn't exist yet. The popular choices for Rust game engines were "[Piston](https://github.com/PistonDevelopers/piston)", a modular game engine which pioneered a ton of useful crates[^ui], and "[Amethyst](https://github.com/amethyst/amethyst)", a data-oriented, ECS-driven game engine, both of which are no longer in active development[^piston].
 
 ![*Amethyst, a* precursor *engine to Bevy, was archived on April 18, 2022, and is now read-only. Please ignore the fact that apparently nobody wants to talk to me on GitHub (0 notifications).*](amethyst.png)
 
@@ -50,7 +50,7 @@ fn movement_system(mut query: Query<(&Movement, &mut Transform)>, time: Res<Time
 }
 ```
 
-In essence, we're still defining `SystemData`, it's just defined in the parameters of our system. Visually, we can see how much Bevy has improved the ergonomics of ECS game engines in the past 5 years, and not just because I unfairly added two lines of comments to the first snippet. This is just a very, very small facet of improvements. While we're on the topic, I'd be remiss if I didn't talk about
+In essence, we're still defining `SystemData`, but defined in the parameters of our system. Visually, we can see how much Bevy has improved the ergonomics of using an ECS over the past 5 years, and not just because I unfairly added two lines of comments to the first snippet. This is a very, very small facet of improvements, so while we're on the topic, I'd be remiss if I didn't talk about
 
 ## My favorite bevy improvements since v0.1
 
@@ -58,7 +58,7 @@ Subjective lists are fun! Do you agree? Do you disagree? Remember to leave a com
 
 ### `system()`less systems
 
-If you're newer to Bevy, you might be confused at this post's title. Back in Bevy v0-something, you registered systems [like](https://github.com/bevyengine/bevy/blob/9afe196f1690a6a6e47bf67ac740b4edeffd97bd/examples/3d/3d_scene.rs#L4C5-L7C44):
+If you're newer to Bevy, this post's title might not mean much to you, but back in Bevy v0-something, we registered systems [like](https://github.com/bevyengine/bevy/blob/9afe196f1690a6a6e47bf67ac740b4edeffd97bd/examples/3d/3d_scene.rs#L4C5-L7C44):
 
 ```rs
 App::build().add_startup_system(setup.system())
@@ -70,7 +70,7 @@ Amusingly, this, combined with developers' propensity to postfix their system fu
 App::build().add_startup_system(birthday_system.system())
 ```
 
-This is no more as of Bevy [0.6](https://bevyengine.org/news/bevy-0-6/#no-more-system) which lets you simply write the function name. While a relatively small change, it's representative of the assigned importance of ergonomics for Bevy.
+This is no more as of Bevy [0.6](https://bevyengine.org/news/bevy-0-6/#no-more-system) which requires only the function name - no `system()` call necessary. While a relatively small change, it's representative of the assigned importance of ergonomics for Bevy developers.
 
 > Bevy is fun to write, partly because its thoughtful design dovetails with Rust's type system and language features to the point of feeling like an extension of Rust itself (after some practice).
 >
@@ -80,10 +80,12 @@ This is no more as of Bevy [0.6](https://bevyengine.org/news/bevy-0-6/#no-more-s
 
 ### Better shaders
 
-I'm really not a math guy. I still don't totally understand Quaternions (and I'm not fully convinced anyone else does). By extension, I'm not much of a graphics guy, but I can't be the only one who had no clue how to load custom shaders in Bevy. It involved touching render code and writing a thesis of boilerplate that I was never able to defend against rustc. With `0.6` Bevy moved to `wgsl` and made custom shaders much easier to implement. Even I was able to finally get a custom stars background implemented (albiet 8 releases later).
+I'm really not a math guy. I still don't totally understand Quaternions (and I'm not fully convinced anyone else does). By extension, I'm not much of a graphics guy, but I can't be the only one who had no clue how to load custom shaders in Bevy. It involved touching render code and writing a thesis of boilerplate that I was never able to defend against rustc. With `0.6` Bevy moved to `wgsl` and made custom shaders much easier to implement. Even I was able to finally get a custom stars background implemented (albeit 8 releases later).
 
 
 I would still love to see more tutorials in this space, specifically for `wgsl`.
+
+{{ mastodon(url="https://hachyderm.io/@chrisbiscardi/112956295123270717") }}
 
 ### Gizmos
 
@@ -93,7 +95,7 @@ Gizmos, introduced in [0.11](https://bevyengine.org/news/bevy-0-11/#gizmos), are
 
 ### Triggers and observers
 
-Bevy is a collection of stuff extending an ECS. Including the removal of `.system()` without mentioning any of the other *major* ECS improvements doesn't feel right; the continual focus on ergonomics is a big reason why Bevy has become a relatively popular engine with a successful and passionate developer community.
+Bevy is a collection of stuff extending an ECS. Including the removal of `.system()` without mentioning any of the other *major* ECS improvements doesn't feel right; the continual focus on ergonomics is a big reason why I believe Bevy has become a relatively popular engine.
 
 ---
 
@@ -136,11 +138,11 @@ The most important crate here is `bevy-inspector-egui` which provides a powerful
 
 ### Project organization
 
-My 6th grade math teacher had a poster that said "Organization is the key to success". So true! I also couldn't stay quiet during his class, which also taught me about detention. Although I don't consider myself a very organized person, my brain does have those peculiar deleterious set of human genes that make me clap my hands and jump up and down whenever I successfully organize groups of things.
+My 6th grade math teacher had a poster that said "Organization is the key to success". So true! I also couldn't stay quiet during his class, which also taught me about detention. Although I don't consider myself a particularly organized person, my brain does have those peculiar deleterious set of genes innate to humans that make us clap our hands and jump up and down whenever we successfully organize things into groups.
 
 Here's another fact about my mysterious past: I used to be really into Ruby on Rails (and according to some Rust surveys, a lot you probably were, too). Rails is *all about* "convention over configuration", that quote itself coined by Rails' creator, Hatsune Miku.
 
-MVC isn't exactly a sexy term. It's arguably sexless. But parts of MVC began to influence how I began to structure my Bevy projects, drawing inspiration particularly from strong separation of data and functionality. In Rails, the data bits are called models, and the functionality bits are called controllers. These are analogous to components and systems in Bevy. Rails has one more level of organization: controllers are not single functions, but a type with several inherited methods (e.g., "new", "create", "delete"). In Bevy, these are akin to `Plugin`s, which are related systems grouped into a single unit.
+MVC isn't exactly a sexy term. It's arguably sexless. But parts of MVC began to influence how I began to structure my Bevy projects, drawing inspiration particularly from strong separation of data and functionality. In Rails, the data bits are "models", and the functionality bits are "controllers". These are analogous to components and systems in Bevy. Rails has one more level of organization: controllers are not single functions, but a type with several inherited methods (e.g., "new", "create", "delete"). In Bevy, these are akin to `Plugin`s, which group systems into a single unit.
 
 In my experience, it's actually rare that a system doesn't belong in a single `Plugin`, and grouping related systems together can help ease the cognitive load of keeping a larger project in (human) working memory. To achieve this, most if not all systems in my projects are private, and only the containing `Plugin` is exposed, resulting in this directory structure:
 
@@ -172,11 +174,11 @@ pub mod prelude {
 
 With this pattern, I have access all of my game's most important types with a single import of `use crate::prelude::*`.
 
-> Note that I also have a `states/` director/module in my template repo, but I've yet to have an application need more than one state (and honestly, I'm not sure if that's an ***idiomatic*** pattern). States are just resources, so it's actually probably better to simply put a `state.rs` file in `resources/`.
+> Note that I also have a `states/` director/module in my template repo, but I've yet to have an application need more than one state (and honestly, I'm not sure if that's an ***idiomatic*** pattern). States _are_ just resources, so it's probably better to just add a `state.rs` file in `resources/`.
 
 ### Naming
 
-In general, I believe conveying type information in a type's name is bad practice. `Controller` is a better type name than `ControllerComponent`. If disambiguation is necessary, modules can be used. For example, event and trigger names are often similar to component names. Using the `prelude` method, there's a problem: we might have an `Equip` component, and an `Equip` event in the same namespace.
+In general, I believe conveying type information in a type's name is bad practice. `Controller` is a better type name than `ControllerComponent`. If disambiguation is necessary, modules can be used. For example, event and trigger names are often similar to component names. Using the `prelude` method, there's a problem: What if we have an `Equip` component, and an `Equip` event in the same namespace?
 
 
 ```rs
@@ -196,7 +198,7 @@ pub mod events {
 }
 ```
 
-It's tempting to simply add an "`Event`" to the end of the type's name, but this creates a new issue where `Event` types are littered in our project with no grouping. We could *prefix* the type name with "Event" to search alphabetically for related types in our editor, but this *forces* us to be verbose, even in situations where it's unnecessary.
+It's tempting to add an "`Event`" to the end of the type's name, but this creates a new issue where `Event` types litter our project with no apparent grouping. We could *prefix* the type name with "Event" to search alphabetically for related types in our editor, but this *forces* us to be verbose, even in situations where it's unnecessary.
 
 ```rs
 // Not the best solution
@@ -235,13 +237,13 @@ fn my_system(equips: Query<&Equip>, events: EventReader<event::Equip>) {
 }
 ```
 
-If, in a particular file, components were completely unused, while events were used heavily, we could instead `use crate::prelude::event::*`. This flexibility is worth the extra characters, and at the very least neatly separates our ever-growing list of types available in the game's prelude.
+If, in a particular file, components were completely unused, while events were used heavily, we could instead write `use crate::prelude::event::*`. This flexibility is worth the extra characters, and at the very least neatly separates our ever-growing list of types available in the game's prelude.
 
-> While we're crossing into subjective territory, I just *like* namespacing by modules instead of adding extra info to the actual type name. That's what modules are there for to begin with, right? I *like* writing `event::Equip` instead of `Equip`, even if it weren't required due to aliasing another type in the prelude.
+> While we're crossing into subjective territory, I *like* namespacing by modules instead of adding extra info to the actual type name. That's what modules are there for to begin with, right? I *like* writing `event::Equip` instead of `Equip`, even if it weren't required due to aliasing another type in the prelude.
 
 ## Projects
 
-Outside of a few projects, I've rarely pushed a project to a "complete" playable state. I'm okay with that! I work on the product team of a tech company. It's kind of nice to just start creating without a clear goal. Ideating, finding creative solutions to problems, then promptly deleting those creative solutions because you move in a new direction isn't a good way to develop games, but it's a great way to learn.
+Outside of a few projects, I've rarely pushed a project to a "complete" playable state. I'm okay with that! I work on the product team of a tech company. It's kind of nice to start creating without a clear goal. Ideating, finding creative solutions to problems, then promptly deleting those creative solutions because you move in a new direction isn't a good way to develop games, but it's a great way to learn.
 
 Let's peruse the few dozen gibberish-named private repositories of ideas stashed on my GitH*b.
 
@@ -255,13 +257,13 @@ This project highlights a recurring theme for me: I don't like 2D. Whenever I'm 
 
 ## [wordlrs](https://github.com/piedoom/wordlrs)
 
-Wordle is a relatively simple game to implement, and [this project](https://piedoom.github.io/wordlrs/) helped further my working knowledge of egui. My implementation is also language-independent. (If the language uses an alphabet. 对不起 [^chinese]). While this sits among my rare playable projects, it's not at all interesting. Wordle doesn't particularly take full advantage of an ECS.
+Wordle is a relatively simple game to implement, and [this project](https://piedoom.github.io/wordlrs/) helped further my working knowledge of egui. My implementation is also language-independent. (If the language uses an alphabet. 对不起[^chinese]). While this sits among my rare playable projects, it's not at all interesting. Wordle doesn't particularly take full advantage of an ECS.
 
 ## [modsynth](https://github.com/piedoom/modsynth)
 
 Not a Bevy project (nor a eurorack), modsynth is a naive model synthesis implementation (also known as "wave function collapse"). My main takeaway from this project is I am not good at math, and constraint solving is hard[^constraints].
 
-I did, however, get a neat, dynamically generated 3D scene working using Bevy. It's just like "Lethal Company", except without any gameplay.
+I did, however, get a neat, dynamically generated 3D scene working using Bevy. It's exactly like "Lethal Company", except without any gameplay.
 
 {{ mastodon(url="https://mastodon.social/@doomy/111756628711521099") }}
 
@@ -347,7 +349,7 @@ pub enum SerializedAnimationClip {
 
 *This is just the data representation. Actually serializing and deserializing this isn't as straightforwards. At least to me.*
 
-The ability to "persist" asset handles is really cool, though - especially if we can automatically load any dependencies. Wouldn't it be nice if we could just do that?
+The ability to "persist" asset handles is awesome - especially if we can automatically load any dependencies. Wouldn't it be nice if we could just _do_ that?
 
 # bsn! bsn!
 
@@ -368,7 +370,7 @@ assets/
     crab.creature.ron
 ```
 
-You can think of `creatures` as NPC definitions. If we load `crab.creature.ron`, we should be able to spawn it, along with all of its components. This is what the crab creature `ron` looks like:
+You can think of `creatures` as NPC definitions. If we load `crab.creature.ron`, we should be able to spawn it, along with its components. This is what the crab creature `ron` looks like:
 
 ```rs
 (
@@ -382,15 +384,15 @@ You can think of `creatures` as NPC definitions. If we load `crab.creature.ron`,
 )
 ```
 
-However, Bevy has no idea what these random path strings mean - we need to manually find a way to map the asset paths to the actual runtime handle. Luckily `[bevy_asset_loader](https://docs.rs/bevy_asset_loader/latest/bevy_asset_loader/)` does this for us. All we have to do is load all of our items and models, and then load our creatures - probably by checking an `Added<Creature>` query and building the described entity manually. This works, though it's highly manual, prone to errors and annoyances with circular dependencies, and is also just a bother to extend.
+However, Bevy has no idea what these random path strings mean - we need to manually find a way to map the asset paths to the actual runtime handle. Luckily `[bevy_asset_loader](https://docs.rs/bevy_asset_loader/latest/bevy_asset_loader/)` does this for us. All we have to do is load our items and models, and then load our creatures - probably by checking an `Added<Creature>` query and building the described entity manually. This works, though it's highly manual, prone to errors and annoyances with circular dependencies, and is a bother to maintain and extend.
 
-Bevy doesn't have a concept of a common collection of components (Bundles and Archetypes don't count) on purpose. There is no concept of the "shape" of an NPC - they're just entities that have a `Transform`, a `Controller` for movement, and a `Thinker` for directing `Controller` movement. There's nothing describing that specific relationship of components in the type system. Bevy's API encourages systems to use the least amount of components necessary, which results in *general* code that adapts with emergent behavior as systems and components are added.
+Bevy doesn't have a concept of a common collection of components (Bundles and Archetypes don't count) on purpose. There is no concept of the "shape" of an NPC - they're simply entities that have a `Transform`, a `Controller` for movement, and a `Thinker` for directing `Controller` movement. There's nothing describing that specific relationship of components in the type system. Bevy's API encourages systems to use the least amount of components necessary, which results in *general* code that adapts with emergent behavior as systems and components are added.
 
 But, our `ron` data description goes against this philosophy and limits flexibility. What if I wanted to add a unique `BossName` component? We'd have to add a whole new field to `creature` struct to support this optional `BossName` component, which means recompilation is required. It also inevitably grows the entity description into a gigantic struct with a bunch of `Option<Component>` fields.
 
 With `bsn`, we could instead define almost *everything* in our game as a Bevy scene, with any arbitrary components we'd like, including our `BossName`, or anything else, letting us build up significant game content without ever venturing outside of our assets.
 
-This is kind of similar to Bevy's `DynamicEntity`  (used in `DynamicScene`), except we can now add and save components with world context, meaning we can serialize a `Handle<_>` to an `AssetPath<'_>` and back into a `Handle<_>` .
+This is similar to Bevy's `DynamicEntity`  (used in `DynamicScene`), except we can now add and save components with world context, meaning we can serialize a `Handle<_>` to an `AssetPath<'_>` and back into a `Handle<_>` .
 
 [Check out the whole thread on GitHub for more details on Bevy's new scene system](https://github.com/bevyengine/bevy/discussions/14437).
 
