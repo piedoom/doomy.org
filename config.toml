@@ -7,7 +7,6 @@ title = "doomy"
 theme = "feather"
 
 generate_feeds = true
-feed_filenames = ["feed.xml"]
 
 taxonomies = [{ name = "tags", feed = true }]
 
