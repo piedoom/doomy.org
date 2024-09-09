@@ -6,8 +6,8 @@ compile_sass = true
 title = "doomy"
 theme = "feather"
 
-generate_feed = true
-feed_filename = "feed.xml"
+generate_feeds = true
+feed_filenames = ["feed.xml"]
 
 taxonomies = [{ name = "tags", feed = true }]
 
@@ -24,9 +24,12 @@ external_links_target_blank = true
 
 [extra.feather]
 # theme = "light"
-# head = "<script></script>"
+head = "<script></script>"
 # hide_nav_image = false
 # disqus_id = ""
 timezone = "America/New_York"
 cusdis_id = "aaae44f5-19b5-419e-88d9-9522e2617ece"
 social =  { url = "https://mastodon.social/@doomy", display = "@doomy@mastodon.social" }
+
+[extra.feather.analytics]
+goatcounter_id = "doomy-org"
