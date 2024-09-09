@@ -324,6 +324,8 @@ It's an [L-system](https://en.wikipedia.org/wiki/L-system) visualizer! L-systems
 
 egui is great, but this project was an early encounter with its aforementioned limitations with Bevy.
 
+{{ mastodon(url="https://mastodon.social/@doomy/113109695733994318") }}
+
 ## [bevy blast ultra](https://github.com/piedoom/bevy_blast_ultra)
 
 My solo Bevy jam #4 entry: a marble run game inspired by *Super Marble Blast Ultra* with levels designed in Blender using Blenvy. I have no idea how I pulled this off in a week, in retrospect. [I have a whole other post documenting the experience](http://127.0.0.1:1111/bevy-jam-4/).
