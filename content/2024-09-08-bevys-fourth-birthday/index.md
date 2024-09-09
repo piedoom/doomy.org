@@ -11,6 +11,8 @@ image = "opengraph.jpg"
 
 +++
 
+![A 3D scene that reads "4 years of bevying"](opengraph.jpg)
+
 Bevy released [4 years](https://bevyengine.org/news/bevys-fourth-birthday/#bevy-ecs-maturity) ago. Feel old yet? Well, I do, because my dive into making games with Rust started even earlier than that.
 
 5 years ago, Bevy didn't exist yet. The popular choices for Rust game engines were "[Piston](https://github.com/PistonDevelopers/piston)", a modular game engine which pioneered a ton of useful crates[^ui], and "[Amethyst](https://github.com/amethyst/amethyst)", a data-oriented, ECS-driven game engine, both of which are no longer in active development[^piston].
