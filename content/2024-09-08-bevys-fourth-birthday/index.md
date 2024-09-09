@@ -2,13 +2,16 @@
 title = "birthday_system.system()"
 author = "doomy"
 description = "Half a decade of Rust game engines, Bevy, project organization, and the glorious future of Rust game development"
-draft = true
 
 [taxonomies]
 tags = ["rust", "gamedev", "bevy"]
+
+[extra.feather.opengraph]
+image = "opengraph.jpg"
+
 +++
 
-Bevy released [4 years](https://bevyengine.org/news/bevys-fourth-birthday/#bevy-ecs-maturity) ago, and it has since evolved into a formidible engine. 4 years is a long time, but my dive into making games with Rust started earlier.
+Bevy released [4 years](https://bevyengine.org/news/bevys-fourth-birthday/#bevy-ecs-maturity) ago. Feel old yet? Well, I do, because my dive into making games with Rust started even earlier than that.
 
 5 years ago, Bevy didn't exist yet. The popular choices for Rust game engines were "[Piston](https://github.com/PistonDevelopers/piston)", a modular game engine which pioneered a ton of useful crates[^ui], and "[Amethyst](https://github.com/amethyst/amethyst)", a data-oriented, ECS-driven game engine, both of which are no longer in active development[^piston].
 
@@ -96,6 +99,52 @@ Gizmos, introduced in [0.11](https://bevyengine.org/news/bevy-0-11/#gizmos), are
 ### Triggers and observers
 
 Bevy is a collection of stuff extending an ECS. Including the removal of `.system()` without mentioning any of the other *major* ECS improvements doesn't feel right; the continual focus on ergonomics is a big reason why I believe Bevy has become a relatively popular engine.
+
+To better understand what triggers do, let's first understand how we'd write a Bevy project _before_ triggers were introduced with regular events. Imagine your game has a minefield. If one mine is triggered, it causes an explosion the size of a defined radius. If any other mines are in range of that explosion, they're also triggered.
+
+Using events, we can express this relationship like the following rusty pseudocode:
+
+```rs
+#[derive(Event)]
+pub struct ExplodeEvent { entity: Entity }
+
+fn handle_explode_events(mut cmd: Commands, events: EventReader<ExplodeEvent>, mut write_events: EventWriter<ExplodeEvent>) {
+    for event in events.read() {
+        let ExplodeEvent { entity } = event;
+        // Do something with this entity like play an explosion noise, then despawn it
+        cmd.entity(entity).despawn_recursive();
+        // Find any entities within a set radius (here it is done ~magically~)
+        let entities_to_explode = find_entities_in_blast_radius(entity);
+        for entity_to_explode in entities_to_explode {
+            write_events.send(ExplodeEvent { entity: entity_to_explode });
+        }
+    }
+}
+```
+
+> For astute _observers_ this might _trigger_ a negative reaction, as this is an invalid system definition, requiring both mutable and immutable access to `ExplodeEvent` events. You'd actually need to use a `ParamSet` here, accumulate events to write in the event read loop, then send out events after reading, which adds to the complexity of this method.
+
+Additionally (and more importantly) these events do not trigger on the same update. Any `entities_to_explode` are added to the event queue, and then `hande_explode_events` runs on the next update. This isn't ideal when scaled to hundreds of objects. Triggers handle this gracefully, executing all triggers in a single update.
+
+Bevy's official examples [has code illustrating this exact minefield idea](https://bevyengine.org/examples/ecs-entity-component-system/observers/). Here's what the equivalent of the above looks like in our pseudocode. (We're leaving out some necessary declarations).
+
+```rs
+#[derive(Event)]
+pub struct ExplodeTrigger;
+
+fn on_explode(trigger: Trigger<ExplodeTrigger>, mut cmd: Commands) {
+    let entity = trigger.entity();
+    // Do something with this entity like play an explosion noise, then despawn it
+    cmd.entity(entity).despawn_recursive();
+    // Find any entities within a set radius (here it is done ~magically~)
+    let entities_to_explode = find_entities_in_blast_radius(entity);
+    for entity_to_explode in entities_to_explode {
+        cmd.trigger_targets(ExplodeTrigger, entity_to_explode);
+    }
+}
+```
+
+With triggers, all entities to explode are calculated in a single update, _and_ we don't have issues juggling event mutability.
 
 ---
 
@@ -410,6 +459,6 @@ Organization is not easy. Bevy making it to 4 years, all the while gaining momen
 
 [^dimensions]: When I work in 2D, I feel like I'm slowly walking down a big hill, wishing I remembered my Heelys so I could just slide to the bottom.
 
-[^chinese]: Some argue that Chinese has an alphabet, it's just thousands and thousands of characters long. In any case it cannot be wordled (but seemingly can be [pinyindle'd](https://www.pinyindle.com))
+[^chinese]: Some argue that Chinese has an alphabet, it's just thousands and thousands of characters long. In any case it cannot be wordled (but can be [pinyindle'd](https://www.pinyindle.com))
 
 [^constraints]: I may have had an easier time if I referenced more than [a single YouTube video on repeat for several hours](https://www.youtube.com/watch?v=A2ODauA1a0M). (This entire experience also revealed to me just how criminally underappreciated Paul Merrell is for his research in this area.)
