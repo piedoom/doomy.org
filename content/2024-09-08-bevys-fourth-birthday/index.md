@@ -49,9 +49,9 @@ This all might look strangely familiar, even if you've never heard of Amethyst. 
 
 ```rs
 fn movement_system(mut query: Query<(&Movement, &mut Transform)>, time: Res<Time>) {
-	for (movement, mut transform) in query.iter_mut() {
-		transform.append_translation(movement.next(&time));
-	}
+    for (movement, mut transform) in query.iter_mut() {
+        transform.append_translation(movement.next(&time));
+    }
 }
 ```
 
