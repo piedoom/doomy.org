@@ -4,6 +4,7 @@ base_url = "https://doomy.org"
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 title = "doomy"
+description = "the world's smallest web site, covered in rust"
 theme = "feather"
 
 generate_feeds = true
