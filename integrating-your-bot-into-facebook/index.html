@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="Integrating your bot into the evil terrible company previously known as Facebook">
+
+    
+    
+
+    
+<meta property="og:title" content="Integrating your bot into Facebook">
+<meta property="og:description" content="Integrating your bot into the evil terrible company previously known as Facebook">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;integrating-your-bot-into-facebook&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Integrating your bot into Facebook</h2>
+			<div class="info">
+				<span>2016 Jul 24</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<blockquote>
+<p>2022 wiser me update: Please do not use Facebook if you can. It's fucked. Delete your account.</p>
+</blockquote>
+<p>Last time, we created a simple bot that posted stuff onto our Tumblr account.  If you haven't already done the previous tutorial, you can check it out <a rel="noopener" target="_blank" href="https://vaporsoft.net/creating-a-tumblr-bot-from-scratch/">here</a>.  If you need the project files to start out with, you can download them by clicking the button below.</p>
+<p><a href="creating-a-tumblr-bot-from-scratch.zip" class="button">Download Starter Files</a></p>
+<p>This tutorial assumes that you already have a Facebook account.  Additionally, please read all terms and conditions before posting to your Facebook.  I'm not responsible for any actions Facebook might take.</p>
+<h3 id="i-don-t-care-about-tumblr-i-just-want-to-post-to-facebook">I don't care about Tumblr, I just want to post to Facebook</h3>
+<p>If you don't care about Tumblr and only want your bot to post to Facebook, read through the entire tutorial before proceeding.  You'll still need to set up Ruby and the folder structure</p>
+<h3 id="where-to-start">Where to start</h3>
+<p>You might remember that we had to create an app when we used Tumblr.  It's a little different (and perhaps a bit easier) with Facebook.  Assuming you're logged in, visit <a rel="noopener" target="_blank" href="https://developers.facebook.com/tools/explorer">Facebook's Graph API Console</a>.</p>
+<p><img src="https://doomy.org/integrating-your-bot-into-facebook/LokmxIk.png" alt="" /></p>
+<p>In the top right, we're going to click "Get Token", to get an access token we can use.  We should be presented with a checkbox list titled "Select Permissions".  Unlike the Tumblr API which grants full access to anything Tumblr with an access token, Facebook requires that you select which permissions you'd like to give your bot.</p>
+<p>Right now, all we really want are <code>publish_actions</code> so we can write on our own wall.</p>
+<p><img src="https://doomy.org/integrating-your-bot-into-facebook/iVUnysL.png" alt="" /></p>
+<p>Press "Get Access Token" to, well, get your access token.  Follow the prompts Facebook gives you, and if all goes well, you should see a long string in the "Access Token" box.   Keep this page open - we'll use the token later.</p>
+<blockquote>
+<p>IMPORTANT: Treat this access token like you would the password to your account.  We gave permission to publish things to our account, and we don't want someone else to gain that access.</p>
+</blockquote>
+<h3 id="setting-up-our-ruby-project">Setting up our Ruby Project</h3>
+<p>At this point, we're going to open up our project.  Remember, if you don't have the files, you can download them here.</p>
+<p><a href="creating-a-tumblr-bot-from-scratch.zip" class="button">Download Starter Files</a></p>
+<p>Open the root project folder in your favorite text editor, and open your <code>Gemfile</code> file.  Right now, it should look like this -</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">source <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>https://rubygems.org<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>tumblr_client<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span></code></pre>
+<p>As a reminder, our <code>Gemfile</code> specifies what 3rd party packages we need for our app to work.  We're going to add a line to integrate with Facebook.</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">source <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>https://rubygems.org<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>tumblr_client<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">gem</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>koala<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span></code></pre>
+<p><a rel="noopener" target="_blank" href="https://github.com/arsduo/koala">Koala</a> is a nice library used to integrate with Facebook.  This will do all of the heavy lifting for us.</p>
+<h3 id="integrating-facebook-into-our-code">Integrating Facebook into our Code</h3>
+<p>Let's go ahead and open our <code>lib/tumblr_bot.rb</code> script.  Right now, it should look a little like this - remember the "x" characters in the <code>Tumblr::Client.new</code> block should be replaced with your own keys.</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>tumblr_client<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-function z-ruby"><span class="z-keyword z-control z-def z-ruby">def</span></span><span class="z-meta z-function z-ruby"> <span class="z-entity z-name z-function z-ruby">post_a_thing</span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Authenticate via OAuth
+</span></span><span class="z-source z-ruby">    client <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Tumblr</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Client</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-punctuation z-section z-scope z-ruby">{</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_key</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby">    <span class="z-punctuation z-section z-scope z-ruby">}</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    alignments <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Neutral Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>True Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Neutral Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    adjectives <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Cool<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Gamer<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Doctor<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Pathetic<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">    nouns <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Boy<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Pineapple Ham<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Child<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Gluestick<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Muffin<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    sentence <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">alignments<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">: </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">adjectives<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby"> </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">nouns<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">.<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Make the request
+</span></span><span class="z-source z-ruby">    client<span class="z-punctuation z-accessor z-dot z-ruby">.</span>text<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>your_blog<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">title<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> sentence<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>We need to add a couple lines to integrate our bot with our Facebook account.  Firstly, we need to <code>require 'koala'</code> at the top of our file, just like for the <code>tumblr_client</code>.  Next, we're going to input the access token we got on Facebook's site using a method that the <code>koala</code> library provides.</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>tumblr_client<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>koala<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby"><span class="z-meta z-function z-ruby"><span class="z-keyword z-control z-def z-ruby">def</span></span><span class="z-meta z-function z-ruby"> <span class="z-entity z-name z-function z-ruby">post_a_thing</span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Authenticate via OAuth
+</span></span><span class="z-source z-ruby">    client <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Tumblr</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Client</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-punctuation z-section z-scope z-ruby">{</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_key</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby">    <span class="z-punctuation z-section z-scope z-ruby">}</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Authenticate to Facebook
+</span></span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Replace the &quot;x&quot;s here with your own Access Token
+</span></span><span class="z-source z-ruby">    facebook <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Koala</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Facebook</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">API</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    alignments <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Neutral Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>True Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Neutral Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    adjectives <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Cool<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Gamer<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Doctor<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Pathetic<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">    nouns <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Boy<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Pineapple Ham<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Child<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Gluestick<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Muffin<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    sentence <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">alignments<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">: </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">adjectives<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby"> </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">nouns<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">.<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Make the request
+</span></span><span class="z-source z-ruby">    client<span class="z-punctuation z-accessor z-dot z-ruby">.</span>text<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>your_blog<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">title<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> sentence<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>Awesome!  We are authenticated to Facebook.  Now all we have to do is tell <code>koala</code> to post for us.  After the penultimate line, we're going to add the code that'll post for us.</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">facebook<span class="z-punctuation z-accessor z-dot z-ruby">.</span>put_wall_post<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>sentence<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span></code></pre>
+<p>This line is very similar to the line that precedes it.  It takes our random <code>sentence</code> and posts it to Facebook.  In full, our code will look like this:</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>tumblr_client<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby"><span class="z-meta z-require z-ruby"><span class="z-keyword z-other z-special-method z-ruby">require</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>koala<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby"><span class="z-meta z-function z-ruby"><span class="z-keyword z-control z-def z-ruby">def</span></span><span class="z-meta z-function z-ruby"> <span class="z-entity z-name z-function z-ruby">post_a_thing</span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Authenticate via OAuth
+</span></span><span class="z-source z-ruby">    client <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Tumblr</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Client</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-punctuation z-section z-scope z-ruby">{</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_key</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">    <span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby">    <span class="z-punctuation z-section z-scope z-ruby">}</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Authenticate to Facebook
+</span></span><span class="z-source z-ruby">    facebook <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Koala</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Facebook</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">API</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxx<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    alignments <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Neutral Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Good<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> 
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>True Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Neutral<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Lawful Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Neutral Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby">                    <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Chaotic Evil<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span> <span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    adjectives <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Cool<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Gamer<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Doctor<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Pathetic<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">    nouns <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-punctuation z-section z-array z-ruby">[</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Boy<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Pineapple Ham<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Child<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Gluestick<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>Muffin<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-section z-array z-ruby">]</span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    sentence <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">alignments<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">: </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">adjectives<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby"> </span><span class="z-meta z-interpolation z-ruby"><span class="z-punctuation z-section z-interpolation z-begin z-ruby">#{</span></span><span class="z-meta z-interpolation z-ruby"><span class="z-source z-ruby z-embedded z-ruby">nouns<span class="z-punctuation z-accessor z-dot z-ruby">.</span>sample</span><span class="z-punctuation z-section z-interpolation z-end z-ruby">}</span></span><span class="z-string z-quoted z-double z-ruby">.<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span>
+</span><span class="z-source z-ruby">
+</span><span class="z-source z-ruby">    <span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Make the request
+</span></span><span class="z-source z-ruby">    client<span class="z-punctuation z-accessor z-dot z-ruby">.</span>text<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>your_blog<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">title<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> sentence<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby">    facebook<span class="z-punctuation z-accessor z-dot z-ruby">.</span>put_wall_post<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span>sentence<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span><span class="z-source z-ruby"><span class="z-keyword z-control z-ruby">end</span>
+</span></code></pre>
+<p>Time to test it out.  Lets open up a console in our root project folder.  Before we run our bot, we need to download the <code>koala</code> library.  We included it in our gemfile, but we have to run a command to actually fetch what we need and install it on our computer.  Let's do that now.</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">bundle</span></span>
+</span></code></pre>
+<p>After this is finished installing, we can test out our bot!</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">ruby</span></span><span class="z-meta z-function-call z-arguments z-shell"> bin/bot.rb</span>
+</span></code></pre>
+<p>Our bot runs, and tells us it "posted a thing".  Lets check our Facebook page. With any luck, we should see something like this -</p>
+<p><img src="https://doomy.org/integrating-your-bot-into-facebook/AmwZV0e.png" alt="" /></p>
+<p>Cool!  Not only that, but we're still posting to our Tumblr account.  If you're having trouble getting to this part, you can download the project here.  Remember to put in your keys!</p>
+<p><a href="connecting-bot-to-facebook-with-tumblr.zip" class="button">Download Files</a></p>
+<h3 id="posting-to-facebook-only">Posting to Facebook only</h3>
+<p>You might want to forgo Tumblr alltogether, and just post to Facebook.  We just need to modify our code a little bit to remove the Tumblr functionality.</p>
+<p>If we remove this line -</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby">client<span class="z-punctuation z-accessor z-dot z-ruby">.</span>text<span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-double z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&quot;</span>your_blog<span class="z-punctuation z-definition z-string z-end z-ruby">&quot;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span> <span class="z-constant z-other z-symbol z-ruby">title<span class="z-punctuation z-definition z-constant z-ruby">:</span></span> sentence<span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span></code></pre>
+<p>- we will no longer post to Tumblr.  However, we can remove some more stuff to clean up our file.  Get rid of this entire block.</p>
+<pre data-lang="ruby" class="language-ruby z-code"><code class="language-ruby" data-lang="ruby"><span class="z-source z-ruby"><span class="z-comment z-line z-number-sign z-ruby"><span class="z-punctuation z-definition z-comment z-ruby">#</span> Authenticate via OAuth
+</span></span><span class="z-source z-ruby">client <span class="z-keyword z-operator z-assignment z-ruby">=</span> <span class="z-support z-class z-ruby">Tumblr</span><span class="z-punctuation z-accessor z-double-colon z-ruby">::</span><span class="z-support z-class z-ruby">Client</span><span class="z-punctuation z-accessor z-dot z-ruby">.</span><span class="z-keyword z-other z-special-method z-ruby">new</span><span class="z-punctuation z-definition z-group z-begin z-ruby">(</span><span class="z-punctuation z-section z-scope z-ruby">{</span>
+</span><span class="z-source z-ruby"><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_key</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>YOUR_KEYS_HERE<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby"><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>consumer_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>YOUR_KEYS_HERE<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby"><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>YOUR_KEYS_HERE<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span><span class="z-punctuation z-separator z-sequence z-ruby">,</span>
+</span><span class="z-source z-ruby"><span class="z-constant z-other z-symbol z-ruby"><span class="z-punctuation z-definition z-constant z-ruby">:</span>oauth_token_secret</span> <span class="z-punctuation z-separator z-key-value z-ruby">=&gt;</span> <span class="z-meta z-string z-ruby"><span class="z-string z-quoted z-single z-ruby"><span class="z-punctuation z-definition z-string z-begin z-ruby">&#39;</span>YOUR_KEYS_HERE<span class="z-punctuation z-definition z-string z-end z-ruby">&#39;</span></span></span>
+</span><span class="z-source z-ruby"><span class="z-punctuation z-section z-scope z-ruby">}</span><span class="z-punctuation z-definition z-group z-end z-ruby">)</span>
+</span></code></pre>
+<p>Since we're not using the <code>tumblr_client</code> library anymore, we can remove the <code>require 'tumblr_client'</code> gem from the top of our file.  We can also remove the <code>gem 'tumblr_client'</code> line from our <code>Gemfile</code>.</p>
+<p>And that's it.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>Let me know how this worked out for you, what kind of posts your own bot makes, and what tutorials I can do in the future.  This very tutorial was a request, so I'm open to making more!</p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;integrating-your-bot-into-facebook&#x2F;"
+				data-page-url="integrating-your-bot-into-facebook"
+				data-page-title="Integrating your bot into Facebook"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

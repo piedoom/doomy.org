@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="the world&#x27;s smallest web site, covered in rust">
+
+    
+
+<link rel="alternate" type="application/atom+xml" href="https://doomy.org/tags/bot/atom.xml">
+
+
+
+    
+    
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+
+<div class="container">
+  <section>
+    <h2>#bot</h2>
+  </section>
+  <div class="posts">
+    
+    <a class='header-link' href="&#x2F;creating-a-tumblr-bot-with-c-sharp&#x2F;">
+      <h4 class="title"> Creating a Tumblr Bot with C# </h4>
+    </a>
+    <p>
+      I&#x27;ve made a few posts on how to create a Tumblr bot with Ruby.  Ruby is great and all, but it is definitely an odd language, and it works best on Mac&#x2F;Unix computers.  Because most people have Windows, and many programmers start with Java (a language very …
+    </p>
+    
+
+<div class='flex gap-small'>
+    
+    
+    <a href="https:&#x2F;&#x2F;doomy.org&#x2F;tags&#x2F;cs&#x2F;"><span class="chip">cs</span></a>
+    
+    
+    <a href="https:&#x2F;&#x2F;doomy.org&#x2F;tags&#x2F;tumblr&#x2F;"><span class="chip">tumblr</span></a>
+    
+    
+    <a href="https:&#x2F;&#x2F;doomy.org&#x2F;tags&#x2F;bot&#x2F;"><span class="chip">bot</span></a>
+    
+</div>
+
+    <hr />
+    
+    <a class='header-link' href="&#x2F;integrating-your-bot-into-facebook&#x2F;">
+      <h4 class="title"> Integrating your bot into Facebook </h4>
+    </a>
+    <p>
+      
+2022 wiser me update: Please do not use Facebook if you can. It&#x27;s fucked. Delete your account.
+
+Last time, we created a simple bot that posted stuff onto our Tumblr account.  If you haven&#x27;t already done the previous tutorial, you can check it out here.  …
+    </p>
+    
+
+<div class='flex gap-small'>
+    
+    
+    <a href="https:&#x2F;&#x2F;doomy.org&#x2F;tags&#x2F;bot&#x2F;"><span class="chip">bot</span></a>
+    
+    
+    <a href="https:&#x2F;&#x2F;doomy.org&#x2F;tags&#x2F;facebook&#x2F;"><span class="chip">facebook</span></a>
+    
+    
+    <a href="https:&#x2F;&#x2F;doomy.org&#x2F;tags&#x2F;ruby&#x2F;"><span class="chip">ruby</span></a>
+    
+</div>
+
+    <hr />
+    
+  </div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

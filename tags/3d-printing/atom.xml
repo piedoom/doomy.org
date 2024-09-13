@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>doomy - 3d printing</title>
+    <subtitle>the world&#x27;s smallest web site, covered in rust</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://doomy.org/tags/3d-printing/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://doomy.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2020-10-14T19:57:08.883+00:00</updated>
+    <id>https://doomy.org/tags/3d-printing/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Using the M3D Micro in 2020</title>
+        <published>2020-10-14T19:57:08.883+00:00</published>
+        <updated>2020-10-14T19:57:08.883+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://doomy.org/using-the-m3d-micro-in-2020/"/>
+        <id>https://doomy.org/using-the-m3d-micro-in-2020/</id>
+        
+        <content type="html" xml:base="https://doomy.org/using-the-m3d-micro-in-2020/">&lt;p&gt;Nearly 6 years ago, a 3D printing startup called M3D successfully kickstarted the &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;www.kickstarter.com&#x2F;projects&#x2F;m3d&#x2F;the-micro-the-first-truly-consumer-3d-printer&quot;&gt;Micro&lt;&#x2F;a&gt;. At the time, this was marketed as one of the &quot;first&quot; small consumer-grade 3D printers.&lt;&#x2F;p&gt;
+&lt;p&gt;Time has passed, and the original ~300 USD price tag of the Micro seems absurd given the varied selection of cheap consumer printers currently for sale. It&#x27;s painfully slow, prone to jams, has an extremely small print volume, and awful outdated proprietary software. Even so... I paid for it, and I&#x27;m going to get my money&#x27;s worth.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;making-the-micro-better&quot;&gt;Making the Micro Better&lt;&#x2F;h2&gt;
+&lt;p&gt;Thankfully, a handful of open-source firmware updates and applications make the printing experience tolerable.&lt;&#x2F;p&gt;
+&lt;p&gt;The first step is to download M33 Manager. M33 Manager will allow you to install &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;donovan6000&#x2F;iMe&quot;&gt;iMe&lt;&#x2F;a&gt;, an open-source firmware for the M3D Micro that allows for greater print speed and control via RepRap G-Code.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;donovan6000&#x2F;iMe#installation&quot;&gt;iMe Installation links&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;After installation, ensure the printer driver is installed. If it isn&#x27;t, there is a handy button within M33 Manager to do that for you. Hit the &quot;Connect&quot; button and wait for your printer to connect. If you have issues connecting, try power-cycling your Micro and trying again, and ensure no other application is taking over the device.&lt;&#x2F;p&gt;
+&lt;p&gt;Once connected, you can begin the firmware update. Click the &quot;Install iMe Firmware&quot; button, and wait for completion. That&#x27;s it! Easy.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;some-caveats&quot;&gt;Some caveats&lt;&#x2F;h3&gt;
+&lt;p&gt;iMe will put your printer in bootloader mode whenever it is powered on. To begin printing, you will need to open M33 manager every time the printer is powered on, connect, and click the &quot;Switch to firmware mode&quot; button. Then, disconnect.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ditching-the-m3d-beta&quot;&gt;Ditching the M3D Beta&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;slicing&quot;&gt;Slicing&lt;&#x2F;h3&gt;
+&lt;p&gt;If you&#x27;re still using the M3D Micro in 2020, you&#x27;ll know the last update the print software got was a beta 2016. What a great gift for us early backers! Well, we can finally junk that pile of trash software and install &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;ultimaker.com&#x2F;software&#x2F;ultimaker-cura&quot;&gt;Cura&lt;&#x2F;a&gt;. (Interestingly enough, I believe the original M3D software uses the Cura slicer anyways.) We will be using Cura to slice our STL models into usable G-Code.&lt;&#x2F;p&gt;
+&lt;p&gt;After installing Cura, we&#x27;ll need to adjust a few settings.&lt;&#x2F;p&gt;
+&lt;p&gt;Go to &lt;code&gt;Settings &amp;gt; Machines &amp;gt; Manage Machines&lt;&#x2F;code&gt; and then click on &quot;Add Machine&quot;. Select the &quot;Custom FFF printer&quot; option in &quot;Add a non-networked printer&quot; and press &quot;Next&quot;. On the machine settings page, enter the following values for the print size:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;X: &lt;code&gt;109&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Y: &lt;code&gt;113&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Z: &lt;code&gt;116&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;WARNING: keep in mind that the printhead limits the XY space on very tall prints. This is not considered in Cura.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;On the same tab, set the G-Code flavor to &quot;RepRap&quot;. Now, move on to the Extruder tab and enter these settings:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Nozzle size: &lt;code&gt;0.35&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Compatible material diameter: &lt;code&gt;1.75&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;All other settings can be left as-is. Press next to complete printer setup.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;setting-up-profiles&quot;&gt;Setting up profiles&lt;&#x2F;h4&gt;
+&lt;p&gt;We&#x27;ll also need printer profiles for our Micro. Adafruit provides a couple just for this application. &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;adafruit&#x2F;Printer-Profiles&#x2F;tree&#x2F;master&#x2F;M3D&quot;&gt;Check out their repository here&lt;&#x2F;a&gt;. We want to download &quot;M3D 2mm PLA.ini&quot; and &quot;M3D 3mm PLA.ini&quot;. Import both these profiles into Cura. We will be using either whenever slicing with the Micro.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sending-g-code&quot;&gt;Sending G-Code&lt;&#x2F;h3&gt;
+&lt;p&gt;Now, if you happened to read the M33&#x2F;iMe documentation, you&#x27;ll know it says Cura should support our new firmware out of the box. However, the last version of iMe was released quite some time ago, and 3D printing has largely moved away from USB printers. I haven&#x27;t had success connecting via Cura in version 4.7, even after hours of messing about with settings. So, we&#x27;ll need a separate application for sending G-Code.&lt;&#x2F;p&gt;
+&lt;p&gt;After testing a few solutions, I found &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;www.pronterface.com&#x2F;&quot;&gt;PrintRun&lt;&#x2F;a&gt;. It&#x27;s not a pretty application, and was last updated in 2017, but it connects! I&#x27;m on a Windows PC, so I installed their binary and it just works(tm).&lt;&#x2F;p&gt;
+&lt;p&gt;So why the combo of Cura and PrintRun? Why not just install an old version of Cura? Well, I&#x27;d much rather the slicer is up to date. It&#x27;s alright if PrintRun is old, because we&#x27;re just using it to send over our G-Code that was generated by a modern application.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;hooking-it-up&quot;&gt;Hooking it up&lt;&#x2F;h2&gt;
+&lt;p&gt;The process looks like this:&lt;&#x2F;p&gt;
+&lt;ol start=&quot;0&quot;&gt;
+&lt;li&gt;Set the printer into firmware mode on initial power on using M33 Manager&lt;&#x2F;li&gt;
+&lt;li&gt;Import model into Cura&lt;&#x2F;li&gt;
+&lt;li&gt;Slice model in Cura using the 2mm or 3mm profile provided by Adafruit&lt;&#x2F;li&gt;
+&lt;li&gt;Save slice to G-Code&lt;&#x2F;li&gt;
+&lt;li&gt;Open G-Code in PrintRun&lt;&#x2F;li&gt;
+&lt;li&gt;Print using PrintRun&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Hope this is helpful for the 3 people out there still using a Micro!&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

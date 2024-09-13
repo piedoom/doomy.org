@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="Use C# and NuGet to create our very own automated Tumblr bot">
+
+    
+    
+
+    
+<meta property="og:title" content="Creating a Tumblr Bot with C#">
+<meta property="og:description" content="Use C# and NuGet to create our very own automated Tumblr bot">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;creating-a-tumblr-bot-with-c-sharp&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Creating a Tumblr Bot with C#</h2>
+			<div class="info">
+				<span>2016 Aug 25</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p>I've made a few posts on how to create a Tumblr bot with <a rel="noopener" target="_blank" href="https://vaporsoft.net/creating-a-tumblr-bot-from-scratch/">Ruby</a>.  Ruby is great and all, but it is definitely an odd language, and it works best on Mac/Unix computers.  Because most people have Windows, and many programmers start with Java (a language very similar to C#) I thought it would be a good idea to "port" the tutorial over.</p>
+<h3 id="setup">Setup</h3>
+<p>You're going to need <a rel="noopener" target="_blank" href="https://www.visualstudio.com/en-us/products/vs-2015-product-editions.aspx">Visual Studio 2015</a> and a Windows PC.  (Note - you can use Xamarin as well, but I won't be showing how to get around in Xamarin!)  This is a pretty big download, so it might take a while.  In the meantime, you can read through the tutorial so you can be extra-ready.</p>
+<p>Make sure you install the <code>visual c#</code> component of Visual Studio.  It <em>should</em> be selected by default.</p>
+<h3 id="project-files">Project Files</h3>
+<p>As always, I have project files!  If you'd prefer to follow along instead of writing everything from scratch, you can download the files.  I've decided to host them on gist, since they're relatively small.  Here's what our project will look like when completed:</p>
+<script src="https://gist.github.com/piedoom/41484cf5b3d853793d8773c6e788e416.js"></script>
+<p>If you want to add them to your project, you still need to follow the next section.</p>
+<h3 id="setting-up-the-solution">Setting up the Solution</h3>
+<p>In Visual Studio, create a new application with <code>File &gt; New &gt; Project</code>.  Select <code>Visual C#</code> in the tree view, and <code>Console Application</code>.  Finally, name your application whatever you want.  Press <code>OK</code> to create the project.</p>
+<p><img src="https://doomy.org/creating-a-tumblr-bot-with-c-sharp/Capture-5.PNG" alt="" /></p>
+<blockquote>
+<p>If you're using the pre-made project files, add them to your solution now!  If not, skip this paragraph.  Change the <code>namespace</code> to your project name.  For instance, if your project was named <code>MyCoolBot</code>, change the <code>namespace</code> in both files so it looks like <code>namespace MyCoolBot</code> <strong>instead</strong> of <code>namespace TumblrBotUtilities</code>.</p>
+</blockquote>
+<p>Great, so we have our project set up.  Let's create a class to hold our Tumblr client for easy use.  Right click our project in the <code>Solution Explorer</code> and go to <code>Add &gt; Class</code>.  Call this class <code>Tumblr</code>.</p>
+<p>Let's open our <code>Tumblr</code> class.  It should be very basic.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-storage z-type z-namespace z-cs">namespace</span> <span class="z-entity z-name z-namespace z-cs">MyCoolBot</span>
+</span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span></span></span></span><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">    <span class="z-meta z-class z-cs"><span class="z-storage z-type z-class z-cs">class</span> <span class="z-entity z-name z-class z-cs">Tumblr</span>
+</span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-cs">    </span><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">    <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></code></pre>
+<p>We want to be able to access this class from anywhere without needing an instance, so let's make sure this is a <code>static</code> and <code>public</code> class.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-storage z-type z-namespace z-cs">namespace</span> <span class="z-entity z-name z-namespace z-cs">MyCoolBot</span>
+</span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span></span></span></span><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">    <span class="z-storage z-modifier z-access z-cs">public</span> <span class="z-storage z-modifier z-cs">static</span> <span class="z-meta z-class z-cs"><span class="z-storage z-type z-class z-cs">class</span> <span class="z-entity z-name z-class z-cs">Tumblr</span>
+</span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-cs">    </span><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">    <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></code></pre>
+<p>Before we continue, we need to get a code library from NuGet.</p>
+<h3 id="getting-newtumblrsharp">Getting NewTumblrSharp</h3>
+<p><a rel="noopener" target="_blank" href="https://github.com/piedoom/TumblrSharp">NewTumblrSharp</a> is a continuation of an older C# Tumblr library that I've taken upon myself to maintain.  You're going to need it to use Tumblr in C#.  Go ahead and click the <code>Project</code> tab, and then <code>Manage Nuget Packages</code>.  Search for <code>New TumblrSharp</code> and install the <code>NewTumblrSharp</code> library.  <strong>Make sure you don't install the old <code>TumblrSharp</code> library!</strong></p>
+<p>Awesome, we can now continue!</p>
+<h3 id="authenticating-our-bot">Authenticating our Bot</h3>
+<p>Let's switch back to our <code>Tumblr.cs</code> file.  At the top of the file, we're going to add two <code>using</code> statements.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-keyword z-control z-import z-cs">using</span> <span class="z-meta z-path z-cs">DontPanic</span><span class="z-punctuation z-separator z-namespace z-cs">.</span><span class="z-meta z-path z-cs">TumblrSharp</span><span class="z-punctuation z-terminator z-cs">;</span>
+</span><span class="z-source z-cs"><span class="z-keyword z-control z-import z-cs">using</span> <span class="z-meta z-path z-cs">DontPanic</span><span class="z-punctuation z-separator z-namespace z-cs">.</span><span class="z-meta z-path z-cs">TumblrSharp</span><span class="z-punctuation z-separator z-namespace z-cs">.</span><span class="z-meta z-path z-cs">Client</span><span class="z-punctuation z-terminator z-cs">;</span>
+</span></code></pre>
+<p>So, together, the file should look like this:</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-keyword z-control z-import z-cs">using</span> <span class="z-meta z-path z-cs">DontPanic</span><span class="z-punctuation z-separator z-namespace z-cs">.</span><span class="z-meta z-path z-cs">TumblrSharp</span><span class="z-punctuation z-terminator z-cs">;</span>
+</span><span class="z-source z-cs"><span class="z-keyword z-control z-import z-cs">using</span> <span class="z-meta z-path z-cs">DontPanic</span><span class="z-punctuation z-separator z-namespace z-cs">.</span><span class="z-meta z-path z-cs">TumblrSharp</span><span class="z-punctuation z-separator z-namespace z-cs">.</span><span class="z-meta z-path z-cs">Client</span><span class="z-punctuation z-terminator z-cs">;</span>
+</span><span class="z-source z-cs">
+</span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-storage z-type z-namespace z-cs">namespace</span> <span class="z-entity z-name z-namespace z-cs">MyCoolBot</span>
+</span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span></span></span></span><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">    <span class="z-storage z-modifier z-access z-cs">public</span> <span class="z-storage z-modifier z-cs">static</span> <span class="z-meta z-class z-cs"><span class="z-storage z-type z-class z-cs">class</span> <span class="z-entity z-name z-class z-cs">Tumblr</span>
+</span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-cs">    </span><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">    <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></code></pre>
+<p>These <code>using</code> statements allow us to use the <code>TumblrSharp</code> library in our <code>Tumblr</code> class.</p>
+<p>Our <code>Tumblr</code> class is going to hold the Tumblr client used to make API requests (like answering asks, making posts, etc.) Before we can make any requests, however, we need to get some authentication tokens.  I go into depth on how to get <code>oauth</code> tokens <a rel="noopener" target="_blank" href="https://vaporsoft.net/creating-a-tumblr-bot-from-scratch/#settingupourtumblraccount">here</a>, so read up if you need a refresher.</p>
+<p>Once we have our consumer key &amp; secret and oauth token &amp; secret, we're going to using them in our code.</p>
+<blockquote>
+<p>NOTE: these keys allow access to your Tumblr account!  Treat them like a password and don't share them with anyone.  Don't share your code with anyone either!  These introductory scripts are made for your own educational use.  Authenticating users and distributing code requires a far different process.</p>
+</blockquote>
+<p>Let's add four new constants in our <code>Tumblr</code> class, and set them to the respective values we got from authenticating.  Your file should look like this, with <code>KEY HERE</code> replaced with a correct value.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-storage z-type z-namespace z-cs">namespace</span> <span class="z-entity z-name z-namespace z-cs">MyCoolBot</span>
+</span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span></span></span></span><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">    <span class="z-storage z-modifier z-access z-cs">public</span> <span class="z-storage z-modifier z-cs">static</span> <span class="z-meta z-class z-cs"><span class="z-storage z-type z-class z-cs">class</span> <span class="z-entity z-name z-class z-cs">Tumblr</span>
+</span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-cs">    </span><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">CONSUMER_KEY</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">CONSUMER_SECRET</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">OAUTH_TOKEN</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">OAUTH_TOKEN_SECRET</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">    <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></code></pre>
+<p>Now that we have all necessary keys, we can create a <code>Client</code>.  We're going to create a publicly accessible property - <code>Client</code> - from which to access this class.  We're also going to create a publicly accessible property called <code>BlogName</code> that is initialized with the name of our Bot's blog.  In my case, it was <code>"somethinginterestingbot"</code>.</p>
+<p>If that wasn't a mouthful, we're also going to create a static initializer with <code>static Tumblr(){ ... }</code>.  All this really does is allow us to do some special stuff when the program starts.  Here's where we're at.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-storage z-type z-namespace z-cs">namespace</span> <span class="z-entity z-name z-namespace z-cs">MyCoolBot</span>
+</span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span></span></span></span><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs">    <span class="z-storage z-modifier z-access z-cs">public</span> <span class="z-storage z-modifier z-cs">static</span> <span class="z-meta z-class z-cs"><span class="z-storage z-type z-class z-cs">class</span> <span class="z-entity z-name z-class z-cs">Tumblr</span>
+</span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-cs">    </span><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">CONSUMER_KEY</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">CONSUMER_SECRET</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">OAUTH_TOKEN</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">const</span> <span class="z-storage z-type z-cs">string</span> <span class="z-variable z-other z-member z-cs">OAUTH_TOKEN_SECRET</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>KEY HERE<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">static</span> <span class="z-storage z-modifier z-access z-cs">public</span> <span class="z-support z-type z-cs">TumblrClient</span> <span class="z-variable z-other z-member z-cs">Client</span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">static</span> <span class="z-storage z-modifier z-access z-cs">public</span> <span class="z-storage z-type z-cs">string</span> <span class="z-meta z-property z-cs"><span class="z-variable z-other z-member z-cs">BlogName</span></span><span class="z-meta z-property z-cs"> <span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span></span></span><span class="z-meta z-property z-cs"><span class="z-meta z-block z-cs"> <span class="z-meta z-method z-cs"><span class="z-storage z-type z-function z-accessor z-get z-cs">get</span><span class="z-punctuation z-terminator z-cs">;</span></span> <span class="z-meta z-method z-cs"><span class="z-storage z-type z-function z-accessor z-set z-cs">set</span><span class="z-punctuation z-terminator z-cs">;</span></span> <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span><span class="z-meta z-property z-cs"> <span class="z-keyword z-operator z-assignment z-cs">=</span></span><span class="z-meta z-property z-cs"> <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>somethinginterestingbot<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-storage z-modifier z-cs">static</span> <span class="z-meta z-method z-constructor z-cs"><span class="z-entity z-name z-function z-constructor z-cs">Tumblr</span><span class="z-meta z-method z-parameters z-cs"><span class="z-punctuation z-section z-parameters z-begin z-cs">(</span></span></span><span class="z-meta z-method z-constructor z-cs"><span class="z-meta z-method z-parameters z-cs"><span class="z-punctuation z-section z-parameters z-end z-cs">)</span></span>
+</span></span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-method z-constructor z-cs">        </span><span class="z-meta z-method z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span></span></span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-method z-body z-cs"><span class="z-meta z-block z-cs">
+</span></span></span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-method z-body z-cs"><span class="z-meta z-block z-cs">        <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-meta z-class z-body z-cs"><span class="z-meta z-block z-cs">    <span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-namespace z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-end z-cs">}</span></span></span>
+</span></code></pre>
+<p>Okay!  We're almost done with the <code>Tumblr</code> class, we just need to add a few more lines to set our <code>Client</code>.  Inside the <code>static Tumblr()</code> initalizer, add the following code.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-storage z-modifier z-cs">static</span> <span class="z-meta z-function-call z-cs"><span class="z-variable z-function z-cs">Tumblr</span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span>
+</span><span class="z-source z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span>
+</span><span class="z-source z-cs">    <span class="z-variable z-other z-cs">Client</span> <span class="z-keyword z-operator z-assignment z-cs">=</span> <span class="z-meta z-instance z-cs"><span class="z-keyword z-operator z-new z-cs">new</span></span><span class="z-meta z-instance z-cs"> </span><span class="z-meta z-instance z-cs"><span class="z-support z-type z-cs">TumblrClientFactory</span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span><span class="z-meta z-instance z-cs"><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-meta z-function-call z-cs"><span class="z-variable z-function z-cs">Create</span><span class="z-meta z-generic z-cs"><span class="z-punctuation z-definition z-generic z-begin z-cs">&lt;</span></span></span><span class="z-meta z-function-call z-cs"><span class="z-meta z-generic z-cs"><span class="z-support z-type z-cs">TumblrClient</span><span class="z-meta z-function-call z-cs"><span class="z-meta z-generic z-cs"><span class="z-punctuation z-definition z-generic z-end z-cs">&gt;</span></span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span></span></span><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">        <span class="z-variable z-other z-cs">CONSUMER_KEY</span><span class="z-punctuation z-separator z-argument z-cs">,</span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">        <span class="z-variable z-other z-cs">CONSUMER_SECRET</span><span class="z-punctuation z-separator z-argument z-cs">,</span>
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">        <span class="z-meta z-instance z-cs"><span class="z-keyword z-operator z-new z-cs">new</span></span><span class="z-meta z-instance z-cs"> </span><span class="z-meta z-instance z-cs"><span class="z-support z-type z-cs">DontPanic</span><span class="z-punctuation z-accessor z-dot z-namespace z-cs">.</span><span class="z-support z-type z-cs">TumblrSharp</span><span class="z-punctuation z-accessor z-dot z-namespace z-cs">.</span><span class="z-support z-type z-cs">OAuth</span><span class="z-punctuation z-accessor z-dot z-namespace z-cs">.</span><span class="z-support z-type z-cs">Token</span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span><span class="z-meta z-instance z-cs"><span class="z-meta z-group z-cs">
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs"><span class="z-meta z-instance z-cs"><span class="z-meta z-group z-cs">            <span class="z-variable z-other z-cs">OAUTH_TOKEN</span><span class="z-punctuation z-separator z-argument z-cs">,</span> <span class="z-variable z-other z-cs">OAUTH_TOKEN_SECRET</span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span><span class="z-source z-cs"><span class="z-punctuation z-section z-block z-end z-cs">}</span>
+</span></code></pre>
+<p>What we're doing here is simply creating a new <code>Client</code> with the values and tokens we got from our previous steps.</p>
+<p>Now that our <code>Client</code> is initialized, we can focus on our bot!  The hard part is over.  Switch over to your <code>Program.cs</code></p>
+<h3 id="publishing-an-ask">Publishing an Ask</h3>
+<p>Here it is!  Here's <em>everything</em> you should have in your <code>Program.cs</code>.  Don't worry, I'll explain everything in a second.</p>
+<script src="https://gist.github.com/piedoom/77e7c1c0fb6e7cfd750c1c09b88b431a.js"></script>
+<blockquote>
+<p>Note: go ahead and enable Asks for your bot's Tumblr account, and send it something.</p>
+</blockquote>
+<p>That's a lot of stuff!  But we know what most of it does.  <code>static void Main(string[] args)</code> is just the entry point for our program - it was generated for us when we created the project.</p>
+<p>In our Main method, we have our first API call!</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-storage z-type z-variable z-cs">var</span> <span class="z-variable z-other z-cs">inbox</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-variable z-other z-cs">Tumblr</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">Client</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-meta z-function-call z-cs"><span class="z-variable z-function z-cs">GetSubmissionPostsAsync</span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs"><span class="z-variable z-other z-cs">Tumblr</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">BlogName</span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">Result</span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></code></pre>
+<p>This reads pretty easily - We're getting all submission posts (read: asks) from our blog, and setting it to the variable <code>inbox</code>.  We pass in <code>Tumblr.BlogName</code> into the <code>GetSubmissionPostsAsync</code> call because Tumblr needs to know what blog from which to fetch messages.  In my previous example, I set <code>Tumblr.BlogName</code> to <code>somethinginterestingbot</code>.</p>
+<p>Let's move on...</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-keyword z-control z-loop z-foreach z-cs">foreach</span> <span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span><span class="z-meta z-group z-cs"><span class="z-storage z-type z-variable z-cs">var</span> <span class="z-variable z-other z-cs">message</span> <span class="z-keyword z-control z-flow z-cs">in</span> <span class="z-variable z-other z-cs">inbox</span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span>
+</span><span class="z-source z-cs"><span class="z-meta z-block z-cs"><span class="z-punctuation z-section z-block z-begin z-cs">{</span> <span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-punctuation z-accessor z-dot z-cs">.</span> <span class="z-punctuation z-section z-block z-end z-cs">}</span></span>
+</span></code></pre>
+<p>This is a standard <code>foreach</code> look.  Because our <code>GetSubmissionPostsAsync</code> returned a <em>list</em> of asks, we need to loop through that list and deal with each submission individually.  In this loop, each <em>individual</em> message will be referenced with the variable <code>message</code>.</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-storage z-type z-variable z-cs">var</span> <span class="z-variable z-other z-cs">msg</span> <span class="z-keyword z-operator z-assignment z-variable z-cs">=</span> <span class="z-meta z-cast z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span><span class="z-support z-type z-cs">AnswerPost</span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span><span class="z-variable z-other z-cs">message</span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></code></pre>
+<p>When we call <code>GetSubmissionPostsAsync</code>, we actually get a bunch of generic instances of a class called <code>BasePost</code>.  This isn't too helpful for answering questions, so we need to <code>cast</code> our message to the <code>AnswerPost</code> type.  If you don't understand what casting does, don't worry too much - but it can't hurt to do some research on casting, either!</p>
+<p>Finally - the meat of our program -</p>
+<pre data-lang="cs" class="language-cs z-code"><code class="language-cs" data-lang="cs"><span class="z-source z-cs"><span class="z-variable z-other z-cs">Tumblr</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">Client</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-meta z-function-call z-cs"><span class="z-variable z-function z-cs">EditPostAsync</span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">
+</span></span></span><span class="z-source z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">    <span class="z-variable z-other z-cs">Tumblr</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">BlogName</span><span class="z-punctuation z-separator z-argument z-cs">,</span> <span class="z-variable z-other z-cs">msg</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">Id</span><span class="z-punctuation z-separator z-argument z-cs">,</span> <span class="z-variable z-other z-cs">PostData</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-meta z-function-call z-cs"><span class="z-variable z-function z-cs">CreateAnswer</span><span class="z-meta z-group z-cs"><span class="z-punctuation z-section z-group z-begin z-cs">(</span></span></span><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">
+</span></span></span></span></span><span class="z-source z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs"><span class="z-meta z-function-call z-cs"><span class="z-meta z-group z-cs">        <span class="z-string z-quoted z-double z-cs"><span class="z-punctuation z-definition z-string z-begin z-cs">&quot;</span>hello<span class="z-punctuation z-definition z-string z-end z-cs">&quot;</span></span><span class="z-punctuation z-separator z-argument z-cs">,</span> <span class="z-constant z-language z-cs">null</span><span class="z-punctuation z-separator z-argument z-cs">,</span> <span class="z-variable z-other z-cs">PostCreationState</span><span class="z-punctuation z-accessor z-dot z-cs">.</span><span class="z-variable z-other z-cs">Published</span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span><span class="z-punctuation z-section z-group z-end z-cs">)</span></span></span><span class="z-punctuation z-terminator z-statement z-cs">;</span>
+</span></code></pre>
+<p>I'm going to steal the nice graphic from my <a rel="noopener" target="_blank" href="https://vaporsoft.net/publishing-asks-with-your-tumblr-bot-2/">Ruby tutorial</a> to explain what's going on here -</p>
+<p><img src="https://doomy.org/creating-a-tumblr-bot-with-c-sharp/tumblr-bot-diagram-01-01-01.png" alt="" /></p>
+<p>Basically, we're getting our submitted posts (which we already did with <code>GetSubmissionPostsAsync</code>), editing that post (with <code>EditPostAsync</code>), and changing the submission state from <code>submission</code> to <code>published</code> (with <code>PostCreationState.Published</code>).</p>
+<p>The little <code>"hello"</code> string is simply the response to our question post.  This is what will be published!</p>
+<p>If everything went correctly, when you start your program, your bot should answer you!</p>
+ <div class="tumblr-post" data-href="https://embed.tumblr.com/embed/post/rAJf0MZ9EobF8WySYwzTGw/149451463207" data-did="da39a3ee5e6b4b0d3255bfef95601890afd80709"><a href="http://somethinginterestingbot.tumblr.com/post/149451463207/hey-whats-up-my-bro">http://somethinginterestingbot.tumblr.com/post/149451463207/hey-whats-up-my-bro</a></div>  <script async src="https://secure.assets.tumblr.com/post.js"></script>
+<blockquote>
+<p>NOTE: This bot only checks it's inbox once when the program starts.  If you want it to continually check, you'll need to use a combination of <code>sleep</code> and the <code>while</code> loop.</p>
+</blockquote>
+<h3 id="closing">Closing</h3>
+<p>If you liked this tutorial, and you want to see more like it, please consider donating to help me out!</p>
+<p><a href="/donate" class="button">Donate</a></p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;creating-a-tumblr-bot-with-c-sharp&#x2F;"
+				data-page-url="creating-a-tumblr-bot-with-c-sharp"
+				data-page-title="Creating a Tumblr Bot with C#"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

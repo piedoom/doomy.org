@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="">
+
+    
+    
+
+    
+<meta property="og:title" content="Creating a very simple sampler audio plugin in JUCE 5+">
+<meta property="og:description" content="">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;creating-a-very-simple-sampler-audio-plugin-in-juce-5&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Creating a very simple sampler audio plugin in JUCE 5+</h2>
+			<div class="info">
+				<span>2017 May 14</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<blockquote>
+<p>If you're coming into this new, might I recommend using Rust? The ecosystem for audio plugins in Rust has matured since this article was written. Start off with the Rust Audio group on Github, or <a rel="noopener" target="_blank" href="https://discord.gg/PQXjcWdUYM">check out their Discord to learn more</a>.</p>
+</blockquote>
+<p>I'm pretty new to JUCE, and I'm still learning the ropes of C++.  I wanted to create an audio plugin (VST, AU, etc.) for use in DAWs as part of an effort to stop my dependency on Kontakt with my commercial site, <a rel="noopener" target="_blank" href="https://resamplr.com">Resamplr</a>.  Developing custom stuff for Kontakt isn't the best choice since unlicensed instruments require the end user to <em>own</em> the full plugin, which is pretty expensive.</p>
+<p>No matter your reasoning, JUCE currently doesn't have great tutorials for this type of stuff.  So after a bit of scrounging around on Github and reading API docs, I finally got a working sampler, which is pretty neat!  In the steps below I'll detail how and why I did the things I did.  I'm very new to this, so if you see a mistake, please point it out!</p>
+<h2 id="1-creating-the-project">1. Creating the project</h2>
+<p>Obviously, the first step is to create a new JUCE project in the Projucer.  Although the same concept can be applied to a regular audio application project, we want to select "Audio Plug-In" so we can use our code in a DAW.</p>
+<p><img src="https://doomy.org/creating-a-very-simple-sampler-audio-plugin-in-juce-5/Untitled.png" alt="" /></p>
+<p>Select the location and name of your project, and then create!  I'm using Visual Studio 2015 for this project, but any compiler on any system should (in theory) work.</p>
+<p>After creating the project, go to settings and make sure "Is a Synth" and "Plugin wants midi input" are checked.  Then, save and open in your IDE of choice.</p>
+<h2 id="2-setting-up-our-synth">2. Setting up our Synth</h2>
+<p>Once created, we want to find the <code>PluginProcessor.cpp</code> file located in our project.  Find the <code>SimpleSamplerAudioProcessor::processBlock</code> function, and just delete the whole body.   We don't need any of that for our simple sampler.</p>
+<p>Every sampler made in JUCE has three main components: A <code>Synthesizer</code>, <code>SamplerVoice</code>s and <code>SamplerSound</code>s.  The <code>Synthesizer</code> class is what JUCE uses to manage an entire instrument, along with <code>SamplerVoice</code>s.  Sampler voices are just regular voices to any other synthesizer.  They allow the <code>Synthesizer</code> to play multiple notes at once.  Lastly, the <code>SamplerSound</code> just contains sample data.</p>
+<p>Go ahead and create a new Synthesizer class from the Projucer.  We're going to name the files <code>SimpleSynth.h</code> and <code>SimpleSynth.cpp</code>.  Let's take a look at what should go in both of these files, and then explain the reasoning behind it.</p>
+<pre data-lang="c" class="language-c z-code"><code class="language-c" data-lang="c"><span class="z-source z-c"><span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> SimpleSynth.h
+</span></span><span class="z-source z-c">
+</span><span class="z-source z-c"><span class="z-meta z-preprocessor z-c"><span class="z-keyword z-control z-import z-c">#pragma</span> once
+</span></span><span class="z-source z-c"><span class="z-meta z-preprocessor z-include z-c"><span class="z-keyword z-control z-import z-include z-c">#include</span> <span class="z-string z-quoted z-double z-include z-c"><span class="z-punctuation z-definition z-string z-begin z-c">&quot;</span>../JuceLibraryCode/JuceHeader.h<span class="z-punctuation z-definition z-string z-end z-c">&quot;</span></span>
+</span></span><span class="z-source z-c">
+</span><span class="z-source z-c">class SimpleSynth <span class="z-keyword z-operator z-ternary z-c">:</span> public Synthesiser <span class="z-meta z-block z-c"><span class="z-punctuation z-section z-block z-begin z-c">{</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c"><span class="z-entity z-name z-label z-c">public</span><span class="z-punctuation z-separator z-c">:</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-storage z-type z-c">void</span> <span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">setup</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c"><span class="z-entity z-name z-label z-c">private</span><span class="z-punctuation z-separator z-c">:</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> manager object that finds an appropriate way to decode various audio files.  Used with SampleSound objects.
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	AudioFormatManager audioFormatManager<span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c"><span class="z-punctuation z-section z-block z-end z-c">}</span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></code></pre>
+<blockquote>
+<p>Note: If you're not using Windows, you may not see <code>#pragma once</code>, but something similar in function.</p>
+</blockquote>
+<p>First, we include the necessary JUCE headers.  Then, we create a new class <code>SimpleSynth</code> which inherits from the <code>Synthesiser</code> class we were talking about earlier.  (Take note that JUCE spells it <code>Synthesiser</code> and not <code>Synthesizer</code>).  We define a very simple setup method, and prepare for an <code>AudioFormatManager</code> object.</p>
+<p>The <code>AudioFormatManager</code> is the object that will find our sampled file, determine the best way to decode it, and then store the file as data.  We'll get further into this with the actual <code>.cpp</code> code.</p>
+<pre data-lang="c" class="language-c z-code"><code class="language-c" data-lang="c"><span class="z-source z-c"><span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> SimpleSynth.cpp
+</span></span><span class="z-source z-c">
+</span><span class="z-source z-c"><span class="z-meta z-preprocessor z-include z-c"><span class="z-keyword z-control z-import z-include z-c">#include</span> <span class="z-string z-quoted z-double z-include z-c"><span class="z-punctuation z-definition z-string z-begin z-c">&quot;</span>SimpleSynth.h<span class="z-punctuation z-definition z-string z-end z-c">&quot;</span></span>
+</span></span><span class="z-source z-c"><span class="z-meta z-preprocessor z-macro z-c"><span class="z-keyword z-control z-import z-define z-c">#define</span></span><span class="z-meta z-preprocessor z-macro z-c"> <span class="z-entity z-name z-constant z-preprocessor z-c">MAX_VOICES</span></span><span class="z-meta z-preprocessor z-macro z-c"> <span class="z-constant z-numeric z-integer z-decimal z-c">16</span></span>
+</span><span class="z-source z-c">
+</span><span class="z-source z-c"><span class="z-storage z-type z-c">void</span> SimpleSynth:<span class="z-keyword z-operator z-ternary z-c">:</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">setup</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span> <span class="z-meta z-block z-c"><span class="z-punctuation z-section z-block z-begin z-c">{</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> add voices to our sampler
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-keyword z-control z-c">for</span> <span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span><span class="z-storage z-type z-c">int</span> i <span class="z-keyword z-operator z-assignment z-c">=</span> <span class="z-constant z-numeric z-integer z-decimal z-c">0</span><span class="z-punctuation z-terminator z-c">;</span> i <span class="z-keyword z-operator z-comparison z-c">&lt;</span> MAX_VOICES<span class="z-punctuation z-terminator z-c">;</span> i<span class="z-keyword z-operator z-arithmetic z-c">++</span><span class="z-punctuation z-section z-group z-end z-c">)</span></span> <span class="z-meta z-block z-c"><span class="z-punctuation z-section z-block z-begin z-c">{</span>
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c"><span class="z-meta z-block z-c">		<span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">addVoice</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c">new <span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">SamplerVoice</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c"><span class="z-meta z-block z-c">	<span class="z-punctuation z-section z-block z-end z-c">}</span></span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> set up our AudioFormatManager class as detailed in the API docs
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> we can now use WAV and AIFF files!
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	audioFormatManager<span class="z-punctuation z-accessor z-c">.</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">registerBasicFormats</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> now that we have our manager, lets read a simple file so we can pass it to our SamplerSound object.
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	File<span class="z-keyword z-operator z-c">*</span> file <span class="z-keyword z-operator z-assignment z-c">=</span> new <span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">File</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-string z-quoted z-double z-c"><span class="z-punctuation z-definition z-string z-begin z-c">&quot;</span>file.wav<span class="z-punctuation z-definition z-string z-end z-c">&quot;</span></span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	ScopedPointer<span class="z-keyword z-operator z-comparison z-c">&lt;</span>AudioFormatReader<span class="z-keyword z-operator z-comparison z-c">&gt;</span> reader <span class="z-keyword z-operator z-assignment z-c">=</span> audioFormatManager<span class="z-punctuation z-accessor z-c">.</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">createReaderFor</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-keyword z-operator z-c">*</span>file</span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> allow our sound to be played on all notes
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	BigInteger allNotes<span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	allNotes<span class="z-punctuation z-accessor z-c">.</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">setRange</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-constant z-numeric z-integer z-decimal z-c">0</span><span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-numeric z-integer z-decimal z-c">128</span><span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-language z-c">true</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> finally, add our sound
+</span></span></span><span class="z-source z-c"><span class="z-meta z-block z-c">	<span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">addSound</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c">new <span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">SamplerSound</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-string z-quoted z-double z-c"><span class="z-punctuation z-definition z-string z-begin z-c">&quot;</span>default<span class="z-punctuation z-definition z-string z-end z-c">&quot;</span></span><span class="z-punctuation z-separator z-c">,</span> <span class="z-keyword z-operator z-c">*</span>reader<span class="z-punctuation z-separator z-c">,</span> allNotes<span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-numeric z-integer z-decimal z-c">60</span><span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-numeric z-integer z-decimal z-c">0</span><span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-numeric z-integer z-decimal z-c">10</span><span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-numeric z-float z-decimal z-c">10<span class="z-punctuation z-separator z-decimal z-c">.</span>0</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></span><span class="z-source z-c"><span class="z-meta z-block z-c"><span class="z-punctuation z-section z-block z-end z-c">}</span></span>
+</span></code></pre>
+<p>There's a lot to take in here, but it's fairly simple (and also most of the code we're going to write!)  First, we include our header file.  Then we define <code>MAX_VOICES</code> to 16.  This is the number of samples that can be played at one time. You can change it to any number you desire.</p>
+<p>In our setup method, we use a simple loop to add 16 new voices to our Synthesizer.  Next, we tell our aforementioned <code>AudioFormatManager</code> class to register basic formats.  This is a convenience method that ships with JUCE that just tells the manager that it can read <code>.WAV</code> and <code>.AIFF</code> files.</p>
+<p>Next, we create a <code>File</code> pointer that contains the relative path to our sample in question.  In a professional application, we probably wouldn't hard-code the filename in like this, or do so with no error checking, but it's fine for our purposes.   My file is simply <code>file.wav</code>, but name your file appropriately depending on the sample you have provided.</p>
+<p>As a side note, the file path is relative to the compiled project.  In my case, I dropped <code>file.wav</code> in <code>...projectname\Builds\VisualStudio2015\x64\Debug\VST\file.wav</code>.
+After this, we create a file reader to pass into our new sound.</p>
+<p>As for the last 3 lines, the <code>addSound</code> documentation is much more descriptive and helpful than I could hope to detail here, so read that to learn more!  It should show up in your IDE when you begin to type it out.</p>
+<h2 id="3-finishing-touches">3. Finishing Touches</h2>
+<p>We need a few more lines to make our synth playable.  In our generated <code>PluginProcessor.h</code> file, add the following after the <code>private</code> declaration:</p>
+<pre data-lang="c" class="language-c z-code"><code class="language-c" data-lang="c"><span class="z-source z-c">SimpleSynth synth<span class="z-punctuation z-terminator z-c">;</span>
+</span></code></pre>
+<p>Here we're just creating a private variable of our synth class to use in the main code.</p>
+<p>Open up <code>PluginProcessor.cpp</code>, and add the following in our blank <code>processBlock</code> method:</p>
+<pre data-lang="c" class="language-c z-code"><code class="language-c" data-lang="c"><span class="z-source z-c">synth<span class="z-punctuation z-accessor z-c">.</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">renderNextBlock</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c">buffer<span class="z-punctuation z-separator z-c">,</span> midiMessages<span class="z-punctuation z-separator z-c">,</span> <span class="z-constant z-numeric z-integer z-decimal z-c">0</span><span class="z-punctuation z-separator z-c">,</span> buffer<span class="z-punctuation z-accessor z-c">.</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">getNumSamples</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></code></pre>
+<p>We're just passing in some local variables to the Synth object.  It handles everything we need to render our audio!</p>
+<p>Finally, add the following line to <code>prepareToPlay</code>:</p>
+<pre data-lang="c" class="language-c z-code"><code class="language-c" data-lang="c"><span class="z-source z-c">synth<span class="z-punctuation z-accessor z-c">.</span><span class="z-meta z-function-call z-c"><span class="z-variable z-function z-c">setCurrentPlaybackSampleRate</span><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-begin z-c">(</span></span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c">sampleRate</span></span><span class="z-meta z-function-call z-c"><span class="z-meta z-group z-c"><span class="z-punctuation z-section z-group z-end z-c">)</span></span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></code></pre>
+<p>This tells our Synth what our sample rate is currently, and prepares it for being played.</p>
+<h2 id="4-testing">4. Testing</h2>
+<p>That's actually it.  Build the project, and run in the host of your choice.  I like JUCE's Plug-In Host, but you can use whatever you like.  The plugin should now play back samples and pitch them according to MIDI data.</p>
+<p>If your plugin crashes, you most likely have the file in the wrong spot.  Double check that you have the file alongside your audio plugin binary.</p>
+<p>If your plugin doesn't make any noise, make sure you added the <code>setCurrentPlaybackSampleRate</code> detailed at the end of step #3.</p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;creating-a-very-simple-sampler-audio-plugin-in-juce-5&#x2F;"
+				data-page-url="creating-a-very-simple-sampler-audio-plugin-in-juce-5"
+				data-page-title="Creating a very simple sampler audio plugin in JUCE 5+"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

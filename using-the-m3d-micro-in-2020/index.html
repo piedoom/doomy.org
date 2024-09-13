@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="Updating the M3D Micro printer to work in 2020 (and hopefully beyond) with some new firmware and software">
+
+    
+    
+
+    
+<meta property="og:title" content="Using the M3D Micro in 2020">
+<meta property="og:description" content="Updating the M3D Micro printer to work in 2020 (and hopefully beyond) with some new firmware and software">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;using-the-m3d-micro-in-2020&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Using the M3D Micro in 2020</h2>
+			<div class="info">
+				<span>2020 Oct 14</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p>Nearly 6 years ago, a 3D printing startup called M3D successfully kickstarted the <a rel="noopener" target="_blank" href="https://www.kickstarter.com/projects/m3d/the-micro-the-first-truly-consumer-3d-printer">Micro</a>. At the time, this was marketed as one of the "first" small consumer-grade 3D printers.</p>
+<p>Time has passed, and the original ~300 USD price tag of the Micro seems absurd given the varied selection of cheap consumer printers currently for sale. It's painfully slow, prone to jams, has an extremely small print volume, and awful outdated proprietary software. Even so... I paid for it, and I'm going to get my money's worth.</p>
+<h2 id="making-the-micro-better">Making the Micro Better</h2>
+<p>Thankfully, a handful of open-source firmware updates and applications make the printing experience tolerable.</p>
+<p>The first step is to download M33 Manager. M33 Manager will allow you to install <a rel="noopener" target="_blank" href="https://github.com/donovan6000/iMe">iMe</a>, an open-source firmware for the M3D Micro that allows for greater print speed and control via RepRap G-Code.</p>
+<blockquote>
+<p><a rel="noopener" target="_blank" href="https://github.com/donovan6000/iMe#installation">iMe Installation links</a></p>
+</blockquote>
+<p>After installation, ensure the printer driver is installed. If it isn't, there is a handy button within M33 Manager to do that for you. Hit the "Connect" button and wait for your printer to connect. If you have issues connecting, try power-cycling your Micro and trying again, and ensure no other application is taking over the device.</p>
+<p>Once connected, you can begin the firmware update. Click the "Install iMe Firmware" button, and wait for completion. That's it! Easy.</p>
+<h3 id="some-caveats">Some caveats</h3>
+<p>iMe will put your printer in bootloader mode whenever it is powered on. To begin printing, you will need to open M33 manager every time the printer is powered on, connect, and click the "Switch to firmware mode" button. Then, disconnect.</p>
+<h2 id="ditching-the-m3d-beta">Ditching the M3D Beta</h2>
+<h3 id="slicing">Slicing</h3>
+<p>If you're still using the M3D Micro in 2020, you'll know the last update the print software got was a beta 2016. What a great gift for us early backers! Well, we can finally junk that pile of trash software and install <a rel="noopener" target="_blank" href="https://ultimaker.com/software/ultimaker-cura">Cura</a>. (Interestingly enough, I believe the original M3D software uses the Cura slicer anyways.) We will be using Cura to slice our STL models into usable G-Code.</p>
+<p>After installing Cura, we'll need to adjust a few settings.</p>
+<p>Go to <code>Settings &gt; Machines &gt; Manage Machines</code> and then click on "Add Machine". Select the "Custom FFF printer" option in "Add a non-networked printer" and press "Next". On the machine settings page, enter the following values for the print size:</p>
+<ul>
+<li>X: <code>109</code></li>
+<li>Y: <code>113</code></li>
+<li>Z: <code>116</code></li>
+</ul>
+<blockquote>
+<p>WARNING: keep in mind that the printhead limits the XY space on very tall prints. This is not considered in Cura.</p>
+</blockquote>
+<p>On the same tab, set the G-Code flavor to "RepRap". Now, move on to the Extruder tab and enter these settings:</p>
+<ul>
+<li>Nozzle size: <code>0.35</code></li>
+<li>Compatible material diameter: <code>1.75</code></li>
+</ul>
+<p>All other settings can be left as-is. Press next to complete printer setup.</p>
+<h4 id="setting-up-profiles">Setting up profiles</h4>
+<p>We'll also need printer profiles for our Micro. Adafruit provides a couple just for this application. <a rel="noopener" target="_blank" href="https://github.com/adafruit/Printer-Profiles/tree/master/M3D">Check out their repository here</a>. We want to download "M3D 2mm PLA.ini" and "M3D 3mm PLA.ini". Import both these profiles into Cura. We will be using either whenever slicing with the Micro.</p>
+<h3 id="sending-g-code">Sending G-Code</h3>
+<p>Now, if you happened to read the M33/iMe documentation, you'll know it says Cura should support our new firmware out of the box. However, the last version of iMe was released quite some time ago, and 3D printing has largely moved away from USB printers. I haven't had success connecting via Cura in version 4.7, even after hours of messing about with settings. So, we'll need a separate application for sending G-Code.</p>
+<p>After testing a few solutions, I found <a rel="noopener" target="_blank" href="https://www.pronterface.com/">PrintRun</a>. It's not a pretty application, and was last updated in 2017, but it connects! I'm on a Windows PC, so I installed their binary and it just works(tm).</p>
+<p>So why the combo of Cura and PrintRun? Why not just install an old version of Cura? Well, I'd much rather the slicer is up to date. It's alright if PrintRun is old, because we're just using it to send over our G-Code that was generated by a modern application.</p>
+<h2 id="hooking-it-up">Hooking it up</h2>
+<p>The process looks like this:</p>
+<ol start="0">
+<li>Set the printer into firmware mode on initial power on using M33 Manager</li>
+<li>Import model into Cura</li>
+<li>Slice model in Cura using the 2mm or 3mm profile provided by Adafruit</li>
+<li>Save slice to G-Code</li>
+<li>Open G-Code in PrintRun</li>
+<li>Print using PrintRun</li>
+</ol>
+<p>Hope this is helpful for the 3 people out there still using a Micro!</p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;using-the-m3d-micro-in-2020&#x2F;"
+				data-page-url="using-the-m3d-micro-in-2020"
+				data-page-title="Using the M3D Micro in 2020"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="">
+
+    
+    
+
+    
+<meta property="og:title" content="Setting up RVM with Cygwin">
+<meta property="og:description" content="">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;setting-up-rvm-with-cygwin&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Setting up RVM with Cygwin</h2>
+			<div class="info">
+				<span>2016 Aug 03</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<h3 id="why">Why?</h3>
+<p>If you're on Windows, many of my Ruby tutorials might not work as expected.  Cygwin is a terminal emulator for Windows that gives it the abilities of Linux / Unix.</p>
+<p>RVM, or the Ruby Version Manager, is a really nice way of setting up Ruby on any system.  With a few lines, you can install multiple versions of Ruby.</p>
+<h3 id="what-you-ll-need">What you'll need</h3>
+<p>I'll assume that you have a working install of Cygwin.  If you don't, it's as simple as any other Windows setup.  You can download <a rel="noopener" target="_blank" href="https://cygwin.com/install.html">Cygwin here</a>.</p>
+<h3 id="installing-rvm-and-ruby">Installing RVM and Ruby</h3>
+<p>Getting RVM up and running is pretty simple once you have Cygwin set up.  Simply open a new console and type</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">gpg</span></span><span class="z-meta z-function-call z-arguments z-shell"><span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>keyserver</span> hkp://keys.gnupg.net<span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> --</span>recv-keys</span> 409B6B1796C275462A1703113804BB82D39DC0E3</span>
+</span></code></pre>
+<p>And then</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-constant z-character z-escape z-shell">\c</span><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">url</span></span><span class="z-meta z-function-call z-arguments z-shell"><span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> -</span>sSL</span> https://get.rvm.io</span> <span class="z-keyword z-operator z-logical z-pipe z-shell">|</span> <span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">bash</span></span><span class="z-meta z-function-call z-arguments z-shell"><span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> -</span>s</span> stable</span>
+</span></code></pre>
+<p>If all goes to plan, you'll get a success message.  Close your current Cygwin terminal and open a new one to reload settings.  Then, type the following to install Ruby.</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">rvm</span></span><span class="z-meta z-function-call z-arguments z-shell"> install ruby</span>
+</span></code></pre>
+<p>This might take a while.  Once it finishes, we'll type in <code>ruby -v</code> to make sure Ruby installed properly.</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">ruby</span></span><span class="z-meta z-function-call z-arguments z-shell"><span class="z-variable z-parameter z-option z-shell"><span class="z-punctuation z-definition z-parameter z-shell"> -</span>v</span></span>
+</span><span class="z-source z-shell z-bash"><span class="z-keyword z-operator z-assignment z-redirection z-shell">&gt;&gt;</span> ruby <span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">2.3.0p0</span></span><span class="z-meta z-function-call z-arguments z-shell"> (2015-12-25 revision 53290</span><span class="z-meta z-function-call z-shell"></span>) <span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">[x86_64-cygwin]</span></span>
+</span></code></pre>
+<p>We'll also probably want the <code>bundle</code> gem so we can bulk-install Ruby packages.</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">gem</span></span><span class="z-meta z-function-call z-arguments z-shell"> install bundle</span>
+</span></code></pre>
+<p>And that's it!</p>
+<h3 id="help-i-m-getting-errors">Help!  I'm getting errors!</h3>
+<h5 id="it-fails-when-i-do-rvm-install-ruby">It fails when I do <code>rvm install ruby</code></h5>
+<p>Try to run this command first:</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">rvm</span></span><span class="z-meta z-function-call z-arguments z-shell"> requirements</span>
+</span></code></pre>
+<p>This will try to install all the stuff RVM relies upon for installing Ruby.  If this fails, you'll probably see an error similar to <code>setup-x86_64.exe not found</code>.  This means you'll have to add the Cygwin installer to your <code>PATH</code> (A system variable that tells Windows where all the good executable stuff is).</p>
+<p>We can edit this by searching "Environment Variables" in the Start Menu.</p>
+<p><img src="https://doomy.org/setting-up-rvm-with-cygwin/Untitled.png" alt="" /></p>
+<p>Go ahead and click that option.  It'll bring up a dialog.  We want to click the "Environment Variables" option on the bottom right.</p>
+<p><img src="https://doomy.org/setting-up-rvm-with-cygwin/Capture-1.PNG" alt="" /></p>
+<p>In the section titled "User variables for <em>username here</em>", scroll and look for a <code>Variable</code> named <code>Path</code>.  Double click it.</p>
+<p><img src="https://doomy.org/setting-up-rvm-with-cygwin/Untitled-1.png" alt="" /></p>
+<p>Add a <code>New</code> variable by clicking the button on the top right.  The value of this will be whatever folder contains your <code>setup-x86_64.exe</code> file.  In my case, this was <code>E:\Program Files\Cygwin</code>, but by default, Cygwin installs to <code>C:\Cygwin</code>.  Note that you shouldn't append the actual file to your <code>Path</code> entry.</p>
+<p>CORRECT</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">C:<span class="z-constant z-character z-escape z-shell">\C</span>ygwin</span></span>
+</span></code></pre>
+<p>INCORRECT</p>
+<pre data-lang="bash" class="language-bash z-code"><code class="language-bash" data-lang="bash"><span class="z-source z-shell z-bash"><span class="z-meta z-function-call z-shell"><span class="z-variable z-function z-shell">C:<span class="z-constant z-character z-escape z-shell">\C</span>ygwin<span class="z-constant z-character z-escape z-shell">\s</span>etup-x86_64.exe</span></span>
+</span></code></pre>
+<p>Press <code>Okay</code> on both open dialogs, and then open a new instance of the Cygwin terminal.  If all goes right, <code>rvm requirements</code> should now succeed.</p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;setting-up-rvm-with-cygwin&#x2F;"
+				data-page-url="setting-up-rvm-with-cygwin"
+				data-page-title="Setting up RVM with Cygwin"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

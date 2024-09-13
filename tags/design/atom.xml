@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>doomy - design</title>
+    <subtitle>the world&#x27;s smallest web site, covered in rust</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://doomy.org/tags/design/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://doomy.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2016-10-15T01:00:00.007+00:00</updated>
+    <id>https://doomy.org/tags/design/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Redesigning crystal-lang.org</title>
+        <published>2016-10-15T01:00:00.007+00:00</published>
+        <updated>2016-10-15T01:00:00.007+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://doomy.org/redesigning-crystal-lang-org/"/>
+        <id>https://doomy.org/redesigning-crystal-lang-org/</id>
+        
+        <content type="html" xml:base="https://doomy.org/redesigning-crystal-lang-org/">&lt;p&gt;The Crystal language&#x27;s current home at crystal-lang.org is a portal where beginners and developers alike will learn about the language and access various resources.  Although certainly usable and aesthetically interesting, Crystal&#x27;s website can be improved.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s take a look at the website in it&#x27;s current state, and then discuss other project websites, and how we can learn from them.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Screenshots for this page will be pretty long, sorry!&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;crystal-s-original-webpage-and-critiques&quot;&gt;Crystal&#x27;s original webpage and critiques&lt;&#x2F;h3&gt;
+&lt;p&gt;Here&#x27;s a current copy of the webpage on archive.org, in case the website is changed in the future.&lt;&#x2F;p&gt;
+&lt;p&gt;https:&#x2F;&#x2F;web.archive.org&#x2F;web&#x2F;20160820115808&#x2F;https:&#x2F;&#x2F;crystal-lang.org&#x2F;&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s take a look at what we can improve upon aesthetically and usability-wise.  Please note, I&#x27;m going to be focusing on stuff to improve.  There&#x27;s certainly good qualities about the website as it stands now, but I am giving a critique and a proposal, so positive remarks aren&#x27;t entirely helpful.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;Hover over each point to see a brief comment.  After the image I provide more in-depth detail on my observations.&lt;&#x2F;p&gt;
+&lt;img src=&quot;full-page.png&quot; class=&quot;jnote&quot; data-jnote=&#x27;[{&quot;x&quot;:0.248046875,&quot;y&quot;:0.18754532269760696,&quot;title&quot;:&quot;Hierarchy&quot;,&quot;caption&quot;:&quot;Low-contrast headers present readability issues, and do not capture the attention of the viewer.&quot;},{&quot;x&quot;:0.4970703125,&quot;y&quot;:0.3374123761179599,&quot;title&quot;:&quot;Grey gore&quot;,&quot;caption&quot;:&quot;It is very difficult to make grey icons on a half-grey background look good!&quot;},{&quot;x&quot;:0.2236328125,&quot;y&quot;:0.512901861252115,&quot;title&quot;:&quot;Repetition and Spacing&quot;,&quot;caption&quot;:&quot;Blog entries are super-spacy and do not have the same visual style as the rest of the site.&quot;},{&quot;x&quot;:0.12,&quot;y&quot;:0.12421440657481267,&quot;title&quot;:&quot;Contrast&quot;,&quot;caption&quot;:&quot;The site has gigantic black margins that create undesirable visual tension and focus the user away from content.&quot;},{&quot;x&quot;:0.15234375,&quot;y&quot;:0.01954919023446942,&quot;title&quot;:&quot;Not responsive&quot;,&quot;caption&quot;:&quot;The current website is not responsive, and does not appear well on mobile devices.&quot;},{&quot;x&quot;:0.552734375,&quot;y&quot;:0.6601099830795262,&quot;title&quot;:&quot;...and it keeps going&quot;,&quot;caption&quot;:&quot;Blog content takes up a huge amount of space for the little information it provides up front.&quot;}]&#x27; &#x2F;&gt;
+&lt;h1 id=&quot;hierarchy&quot;&gt;Hierarchy&lt;&#x2F;h1&gt;
+&lt;p&gt;The site suffers from poor hierarchy.  Very low-contrast headers present readability issues, and do not capture the attention of the viewer.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;Capture.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;In this example, the &quot;How it looks&quot; header is completely skipped over in favor of it&#x27;s bolded, black content.  When scanning a webpage, most readers will completely skip the main form of organization on this page - headers - and jump straight into body copy.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;sponsors&quot;&gt;Sponsors&lt;&#x2F;h1&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;2.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Here, the &quot;Top Sponsors&quot; section is &lt;em&gt;huge&lt;&#x2F;em&gt; - bigger than all other content on the page.  Sponsors are incredibly important, but should not dominate content.  We can fix this in a couple ways - we can either make the sponsors section smaller (not good!) or we can find a way to separate the sponsors from content and give them their own place on the site (good!).&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;the-verge.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;The Verge&lt;&#x2F;em&gt; gives us a more exaggerated example of this problem, with a gigantic advertisement across the top of the page.  Although important, what does this say about the website&#x27;s attitude towards the consumer?  UI should always feel like a friendly and respectful conversation.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;proportions&quot;&gt;Proportions&lt;&#x2F;h1&gt;
+&lt;p&gt;Crystal&#x27;s website stays mostly consistent with typeface choices, allowing for a predicable and enjoyable rhythm.  However,  blog posts at the bottom of the site look out of place because of their huge margins, large text, and grey thumbnail boxes.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;proportions-1.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;color&quot;&gt;Color&lt;&#x2F;h1&gt;
+&lt;p&gt;Of in design one will be told to never use pure black or white as it can be straining to read.  However, I believe that the pure black color is almost like a Crystal trademark.  If I think of Ruby, I think of red.  If I think of Python, I think of blue and yellow.&lt;&#x2F;p&gt;
+&lt;p&gt;Crystal&#x27;s accent color is black, meaning it should be used only for emphasizing content.  However, the current website has gigantic black margins that create undesirable visual tension.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;visual.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;Visual tension focused on the edges of the page, as opposed to the content&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Lowering the contrast of the background can immediately help resolve some issues without detracting from Crystal&#x27;s visual style.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;visual-2.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;While still not perfect, emphasis is now on the content&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;usability&quot;&gt;Usability&lt;&#x2F;h1&gt;
+&lt;p&gt;Perhaps most detrimental, Crystal&#x27;s webpage is not easily accessed on mobile devices.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;usability.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This is by no means an in-depth look at every element on Crystal&#x27;s homepage, but an overview on the biggest issues.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;hr &#x2F;&gt;
+&lt;h1 id=&quot;learning-from-other-sites&quot;&gt;Learning from other sites&lt;&#x2F;h1&gt;
+&lt;p&gt;Let&#x27;s take a look at other programming-based website homepages to see how they solve common problems.&lt;&#x2F;p&gt;
+&lt;h5 id=&quot;ruby&quot;&gt;Ruby&lt;&#x2F;h5&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;ruby.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Aesthetically, Ruby&#x27;s homepage is not too impressive.  However, it has a strong visual hierarchy.  The first element visitors will see is the huge, red &quot;Download Ruby&quot; button.  We can assume from this that most users who come to Ruby&#x27;s webpage are there to install the language.  At the top of the page, we have links on everything Ruby programmers might want to know about spread out in a predictable and orthodox pattern.&lt;&#x2F;p&gt;
+&lt;p&gt;Notice that Ruby also uses a red accent &lt;em&gt;sparingly&lt;&#x2F;em&gt; and &lt;em&gt;strategically&lt;&#x2F;em&gt; to highlight the most important information.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h5 id=&quot;swift&quot;&gt;Swift&lt;&#x2F;h5&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;apple.PNG&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Swift, being born out of Apple, has a different feel.  Swift is presented like a product, and language features are highlighted much to the same effect as a MacBook or iPad.  Although it&#x27;s easy to scoff (especially at Apple!) and assert that a programming language shouldn&#x27;t be treated like a shiny new Apple Watch, Apple&#x27;s methodology is part of the reason that Swift got popular so quickly.&lt;&#x2F;p&gt;
+&lt;p&gt;In a sense, we are selling a product.  We are asking people to adopt Crystal or contribute to the project.&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;h1 id=&quot;ideas&quot;&gt;Ideas&lt;&#x2F;h1&gt;
+&lt;p&gt;Crystal has a very unique aesthetic where pure black is an accent.  We can use this simplistic and clean style to create a very graphic feeling.&lt;&#x2F;p&gt;
+&lt;p&gt;Here is an example style sheet for common elements.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;redesigns-02-3.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;page-examples&quot;&gt;Page Examples&lt;&#x2F;h3&gt;
+&lt;p&gt;Consider right-clicking the image and opening it in a new tab to see it full resolution.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;doomy.org&#x2F;redesigning-crystal-lang-org&#x2F;rerere.png&quot; alt=&quot;&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;more-to-come&quot;&gt;More to come:&lt;&#x2F;h4&gt;
+&lt;p&gt;I still haven&#x27;t figured out what to do with blogs, but I think image banners with custom illustrations would looks really cool!  That does require some upkeep, though...&lt;&#x2F;p&gt;
+&lt;p&gt;The design above is very much a first iteration and can use a lot of work.  But I think the essence of my idea is there, so I&#x27;ll keep progress updated.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;my-goal&quot;&gt;My Goal&lt;&#x2F;h1&gt;
+&lt;p&gt;I would like to finalize these designs, and make a pull request someday to the Crystal website if they are interesting in a redesign of the site.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

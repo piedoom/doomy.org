@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>doomy - zola</title>
+    <subtitle>the world&#x27;s smallest web site, covered in rust</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://doomy.org/tags/zola/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://doomy.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2017-12-16T01:00:00.007+00:00</updated>
+    <id>https://doomy.org/tags/zola/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Automatically publishing your Gutenberg project to Github pages</title>
+        <published>2017-12-16T01:00:00.007+00:00</published>
+        <updated>2017-12-16T01:00:00.007+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://doomy.org/publishing-gutenberg-to-github/"/>
+        <id>https://doomy.org/publishing-gutenberg-to-github/</id>
+        
+        <content type="html" xml:base="https://doomy.org/publishing-gutenberg-to-github/">&lt;blockquote&gt;
+&lt;p&gt;As of now, Zola (previously known as Gutenberg) has much easier ways of doing this! Please consider Github actions, or Netlify.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h1 id=&quot;gutenberg-static-site-generators&quot;&gt;Gutenberg &amp;amp; Static Site generators&lt;&#x2F;h1&gt;
+&lt;p&gt;If you&#x27;re familiar with Github, you&#x27;re most likely also aware of the Github Pages tool that allows users to publish static sites.  This is particularly useful for docs or a blog.  By default, Github uses Jekyll (A ruby based static site generator), but you can use whatever you want provided you have an &lt;code&gt;index.html&lt;&#x2F;code&gt; file in the root of a branch called &lt;code&gt;gh-pages&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;I recently came across a project called &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;www.getgutenberg.io&#x2F;&quot;&gt;Gutenberg&lt;&#x2F;a&gt; by &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Keats&#x2F;gutenberg&quot;&gt;Keats&lt;&#x2F;a&gt; and other contributors.  I was initially interested in the project because I like the Rust programming language, but Gutenberg has the additional value of having everything-you-need in a single executable.&lt;&#x2F;p&gt;
+&lt;p&gt;This means that you don&#x27;t need to fiddle with RVM or Python on your local machine to get started - you just need a &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;www.getgutenberg.io&#x2F;documentation&#x2F;getting-started&#x2F;installation&#x2F;&quot;&gt;single executable&lt;&#x2F;a&gt;.  Being said, Gutenberg is opinionated, so don&#x27;t expect a billion preprocessors bundled.  You get Tera - a fine templating markup - as well as an SCSS preprocessor.  If for some reason you love to torture yourself with CoffeeScript or Babel, you&#x27;ll have to do that stuff on your own.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;disclaimer&quot;&gt;Disclaimer&lt;&#x2F;h1&gt;
+&lt;p&gt;This post is not about how to use Gutenberg.  For that stuff, please check out Gutenberg&#x27;s official docs.  They&#x27;re super easy to read through and quick to execute.  &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;www.getgutenberg.io&#x2F;&quot;&gt;See it here.&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;automating&quot;&gt;Automating&lt;&#x2F;h1&gt;
+&lt;p&gt;Unlike Jekyll, Gutenberg is not run by Github.  In other words, if you push Gutenberg project files, they won&#x27;t automatically build inside of Github and publish to the &lt;code&gt;gh-pages&lt;&#x2F;code&gt; branch.  However, we can use Travis CI to do this for us.&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;m not going to explain exactly how to set up Travis as there are great documents already on that subject.  All you need to do is set up a new Github repository and enable it within the Travis dashboard.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;adding-to-your-gitignore&quot;&gt;Adding to your &lt;code&gt;.gitignore&lt;&#x2F;code&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;You don&#x27;t want your project pushing the generated site to master accidentally if you do something like &lt;code&gt;gutenberg build&lt;&#x2F;code&gt; on master.  I recommend adding the following files to your &lt;code&gt;.gitignore&lt;&#x2F;code&gt;.  Keep in mind that this assumes that your project files are in the root directory.  For a static site generator &lt;em&gt;within&lt;&#x2F;em&gt; a code project, the structure may be different.&lt;&#x2F;p&gt;
+&lt;pre class=&quot;z-code&quot;&gt;&lt;code&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;public
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And that&#x27;s it.  Gutenberg outputs everything to the &lt;code&gt;public&lt;&#x2F;code&gt; directory (unless of course you use the new &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Keats&#x2F;gutenberg&#x2F;pull&#x2F;191&quot;&gt;&lt;code&gt;--ouput-dir parameter&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;)&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;setting-up-travis&quot;&gt;Setting up Travis&lt;&#x2F;h2&gt;
+&lt;p&gt;Before pushing anything, Travis needs a Github private access key in order to make changes to your repository.  If you&#x27;re already logged in to your account, just click &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;settings&#x2F;tokens&quot;&gt;here&lt;&#x2F;a&gt; to go to your tokens page.  Otherwise, navigate to &lt;code&gt;Settings &amp;gt; Developer Settings &amp;gt; Personal Access Tokens&lt;&#x2F;code&gt;.  Generate a new token, and give it any description you&#x27;d like.  Under the &quot;Select Scopes&quot; section, give it &lt;code&gt;repo&lt;&#x2F;code&gt; permissions.  Click &quot;Generate token&quot; to finish up.&lt;&#x2F;p&gt;
+&lt;p&gt;Your token will now be visible!  Copy it into your clipboard and head back to Travis.  Once on Travis, click on your project, and navigate to &quot;Settings&quot;.  Scroll down to &quot;Environment Variables&quot; and input a name of &lt;code&gt;GH_TOKEN&lt;&#x2F;code&gt; with a value of your access token.  Make sure &quot;Display value in build log&quot; is off, and then click add.  Now Travis has access to your repository.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;encrypted-keys&quot;&gt;Encrypted Keys&lt;&#x2F;h3&gt;
+&lt;p&gt;Alternatively, you can put encrypted keys right into your &lt;code&gt;.travis.yml&lt;&#x2F;code&gt; file by using &lt;a rel=&quot;noopener&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;docs.travis-ci.com&#x2F;user&#x2F;environment-variables&#x2F;#Defining-encrypted-variables-in-.travis.yml&quot;&gt;this&lt;&#x2F;a&gt; method.  Although this can be seen as more legible for other users, it requires Ruby and a special Travis gem.  I didn&#x27;t have Ruby on my system, and I didn&#x27;t feel like installing RVM, so I opted for just using the website.  Either is fine, and either will work!  If you do already have Ruby installed, I recommend the encrypted keys method.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;setting-up-your-settings&quot;&gt;Setting up your settings&lt;&#x2F;h2&gt;
+&lt;p&gt;We&#x27;re almost done.  We just need some scripts in a &lt;code&gt;.travis.yml&lt;&#x2F;code&gt; file to tell Travis what to do.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yaml&quot; class=&quot;language-yaml z-code&quot;&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag z-yaml&quot;&gt;before_script&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-key-value z-mapping z-yaml&quot;&gt;:&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-punctuation z-definition z-block z-sequence z-item z-yaml&quot;&gt;-&lt;&#x2F;span&gt; &lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;curl -s -L https:&#x2F;&#x2F;github.com&#x2F;Keats&#x2F;gutenberg&#x2F;releases&#x2F;download&#x2F;v0.2.2&#x2F;gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C &#x2F;usr&#x2F;local&#x2F;bin&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag z-yaml&quot;&gt;script&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-key-value z-mapping z-yaml&quot;&gt;:&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-punctuation z-definition z-block z-sequence z-item z-yaml&quot;&gt;-&lt;&#x2F;span&gt; &lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;gutenberg build&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag z-yaml&quot;&gt;after_success&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-key-value z-mapping z-yaml&quot;&gt;:&lt;&#x2F;span&gt; &lt;span class=&quot;z-keyword z-control z-flow z-block-scalar z-literal z-yaml&quot;&gt;|&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  [ $TRAVIS_BRANCH = master ] &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  [ $TRAVIS_PULL_REQUEST = false ] &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  gutenberg build &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  sudo pip install ghp-import &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  ghp-import -n public &amp;amp;&amp;amp; 
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  git push -fq https:&#x2F;&#x2F;${GH_TOKEN}@github.com&#x2F;${TRAVIS_REPO_SLUG}.git gh-pages
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;&lt;&#x2F;span&gt;```	
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;Lets take a look at that file again, but with comments.&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;```&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;yaml&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag z-yaml&quot;&gt;before_script&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-key-value z-mapping z-yaml&quot;&gt;:&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-comment z-line z-number-sign z-yaml&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment z-line z-number-sign z-yaml&quot;&gt;#&lt;&#x2F;span&gt; download gutenberg&amp;#39;s executable, unzip it, and add it to our binaries.  
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-comment z-line z-number-sign z-yaml&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment z-line z-number-sign z-yaml&quot;&gt;#&lt;&#x2F;span&gt; This link isn&amp;#39;t future proof!  By the time you read this article, a new
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-comment z-line z-number-sign z-yaml&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment z-line z-number-sign z-yaml&quot;&gt;#&lt;&#x2F;span&gt; version may have been released.  Check the Gutenberg release page
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-comment z-line z-number-sign z-yaml&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment z-line z-number-sign z-yaml&quot;&gt;#&lt;&#x2F;span&gt; on Github for more. 
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-punctuation z-definition z-block z-sequence z-item z-yaml&quot;&gt;-&lt;&#x2F;span&gt; &lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;curl -s -L https:&#x2F;&#x2F;github.com&#x2F;Keats&#x2F;gutenberg&#x2F;releases&#x2F;download&#x2F;v0.2.2&#x2F;gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C &#x2F;usr&#x2F;local&#x2F;bin&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag z-yaml&quot;&gt;script&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-key-value z-mapping z-yaml&quot;&gt;:&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;  &lt;span class=&quot;z-punctuation z-definition z-block z-sequence z-item z-yaml&quot;&gt;-&lt;&#x2F;span&gt; &lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;gutenberg build&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;&lt;span class=&quot;z-entity z-name z-tag z-yaml&quot;&gt;after_success&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-punctuation z-separator z-key-value z-mapping z-yaml&quot;&gt;:&lt;&#x2F;span&gt; &lt;span class=&quot;z-keyword z-control z-flow z-block-scalar z-literal z-yaml&quot;&gt;|&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  [ $TRAVIS_BRANCH = master ] &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  [ $TRAVIS_PULL_REQUEST = false ] &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  # This command builds our static site and automatically puts it in a directory 
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  # called `public`, unless specified otherwise
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  gutenberg build &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  # install ghp-import - more on that below
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  sudo pip install ghp-import &amp;amp;&amp;amp;
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  ghp-import -n public &amp;amp;&amp;amp; 
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  # finally, push with that token that we set earlier
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;  git push -fq https:&#x2F;&#x2F;${GH_TOKEN}@github.com&#x2F;${TRAVIS_REPO_SLUG}.git gh-pages
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-block z-yaml&quot;&gt;&lt;&#x2F;span&gt;```	
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;If you already have a `.travis.yml` file for your project, just try merging the two files together manually.&lt;&#x2F;span&gt;  
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;You can see we&amp;#39;re using [ghp-import](https:&#x2F;&#x2F;github.com&#x2F;davisp&#x2F;ghp-import) which is just an easy way to publish Github pages.&lt;&#x2F;span&gt;  
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-comment z-line z-number-sign z-yaml&quot;&gt;&lt;span class=&quot;z-punctuation z-definition z-comment z-line z-number-sign z-yaml&quot;&gt;#&lt;&#x2F;span&gt;# Caveats 
+&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;Please note that `ghp-import` will *obliterate* anything in the `gh-pages` branch.  It won&amp;#39;t just overwrite it, but completely destroy the branch and start new.  Keep this in mind if you need to preserve old versions for any reason.&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;&lt;span class=&quot;z-string z-unquoted z-plain z-out z-yaml&quot;&gt;Also, if you&amp;#39;re using a custom domain name like I am, you&amp;#39;ll need to specify that.  Instead of&lt;&#x2F;span&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-source z-yaml&quot;&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;ghp-import -n public&lt;&#x2F;p&gt;
+&lt;pre class=&quot;z-code&quot;&gt;&lt;code&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;You&amp;#39;ll need to write your domain name with the `-c` flag.  For instance, my website looks like this:
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;ghp-import -c vaporsoft.net -n public&lt;&#x2F;p&gt;
+&lt;pre class=&quot;z-code&quot;&gt;&lt;code&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;# Conclusion
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;If all goes well, the next time you make a push on `master`, your Github Pages should update and be visible.  If it&amp;#39;s not working, wait a minute or so.  Also make sure that the settings on your Github repo allow Github Pages.
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;# Thanks
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;Thanks to [Keats](https:&#x2F;&#x2F;vincent.is&#x2F;) for authoring Gutenberg, as well as the many [contributors](https:&#x2F;&#x2F;github.com&#x2F;Keats&#x2F;gutenberg&#x2F;graphs&#x2F;contributors) 
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;Thanks to [t-rex tileserver](http:&#x2F;&#x2F;t-rex.tileserver.ch&#x2F;) for providing an example CI file to go off of.
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;Thanks to [davisp](https:&#x2F;&#x2F;github.com&#x2F;davisp) for authoring ghp-import, as well as the many [contributors](https:&#x2F;&#x2F;github.com&#x2F;davisp&#x2F;ghp-import&#x2F;graphs&#x2F;contributors)
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;# Theme
+&lt;&#x2F;span&gt;&lt;span class=&quot;z-text z-plain&quot;&gt;If you want a theme for Gutenberg, you can look at or use my own custom them that I use for this blog called feather.  [It&amp;#39;s available here](https:&#x2F;&#x2F;github.com&#x2F;piedoom&#x2F;feather).  &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+        
+    </entry>
+</feed>

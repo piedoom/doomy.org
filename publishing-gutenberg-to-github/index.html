@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="Using Travis CI to publish a static zola site from a git repository">
+
+    
+    
+
+    
+<meta property="og:title" content="Automatically publishing your Gutenberg project to Github pages">
+<meta property="og:description" content="Using Travis CI to publish a static zola site from a git repository">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;publishing-gutenberg-to-github&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Automatically publishing your Gutenberg project to Github pages</h2>
+			<div class="info">
+				<span>2017 Dec 16</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<blockquote>
+<p>As of now, Zola (previously known as Gutenberg) has much easier ways of doing this! Please consider Github actions, or Netlify.</p>
+</blockquote>
+<h1 id="gutenberg-static-site-generators">Gutenberg &amp; Static Site generators</h1>
+<p>If you're familiar with Github, you're most likely also aware of the Github Pages tool that allows users to publish static sites.  This is particularly useful for docs or a blog.  By default, Github uses Jekyll (A ruby based static site generator), but you can use whatever you want provided you have an <code>index.html</code> file in the root of a branch called <code>gh-pages</code>.</p>
+<p>I recently came across a project called <a rel="noopener" target="_blank" href="https://www.getgutenberg.io/">Gutenberg</a> by <a rel="noopener" target="_blank" href="https://github.com/Keats/gutenberg">Keats</a> and other contributors.  I was initially interested in the project because I like the Rust programming language, but Gutenberg has the additional value of having everything-you-need in a single executable.</p>
+<p>This means that you don't need to fiddle with RVM or Python on your local machine to get started - you just need a <a rel="noopener" target="_blank" href="https://www.getgutenberg.io/documentation/getting-started/installation/">single executable</a>.  Being said, Gutenberg is opinionated, so don't expect a billion preprocessors bundled.  You get Tera - a fine templating markup - as well as an SCSS preprocessor.  If for some reason you love to torture yourself with CoffeeScript or Babel, you'll have to do that stuff on your own.</p>
+<h1 id="disclaimer">Disclaimer</h1>
+<p>This post is not about how to use Gutenberg.  For that stuff, please check out Gutenberg's official docs.  They're super easy to read through and quick to execute.  <a rel="noopener" target="_blank" href="https://www.getgutenberg.io/">See it here.</a></p>
+<h1 id="automating">Automating</h1>
+<p>Unlike Jekyll, Gutenberg is not run by Github.  In other words, if you push Gutenberg project files, they won't automatically build inside of Github and publish to the <code>gh-pages</code> branch.  However, we can use Travis CI to do this for us.</p>
+<p>I'm not going to explain exactly how to set up Travis as there are great documents already on that subject.  All you need to do is set up a new Github repository and enable it within the Travis dashboard.</p>
+<h2 id="adding-to-your-gitignore">Adding to your <code>.gitignore</code></h2>
+<p>You don't want your project pushing the generated site to master accidentally if you do something like <code>gutenberg build</code> on master.  I recommend adding the following files to your <code>.gitignore</code>.  Keep in mind that this assumes that your project files are in the root directory.  For a static site generator <em>within</em> a code project, the structure may be different.</p>
+<pre class="z-code"><code><span class="z-text z-plain">public
+</span></code></pre>
+<p>And that's it.  Gutenberg outputs everything to the <code>public</code> directory (unless of course you use the new <a rel="noopener" target="_blank" href="https://github.com/Keats/gutenberg/pull/191"><code>--ouput-dir parameter</code></a>)</p>
+<h2 id="setting-up-travis">Setting up Travis</h2>
+<p>Before pushing anything, Travis needs a Github private access key in order to make changes to your repository.  If you're already logged in to your account, just click <a rel="noopener" target="_blank" href="https://github.com/settings/tokens">here</a> to go to your tokens page.  Otherwise, navigate to <code>Settings &gt; Developer Settings &gt; Personal Access Tokens</code>.  Generate a new token, and give it any description you'd like.  Under the "Select Scopes" section, give it <code>repo</code> permissions.  Click "Generate token" to finish up.</p>
+<p>Your token will now be visible!  Copy it into your clipboard and head back to Travis.  Once on Travis, click on your project, and navigate to "Settings".  Scroll down to "Environment Variables" and input a name of <code>GH_TOKEN</code> with a value of your access token.  Make sure "Display value in build log" is off, and then click add.  Now Travis has access to your repository.</p>
+<h3 id="encrypted-keys">Encrypted Keys</h3>
+<p>Alternatively, you can put encrypted keys right into your <code>.travis.yml</code> file by using <a rel="noopener" target="_blank" href="https://docs.travis-ci.com/user/environment-variables/#Defining-encrypted-variables-in-.travis.yml">this</a> method.  Although this can be seen as more legible for other users, it requires Ruby and a special Travis gem.  I didn't have Ruby on my system, and I didn't feel like installing RVM, so I opted for just using the website.  Either is fine, and either will work!  If you do already have Ruby installed, I recommend the encrypted keys method.</p>
+<h2 id="setting-up-your-settings">Setting up your settings</h2>
+<p>We're almost done.  We just need some scripts in a <code>.travis.yml</code> file to tell Travis what to do.</p>
+<pre data-lang="yaml" class="language-yaml z-code"><code class="language-yaml" data-lang="yaml"><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml"><span class="z-entity z-name z-tag z-yaml">before_script</span></span><span class="z-punctuation z-separator z-key-value z-mapping z-yaml">:</span>
+</span><span class="z-source z-yaml">  <span class="z-punctuation z-definition z-block z-sequence z-item z-yaml">-</span> <span class="z-string z-unquoted z-plain z-out z-yaml">curl -s -L https://github.com/Keats/gutenberg/releases/download/v0.2.2/gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C /usr/local/bin</span>
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml"><span class="z-entity z-name z-tag z-yaml">script</span></span><span class="z-punctuation z-separator z-key-value z-mapping z-yaml">:</span>
+</span><span class="z-source z-yaml">  <span class="z-punctuation z-definition z-block z-sequence z-item z-yaml">-</span> <span class="z-string z-unquoted z-plain z-out z-yaml">gutenberg build</span>
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml"><span class="z-entity z-name z-tag z-yaml">after_success</span></span><span class="z-punctuation z-separator z-key-value z-mapping z-yaml">:</span> <span class="z-keyword z-control z-flow z-block-scalar z-literal z-yaml">|</span>
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  [ $TRAVIS_BRANCH = master ] &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  [ $TRAVIS_PULL_REQUEST = false ] &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  gutenberg build &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  sudo pip install ghp-import &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  ghp-import -n public &amp;&amp; 
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml"></span>```	
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml">Lets take a look at that file again, but with comments.</span>
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml">```<span class="z-string z-unquoted z-plain z-out z-yaml">yaml</span>
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml"><span class="z-entity z-name z-tag z-yaml">before_script</span></span><span class="z-punctuation z-separator z-key-value z-mapping z-yaml">:</span>
+</span><span class="z-source z-yaml">  <span class="z-comment z-line z-number-sign z-yaml"><span class="z-punctuation z-definition z-comment z-line z-number-sign z-yaml">#</span> download gutenberg&#39;s executable, unzip it, and add it to our binaries.  
+</span></span><span class="z-source z-yaml">  <span class="z-comment z-line z-number-sign z-yaml"><span class="z-punctuation z-definition z-comment z-line z-number-sign z-yaml">#</span> This link isn&#39;t future proof!  By the time you read this article, a new
+</span></span><span class="z-source z-yaml">  <span class="z-comment z-line z-number-sign z-yaml"><span class="z-punctuation z-definition z-comment z-line z-number-sign z-yaml">#</span> version may have been released.  Check the Gutenberg release page
+</span></span><span class="z-source z-yaml">  <span class="z-comment z-line z-number-sign z-yaml"><span class="z-punctuation z-definition z-comment z-line z-number-sign z-yaml">#</span> on Github for more. 
+</span></span><span class="z-source z-yaml">  <span class="z-punctuation z-definition z-block z-sequence z-item z-yaml">-</span> <span class="z-string z-unquoted z-plain z-out z-yaml">curl -s -L https://github.com/Keats/gutenberg/releases/download/v0.2.2/gutenberg-v0.2.2-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C /usr/local/bin</span>
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml"><span class="z-entity z-name z-tag z-yaml">script</span></span><span class="z-punctuation z-separator z-key-value z-mapping z-yaml">:</span>
+</span><span class="z-source z-yaml">  <span class="z-punctuation z-definition z-block z-sequence z-item z-yaml">-</span> <span class="z-string z-unquoted z-plain z-out z-yaml">gutenberg build</span>
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml"><span class="z-entity z-name z-tag z-yaml">after_success</span></span><span class="z-punctuation z-separator z-key-value z-mapping z-yaml">:</span> <span class="z-keyword z-control z-flow z-block-scalar z-literal z-yaml">|</span>
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  [ $TRAVIS_BRANCH = master ] &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  [ $TRAVIS_PULL_REQUEST = false ] &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  # This command builds our static site and automatically puts it in a directory 
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  # called `public`, unless specified otherwise
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  gutenberg build &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  # install ghp-import - more on that below
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  sudo pip install ghp-import &amp;&amp;
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  ghp-import -n public &amp;&amp; 
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  # finally, push with that token that we set earlier
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml">  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-block z-yaml"></span>```	
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml">If you already have a `.travis.yml` file for your project, just try merging the two files together manually.</span>  
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml">You can see we&#39;re using [ghp-import](https://github.com/davisp/ghp-import) which is just an easy way to publish Github pages.</span>  
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-comment z-line z-number-sign z-yaml"><span class="z-punctuation z-definition z-comment z-line z-number-sign z-yaml">#</span># Caveats 
+</span></span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml">Please note that `ghp-import` will *obliterate* anything in the `gh-pages` branch.  It won&#39;t just overwrite it, but completely destroy the branch and start new.  Keep this in mind if you need to preserve old versions for any reason.</span>
+</span><span class="z-source z-yaml">
+</span><span class="z-source z-yaml"><span class="z-string z-unquoted z-plain z-out z-yaml">Also, if you&#39;re using a custom domain name like I am, you&#39;ll need to specify that.  Instead of</span>
+</span><span class="z-source z-yaml">
+</span></code></pre>
+<p>ghp-import -n public</p>
+<pre class="z-code"><code><span class="z-text z-plain">
+</span><span class="z-text z-plain">You&#39;ll need to write your domain name with the `-c` flag.  For instance, my website looks like this:
+</span><span class="z-text z-plain">
+</span></code></pre>
+<p>ghp-import -c vaporsoft.net -n public</p>
+<pre class="z-code"><code><span class="z-text z-plain">
+</span><span class="z-text z-plain"># Conclusion
+</span><span class="z-text z-plain">If all goes well, the next time you make a push on `master`, your Github Pages should update and be visible.  If it&#39;s not working, wait a minute or so.  Also make sure that the settings on your Github repo allow Github Pages.
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain"># Thanks
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Thanks to [Keats](https://vincent.is/) for authoring Gutenberg, as well as the many [contributors](https://github.com/Keats/gutenberg/graphs/contributors) 
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Thanks to [t-rex tileserver](http://t-rex.tileserver.ch/) for providing an example CI file to go off of.
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain">Thanks to [davisp](https://github.com/davisp) for authoring ghp-import, as well as the many [contributors](https://github.com/davisp/ghp-import/graphs/contributors)
+</span><span class="z-text z-plain">
+</span><span class="z-text z-plain"># Theme
+</span><span class="z-text z-plain">If you want a theme for Gutenberg, you can look at or use my own custom them that I use for this blog called feather.  [It&#39;s available here](https://github.com/piedoom/feather).  </span></code></pre>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;publishing-gutenberg-to-github&#x2F;"
+				data-page-url="publishing-gutenberg-to-github"
+				data-page-title="Automatically publishing your Gutenberg project to Github pages"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

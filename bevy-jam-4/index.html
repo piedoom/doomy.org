@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+    <title>doomy</title>
+    <meta name="description" content="Thoughts on working with Bevy in version 0.12 to make a 3D marble game">
+
+    
+    
+
+    
+<meta property="og:title" content="I submitted a game to Bevy Jam 4 and it was pretty cool">
+<meta property="og:description" content="Thoughts on working with Bevy in version 0.12 to make a 3D marble game">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;bevy-jam-4&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/syntax-theme-light.css" media="screen" />
+    <link rel="stylesheet" href="/syntax-theme-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+    <script></script>
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex fill vcenter">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                </div>
+                
+                <button class="theme-switcher"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>I submitted a game to Bevy Jam 4 and it was pretty cool</h2>
+			<div class="info">
+				<span>2023 Dec 16</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p>I submitted an entry to the 4th #bevy jam this December, with the theme of "
+That's a LOT of Entities!". As a big fan of the <a rel="noopener" target="_blank" href="https://en.wikipedia.org/wiki/Marble_Blast_Ultra"><em>Marble Blast
+Ultra</em></a> game on the 360
+arcade, I though I might try a stab at something similar.</p>
+<h2 id="bevy-blast-ultra">Bevy Blast Ultra</h2>
+<p>With subtle acknowledgement of its inspiration, <a rel="noopener" target="_blank" href="https://github.com/piedoom/bevy_blast_ultra/releases/">Bevy Blast Ultra</a> brings several
+minutes of non-stop MVP marble action to any <del>browser</del> Windows, Mac, or Linux
+machine.</p>
+<h2 id="how-s-bevy-0-12">How's Bevy 0.12?</h2>
+<p>There's a couple Epic Rust Moments and issues I ran into while creating this
+game. Bevy has grown tremendously since I last wrote about it in version 0.6,
+and this is an effort to document what I found of note.</p>
+<h3 id="bevy-editor-pls">Bevy editor, pls</h3>
+<p>While Bevy is a
+capable engine, its lack of an editor means procedural generation is much more
+achievable in comparison to handcrafted levels. A game like MBU, however,
+requires intentionally designed levels (or a wizardly knowledge of procedural
+generation).</p>
+<p><img src="https://doomy.org/bevy-jam-4/MarbleBlastUltra_screenshot.png" alt="Marble Blast Ultra screenshot" /></p>
+<p>A few 3rd party <a rel="noopener" target="_blank" href="https://bevy-cheatbook.github.io/setup/bevy-tools.html">editors for
+Bevy</a> exist at the
+moment, but are understandably limited in comparison to established engines like
+Unreal.</p>
+<p>Fortunately, Bevy <em>is</em> able to import GLTFs, and a workflow for <a rel="noopener" target="_blank" href="https://github.com/kaosat-dev/Blender_bevy_components_workflow">exporting to
+Bevy is already
+available</a>.
+Using a single <code>.blend</code> file, I could edit all levels as different scenes, and
+create reusable prefabs. Most importantly, I could create any kind of level
+geometry that Blender could export.</p>
+<div class="social">
+    
+    
+    
+
+    <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy class="author" target="_blank">
+        <span><img class="avatar" src=https:&#x2F;&#x2F;files.mastodon.social&#x2F;accounts&#x2F;avatars&#x2F;000&#x2F;367&#x2F;262&#x2F;original&#x2F;bafb14fd8ede1c01.jpg /></span>
+        <div class="flex column gap-xsmall">
+            <h6>doomy 🦀</h6>
+            <p class="secondary small">@doomy@mastodon.social</p>
+        </div>
+    </a>
+
+    
+    <p>goal areas <a href="https://mastodon.social/tags/bevy" class="mention hashtag" rel="tag">#<span>bevy</span></a> b vevy bev y</p>
+
+    
+    
+    
+    
+    <video src=https:&#x2F;&#x2F;files.mastodon.social&#x2F;media_attachments&#x2F;files&#x2F;111&#x2F;526&#x2F;445&#x2F;252&#x2F;161&#x2F;386&#x2F;original&#x2F;44d4b40a7bc6718b.mp4 controls="true"></video>
+    
+    
+
+    <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy&#x2F;111526446179976498 class="secondary small"> December  5, 2023 at  1:57 AM
+    </a>
+    
+</div>
+<blockquote>
+<p>Early development footage</p>
+</blockquote>
+<h3 id="assets-are-still-kind-of-tricky-but-not-as-much">Assets are still kind of tricky, but not as much</h3>
+<p>Assets used to be among the more tedious game logic to implement. With the
+advent of helpful crates like
+<a rel="noopener" target="_blank" href="https://github.com/NiklasEi/bevy_asset_loader"><code>bevy_asset_loader</code></a>, this isn't
+much of an issue.</p>
+<p>Before I decided on going the Blender route, I considered writing a bunch of
+<code>.ron</code> scene files by hand. I would have liked to specify a bunch of prefab
+<code>.ron</code> scenes, and use them within level <code>.ron</code> scenes. Apparently, that still
+isn't a possibility just yet, but I hear an overhaul of the way scenes are
+handled in Bevy is under way. I imagine this might rely on some of the new asset
+v2 preprocessing features released in <code>0.12</code>.</p>
+<p>Annoyingly, it's still impossible to load folders with WASM (which isn't a
+Bevy issue, but still a bummer when you have to hard-code filenames in your
+project for web support).</p>
+<h3 id="z-will-always-be-up-to-me">Z will always be up to me</h3>
+<p>ok seriously though. "Up" is <code>(0.0,0.0,1.0)</code>, and I'm Tired of People trying to
+Tell Me Otherwise! It is not <code>(0.0,1.0,0.0)</code>. I will die on this very tall
+Z-aligned hill.</p>
+<p>This brings me to <strong>The worst moment of the Bevy Game Jam 2023</strong>: figuring out
+skyboxes.</p>
+<p>I spent 6 very misplaced hours right before the due date attempting to figure
+out how to convince my skybox image that Z is up.</p>
+<p>This was, of course, completely unnecessary compared to fixing core issues with
+the camera logic, but I persisted and brute-forced my way to figuring it out.</p>
+<h3 id="the-wretched-skybox-journey">The wretched skybox journey</h3>
+<p>Bevy provides a few files in the example assets for showing a skybox image, but
+it has some minor issues - mostly the fact that it is a little bit rotated.</p>
+<p><img src="https://doomy.org/bevy-jam-4/zup.png" alt="Game screenshot showing a skybox that is rotated 90 degrees counter-clockwise" /></p>
+<p>But that shouldn't be an issue, right? With the right editing, I could certainly
+rotate it back in the right direction. But the files Bevy provides are <code>ktx2</code>
+images. Most tools to convert to and from this format are CLI based (or need
+compilation) which I wanted to avoid. NVIDIA <em>does</em> provide a GUI application
+for viewing and exporting many of these filetypes, but it
+claimed my precious <code>ktx2</code> files were corrupt.</p>
+<p><img src="https://doomy.org/bevy-jam-4/texture-tools.png" alt="Settings view of NVIDIA Texture Tools Exporter" /></p>
+<blockquote>
+<p>This application has many, many settings, and I know what approximately 0 of
+them actually do.</p>
+</blockquote>
+<p>Thankfully, the Bevy repo also provide a <code>.png</code> skybox example, I just needed to
+map portions on the image in the correct sequence and rotation to match, which I
+figured out slowly and arduously by changing the image until everything properly
+tiled together.</p>
+<p><img src="https://doomy.org/bevy-jam-4/Ryfjallet_cubemap.png" alt="A cubemap from Bevy&#39;s examples" /></p>
+<p>I'm sure this is a solved problem, and there's a document
+somewhere specifying where to put which bit of image, but I instead spent hours
+brute forcing this. But hey, it eventually worked!</p>
+<blockquote>
+<p>I skipped over a lot with this story. It also involved forking a cubemap
+generator javascript project so I could up the photo resolution, and lots of
+aggravated scribbling in Microsoft paint</p>
+</blockquote>
+<h4 id="i-do-not-know-how-to-compile-a-c-project">I do not know how to compile a C project</h4>
+<p>One alternative route was to use Patrick Walton's <a rel="noopener" target="_blank" href="https://github.com/pcwalton/gltf-ibl-sampler-egui">automatic
+tool</a>, but this requires a
+beginner level of C knowledge and some patience. After scouring the internet
+for the right header files to download, and reading source code to figure out
+where to place them, I gave up. But it looks like a great application for this
+exact purpose, if you're able to get it running.</p>
+<h3 id="the-world-s-most-difficult-to-remember-acronym">The world's most difficult to remember acronym</h3>
+<p>Since I last used Bevy, its added another physics engine to the mainstream -
+<a rel="noopener" target="_blank" href="https://github.com/Jondolf/bevy_xpbd"><code>bevy_xpbd</code></a>. The <code>xpbd</code> part stands for
+<em>Extended Position Based Dynamics</em>. Without a bookmark, prepare to enter every
+permutation of <code>xpbd</code>'s letters in your search engine.</p>
+<p>XPBD to my understanding is a newer (but less battle-tested) way to calculate
+physics. The YouTube channel <a rel="noopener" target="_blank" href="https://www.youtube.com/watch?v=F0QwAhUnpr4"><code>Two Minute Papers</code></a> does a pretty good job
+summarizing the differences between XPBD and more traditional methods. One
+interesting feature of XPBD is that it can simulate situations where more
+traditional methods would fail, such as marbles on a track, which I incorporated
+into my game.</p>
+<p><img src="https://doomy.org/bevy-jam-4/rails.png" alt="Marble on rails in game" /></p>
+<div class="social">
+    
+    
+    
+
+    <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy class="author" target="_blank">
+        <span><img class="avatar" src=https:&#x2F;&#x2F;files.mastodon.social&#x2F;accounts&#x2F;avatars&#x2F;000&#x2F;367&#x2F;262&#x2F;original&#x2F;bafb14fd8ede1c01.jpg /></span>
+        <div class="flex column gap-xsmall">
+            <h6>doomy 🦀</h6>
+            <p class="secondary small">@doomy@mastodon.social</p>
+        </div>
+    </a>
+
+    
+    <p>something cool about bevy_xpbd is you can do these marble track things that would definitely break other engines</p>
+
+    
+    
+    
+    
+    <video src=https:&#x2F;&#x2F;files.mastodon.social&#x2F;media_attachments&#x2F;files&#x2F;111&#x2F;543&#x2F;690&#x2F;819&#x2F;473&#x2F;017&#x2F;original&#x2F;c4ce4fc1275515fc.mp4 controls="true"></video>
+    
+    
+
+    <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy&#x2F;111543692817690564 class="secondary small"> December  8, 2023 at  2:59 AM
+    </a>
+    
+</div>
+<p>I've used Rapier almost exclusively in the past, and while it's matured nicely,
+it's still a library intended for general use. That means it needs the glue of
+<code>bevy_rapier</code> to translate into our game world, and the Rapier and Bevy world
+don't always play together without issues. <code>bevy_xpbd</code> on the other hand, is
+designed specifically for use in Bevy, which (in my opinion) makes its resulting
+API far friendlier and intuitive to use. I didn't encounter any bugs or strange
+behavior and will use it as my physics engine of choice moving
+forwards.</p>
+<p>I only wish it had some built in forces (outside of gravity) like wind or
+magnetism - but those are easy enough to implement yourself.</p>
+<h3 id="graphics-are-too-good">Graphics are too good</h3>
+<p>As I alluded to earlier in this post, Bevy Blast Ultra is not playable
+in-browser, because it runs like rotten garbage, clocking in a spectacular
+~0.5FPS despite my desperate fumbling with <code>wasm-opt</code>. After playing a few other
+submissions, I suspect the issue is the shadow graphics, which
+were recently improved and look great, but might cost too much for a browser
+game. But hey, it looks really nice!</p>
+<div style="padding:56.25% 0 0 0;position:relative;margin:2em 0;"><iframe src="https://player.vimeo.com/video/893312876?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Bevy Blast Ultra Gameplay"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+<h3 id="adjusting-game-settings">Adjusting game settings</h3>
+<p>I used a big <code>.ron</code> file to store many game settings. Whenever there was some scalar that affected gameplay, I tried to include it here, so I could tweak values without needing to recompile. (Also, since there's no settings UI, this is at least an option for changing sensitivity).</p>
+<pre data-lang="js" class="language-js z-code"><code class="language-js" data-lang="js"><span class="z-source z-ts"><span class="z-meta z-function-call z-ts"><span class="z-entity z-name z-function z-ts">SettingsAsset</span></span><span class="z-meta z-brace z-round z-ts">(</span>
+</span><span class="z-source z-ts">    <span class="z-variable z-other z-readwrite z-ts">game</span>: <span class="z-meta z-brace z-round z-ts">(</span>
+</span><span class="z-source z-ts">        <span class="z-variable z-other z-readwrite z-ts">player</span>: <span class="z-meta z-brace z-round z-ts">(</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> More torque = ball goes faster</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">torque_strength</span>: <span class="z-constant z-numeric z-decimal z-ts">4<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>8</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> Impulse applied to the Z AXIS</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">jump_strength</span>: <span class="z-constant z-numeric z-decimal z-ts">6<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">friction</span>: <span class="z-constant z-numeric z-decimal z-ts">0<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>9</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> XPDBDPX calculates the mass of our collider, but /</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> by adjusting the density we can fine-tune things</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">density</span>: <span class="z-constant z-numeric z-decimal z-ts">1<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> Because theres multiple marbles, and we can&#39;t </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> just have one &quot;main&quot; player, the focal point is </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> actually the average of player positions. This </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> applies a force to marbles to keep them towards </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> the focus point. To keep players near the center </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> from vibrating, a &quot;deadzone&quot; is applied</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">magnetism_deadzone</span>: <span class="z-constant z-numeric z-decimal z-ts">0<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>5</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> How fast the pull towards the average center</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">magnetism_strength</span>: <span class="z-constant z-numeric z-decimal z-ts">1<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> How far the magnetic influence reaches</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">influence_radius</span>: <span class="z-constant z-numeric z-decimal z-ts">5<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts">        <span class="z-meta z-brace z-round z-ts">)</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts">        <span class="z-variable z-other z-readwrite z-ts">camera</span>: <span class="z-meta z-brace z-round z-ts">(</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">controller_sensitivity</span>: <span class="z-meta z-brace z-round z-ts">(</span><span class="z-constant z-numeric z-decimal z-ts">3<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span> <span class="z-constant z-numeric z-decimal z-ts">1<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>5</span><span class="z-meta z-brace z-round z-ts">)</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">mouse_sensitivity</span>: <span class="z-meta z-brace z-round z-ts">(</span><span class="z-constant z-numeric z-decimal z-ts">5<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span> <span class="z-constant z-numeric z-decimal z-ts">5<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-meta z-brace z-round z-ts">)</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">fov</span>: <span class="z-constant z-numeric z-decimal z-ts">90</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> lol this doesn&#39;t actually do anything anymore</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">fov_multiplier_range</span>: <span class="z-meta z-function-call z-ts"><span class="z-entity z-name z-function z-ts">RangeInclusive</span></span><span class="z-meta z-brace z-round z-ts">(</span> <span class="z-variable z-other z-readwrite z-ts">start</span>: <span class="z-constant z-numeric z-decimal z-ts">1<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>2</span><span class="z-punctuation z-separator z-comma z-ts">,</span> <span class="z-variable z-other z-readwrite z-ts">end</span>: <span class="z-constant z-numeric z-decimal z-ts">0<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>9</span> <span class="z-meta z-brace z-round z-ts">)</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> Not sure why it has to be between these two </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> numbers, but it does work!</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">angle_range</span>: <span class="z-meta z-function-call z-ts"><span class="z-entity z-name z-function z-ts">RangeInclusive</span></span><span class="z-meta z-brace z-round z-ts">(</span> <span class="z-variable z-other z-readwrite z-ts">start</span>: <span class="z-constant z-numeric z-decimal z-ts">200</span><span class="z-punctuation z-separator z-comma z-ts">,</span> <span class="z-variable z-other z-readwrite z-ts">end</span>: <span class="z-constant z-numeric z-decimal z-ts">270</span> <span class="z-meta z-brace z-round z-ts">)</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> How far away to position the camera from the </span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">            </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> player center</span>
+</span><span class="z-source z-ts">            <span class="z-variable z-other z-readwrite z-ts">distance</span>: <span class="z-constant z-numeric z-decimal z-ts">7<span class="z-meta z-delimiter z-decimal z-period z-ts">.</span>0</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts">        <span class="z-meta z-brace z-round z-ts">)</span>
+</span><span class="z-source z-ts">    <span class="z-meta z-brace z-round z-ts">)</span><span class="z-punctuation z-separator z-comma z-ts">,</span>
+</span><span class="z-source z-ts"><span class="z-punctuation z-whitespace z-comment z-leading z-ts">    </span><span class="z-comment z-line z-double-slash z-ts"><span class="z-punctuation z-definition z-comment z-ts">//</span></span><span class="z-comment z-line z-double-slash z-ts"> etc...</span>
+</span><span class="z-source z-ts"><span class="z-meta z-brace z-round z-ts">)</span>
+</span></code></pre>
+<p>I am a big fan of <code>Range</code>s in Rust. Am I the only one?</p>
+<h2 id="the-best-bevy">The best Bevy</h2>
+<p>Bevy is (objectively) a good game engine because Rust is (objectively) a good
+programming language. The best parts of Bevy are when it leverages the best
+parts of Rust, most notably in the incredibly satisfying generic <code>Query</code> API. I
+find the more trying tasks within Bevy consist of working with dynamic data (like asset
+loading). Still, I've found Bevy to be among the more enjoyable projects to hack
+on in Rust, contrast to my web escapades in
+<a rel="noopener" target="_blank" href="https://github.com/piedoom/cedr">Tauri</a> which left me feeling bitter and empty.</p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;bevy-jam-4&#x2F;"
+				data-page-url="bevy-jam-4"
+				data-page-title="I submitted a game to Bevy Jam 4 and it was pretty cool"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/syntax-theme-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/syntax-theme-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>
