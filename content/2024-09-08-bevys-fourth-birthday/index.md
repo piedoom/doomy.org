@@ -13,6 +13,19 @@ image = "opengraph.jpg"
 
 ![A 3D scene that reads "4 years of bevying"](opengraph.jpg)
 
+### Table of contents
+
+* [**4 years of bevy**](#4-years-of-bevy)
+  * [Best bevy improvements](#my-favorite-bevy-improvements-since-v0-1)
+  * [Organizing a bevy project for honor and success](#organizing-a-bevy-project-for-honor-and-success)
+  * [Lessons from the past](#projects)
+* [**Looking forward**](#iii-looking-forward)
+  * [What I'm still waiting for](#what-i-m-still-waiting-for)
+  * [bsn!](#bsn-bsn)
+* [**Closing**](#closing-thoughts)
+
+## 4 years of bevy
+
 Bevy released [4 years](https://bevyengine.org/news/bevys-fourth-birthday/#bevy-ecs-maturity) ago. Feel old yet? Well, I do, because my dive into making games with Rust started even earlier than that.
 
 5 years ago, Bevy didn't exist. The popular choices for Rust game engines were "[Piston](https://github.com/PistonDevelopers/piston)", a modular game engine which pioneered a ton of useful crates[^ui], and "[Amethyst](https://github.com/amethyst/amethyst)", a data-oriented, ECS-driven game engine, both of which are no longer in active development[^piston].
@@ -85,8 +98,6 @@ I'm really not a math guy. I still don't "get" Quaternions (and I'm not fully co
 
 
 I would still love to see more tutorials in this space, specifically for `wgsl`.
-
-{{ mastodon(url="https://hachyderm.io/@chrisbiscardi/112956295123270717") }}
 
 ### Gizmos
 
