@@ -1,8 +1,10 @@
 +++
 title = "Building a model locomotive controller with embedded Rust"
 author = "doomy"
-draft = true
-description = "i do not know what im doing"
+description = "Exploring DCC signals using Rust and ESP32 microcontrollers"
+
+[extra.feather.opengraph]
+image = "opengraph.jpg"
 
 [taxonomies]
 tags = ["rust", "embedded",]
@@ -158,7 +160,7 @@ I used a very neat library for the UI called [Kolibri](https://github.com/Yandri
 
 A few thoughts after approaching a larger embedded project:
 
-- Embassy makes embedded development much more approachable, even more than RTIC, which was my previous favorite.
+- Embassy makes embedded development much more approachable, even more than RTIC, which was my previous go-to.
 - Espressif and STM chips seem to be among the best supported by embedded Rust, and getting set up is far simpler than it used to be.
 - The Rust embedded ecosystem is relatively small compared to something like its game development scene, but it's still full of highly knowledgable, helpful, and friendly people who help make this language both approachable and powerful.
 
