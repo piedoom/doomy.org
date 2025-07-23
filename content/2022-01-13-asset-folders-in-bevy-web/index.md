@@ -17,7 +17,7 @@ take advantage of web, I ran into an issue where I could not use the
 
 From what I can see, load_folder is not supported with wasm currently. I was
 wondering if there is an alternative I can use that would work and would allow
-specifying directories? {% end %}
+specifying directories? 
 
 Take for instance, the following line from the [official asset loading
 example](https://github.com/bevyengine/bevy/blob/b724a0f586e6186f2a6ce4eb7903be0e340649e9/examples/asset/asset_loading.rs#L41):

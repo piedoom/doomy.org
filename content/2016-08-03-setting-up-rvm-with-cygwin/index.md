@@ -25,7 +25,7 @@ Getting RVM up and running is pretty simple once you have Cygwin set up.  Simply
 gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 ```
 
-And then 
+And then
 
 ```bash
 \curl -sSL https://get.rvm.io | bash -s stable
@@ -71,13 +71,13 @@ We can edit this by searching "Environment Variables" in the Start Menu.
 
 Go ahead and click that option.  It'll bring up a dialog.  We want to click the "Environment Variables" option on the bottom right.
 
-![](Capture-1.PNG)
+![](Capture-1.png)
 
 In the section titled "User variables for *username here*", scroll and look for a `Variable` named `Path`.  Double click it.
 
 ![](Untitled-1.png)
 
-Add a `New` variable by clicking the button on the top right.  The value of this will be whatever folder contains your `setup-x86_64.exe` file.  In my case, this was `E:\Program Files\Cygwin`, but by default, Cygwin installs to `C:\Cygwin`.  Note that you shouldn't append the actual file to your `Path` entry. 
+Add a `New` variable by clicking the button on the top right.  The value of this will be whatever folder contains your `setup-x86_64.exe` file.  In my case, this was `E:\Program Files\Cygwin`, but by default, Cygwin installs to `C:\Cygwin`.  Note that you shouldn't append the actual file to your `Path` entry.
 
 CORRECT
 ```bash

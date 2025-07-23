@@ -28,7 +28,7 @@ If you want to add them to your project, you still need to follow the next secti
 
 In Visual Studio, create a new application with `File > New > Project`.  Select `Visual C#` in the tree view, and `Console Application`.  Finally, name your application whatever you want.  Press `OK` to create the project.
 
-![](Capture-5.PNG)
+![](Capture-5.png)
 
 > If you're using the pre-made project files, add them to your solution now!  If not, skip this paragraph.  Change the `namespace` to your project name.  For instance, if your project was named `MyCoolBot`, change the `namespace` in both files so it looks like `namespace MyCoolBot` **instead** of `namespace TumblrBotUtilities`.
 
@@ -87,7 +87,7 @@ namespace MyCoolBot
 }
 ```
 
-These `using` statements allow us to use the `TumblrSharp` library in our `Tumblr` class.  
+These `using` statements allow us to use the `TumblrSharp` library in our `Tumblr` class.
 
 Our `Tumblr` class is going to hold the Tumblr client used to make API requests (like answering asks, making posts, etc.) Before we can make any requests, however, we need to get some authentication tokens.  I go into depth on how to get `oauth` tokens [here](https://vaporsoft.net/creating-a-tumblr-bot-from-scratch/#settingupourtumblraccount), so read up if you need a refresher.
 
@@ -123,7 +123,7 @@ namespace MyCoolBot
         const string CONSUMER_SECRET = "KEY HERE";
         const string OAUTH_TOKEN = "KEY HERE";
         const string OAUTH_TOKEN_SECRET = "KEY HERE";
-        
+
         static public TumblrClient Client;
         static public string BlogName { get; set; } = "somethinginterestingbot";
 
@@ -149,7 +149,7 @@ static Tumblr()
 }
 ```
 
-What we're doing here is simply creating a new `Client` with the values and tokens we got from our previous steps.  
+What we're doing here is simply creating a new `Client` with the values and tokens we got from our previous steps.
 
 Now that our `Client` is initialized, we can focus on our bot!  The hard part is over.  Switch over to your `Program.cs`
 
@@ -163,13 +163,13 @@ Here it is!  Here's *everything* you should have in your `Program.cs`.  Don't wo
 
 That's a lot of stuff!  But we know what most of it does.  `static void Main(string[] args)` is just the entry point for our program - it was generated for us when we created the project.
 
-In our Main method, we have our first API call!  
+In our Main method, we have our first API call!
 
 ```cs
 var inbox = Tumblr.Client.GetSubmissionPostsAsync(Tumblr.BlogName).Result;
 ```
 
-This reads pretty easily - We're getting all submission posts (read: asks) from our blog, and setting it to the variable `inbox`.  We pass in `Tumblr.BlogName` into the `GetSubmissionPostsAsync` call because Tumblr needs to know what blog from which to fetch messages.  In my previous example, I set `Tumblr.BlogName` to `somethinginterestingbot`.  
+This reads pretty easily - We're getting all submission posts (read: asks) from our blog, and setting it to the variable `inbox`.  We pass in `Tumblr.BlogName` into the `GetSubmissionPostsAsync` call because Tumblr needs to know what blog from which to fetch messages.  In my previous example, I set `Tumblr.BlogName` to `somethinginterestingbot`.
 
 Let's move on...
 
@@ -186,7 +186,7 @@ var msg = (AnswerPost)message;
 
 When we call `GetSubmissionPostsAsync`, we actually get a bunch of generic instances of a class called `BasePost`.  This isn't too helpful for answering questions, so we need to `cast` our message to the `AnswerPost` type.  If you don't understand what casting does, don't worry too much - but it can't hurt to do some research on casting, either!
 
-Finally - the meat of our program - 
+Finally - the meat of our program -
 
 ```cs
 Tumblr.Client.EditPostAsync(
@@ -194,13 +194,13 @@ Tumblr.Client.EditPostAsync(
         "hello", null, PostCreationState.Published));
 ```
 
-I'm going to steal the nice graphic from my [Ruby tutorial](https://vaporsoft.net/publishing-asks-with-your-tumblr-bot-2/) to explain what's going on here - 
+I'm going to steal the nice graphic from my [Ruby tutorial](https://vaporsoft.net/publishing-asks-with-your-tumblr-bot-2/) to explain what's going on here -
 
 ![](tumblr-bot-diagram-01-01-01.png)
 
 Basically, we're getting our submitted posts (which we already did with `GetSubmissionPostsAsync`), editing that post (with `EditPostAsync`), and changing the submission state from `submission` to `published` (with `PostCreationState.Published`).
 
-The little `"hello"` string is simply the response to our question post.  This is what will be published!  
+The little `"hello"` string is simply the response to our question post.  This is what will be published!
 
 If everything went correctly, when you start your program, your bot should answer you!
 
