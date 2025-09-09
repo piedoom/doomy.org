@@ -71,7 +71,7 @@ I've provided an example sandbox which implements a simple [*Karplus-Strong*](ht
 
 *Nothing* here is sampled - it's all generated in real time.
 
-<iframe frameborder="0" src="https://itch.io/embed-upload/14905959?color=333333" allowfullscreen="" width="100%" height="380"><a href="https://1-doomy.itch.io/karplus">Play Karplus on itch.io</a></iframe>
+<iframe frameborder="0" src="https://itch.io/embed-upload/14905959?color=333333" allowfullscreen="" width="100%" height="480"><a href="https://1-doomy.itch.io/karplus">Play Karplus on itch.io</a></iframe>
 
 I think it's pretty neat to get such a convincing and *reactive* sound from something so relatively simple in implementation, don't you agree? This kind of synthesis has many applications for games and interactive art. Imagine for a moment that you me, creating another game involving a rolling ball. Instead of downloading a few dozen `.wav` files, and hooking it up to a sampler, wouldn't it be neat to define material properties of your physics objects, and procedurally generate rolling noises based on just those details?
 
