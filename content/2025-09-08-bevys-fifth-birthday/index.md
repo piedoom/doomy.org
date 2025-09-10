@@ -67,7 +67,7 @@ Besides game development, I [first was interested](https://doomy.org/creating-an
 
 This opens up some intriging possibilities, including my nascient interest in physical modeling. Generative, physics-driven audio offers far greater control when compared to simple sample playback; sounds can be adjusted based on their physical model's properties.
 
-I've provided an example sandbox which implements a simple [*Karplus-Strong*](https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis) synthesizer - a *very* simple physical model of an idealized stringed instrument. Use the left mouse to create rectangles. A ball[^balls] will pop out regularly, and create a tone for each rectangle it hits, taking into consideration the rectangle's size as a physical parameter to calculate the resulting pitch. Use the right mouse to remove rectangles. Press "R" to reset the simulation.
+I've provided an example sandbox which implements a simple [*Karplus-Strong*](https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis) synthesizer - a *very* simple physical model of an idealized stringed instrument. Use the left mouse to create rectangles. A ball[^balls] will pop out regularly, and create a tone for each rectangle it hits, taking into consideration the rectangle's size as a physical parameter to calculate the resulting pitch. Use the right mouse to remove rectangles. Press "R" to reset the simulation[^sim].
 
 *Nothing* here is sampled - it's all generated in real time.
 
@@ -94,6 +94,8 @@ I haven't contributed[^contributing] to the engine itself in any capacity despit
 [^scripting]: I'm incredibly grateful to all the helpful people in the `bevy_mod_scripting` channel for their support getting set up. This is the first time I've built scripting support into *anything* and I owe all of my success to the knowledge shared in that community.
 
 [^bevy_audio]: Like with scripting, I'm incredibly grateful to the folks in Bevy's discord, chiefly BillyDM and Corvus Prudens for their help and patience with Firewheel and seedling.
+
+[^sim]: I also added modal synthesis, which you can try out by tapping the "m" and creating a rectangle.
 
 [^balls]: We're on number 4 now.
 
