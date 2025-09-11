@@ -2,10 +2,13 @@
 
 title = "Bevy's 5th Birthday"
 author = "doomy"
-description = "It's already been another year?"
+description = "Bevy at 5: game jams, Bevy's UI, Lua scripting, and real-time audio processing based on physical models."
 
 [taxonomies]
 tags = ["rust", "gamedev", "bevy"]
+
+[extra.feather.opengraph]
+image = "opengraph.jpg"
 
 +++
 
@@ -67,9 +70,9 @@ Besides game development, I [first was interested](https://doomy.org/creating-an
 
 This opens up some intriging possibilities, including my nascient interest in physical modeling. Generative, physics-driven audio offers far greater control when compared to simple sample playback; sounds can be adjusted based on their physical model's properties.
 
-I've provided an example sandbox which implements a simple [*Karplus-Strong*](https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis) synthesizer - a *very* simple physical model of an idealized stringed instrument. Use the left mouse to create rectangles. A ball[^balls] will pop out regularly, and create a tone for each rectangle it hits, taking into consideration the rectangle's size as a physical parameter to calculate the resulting pitch. Use the right mouse to remove rectangles. Press "R" to reset the simulation[^sim].
+I've provided an example sandbox which implements a simple [*Karplus-Strong*](https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis) synthesizer - a *very* simple physical model of an idealized stringed instrument. Use the left mouse to create rectangles. A ball[^balls] will pop out regularly, and create a tone for each rectangle it hits, taking into consideration the rectangle's size as a physical parameter to calculate the resulting pitch. Use the right mouse to remove rectangles. Press "R" to reset the simulation.
 
-*Nothing* here is sampled - it's all generated in real time.
+*Nothing* here is sampled - it's all generated in real time. If you want to experiment, switch the synthesis method of the next rectangle you draw by tapping the "k" or "m" button. "k" is for "Karplus-Strong", and "m" is for ["Modal synthesis"](https://ccrma.stanford.edu/~bilbao/booktop/node14.html), another physical modeling strategy.
 
 <iframe frameborder="0" src="https://itch.io/embed-upload/14905959?color=333333" allowfullscreen="" width="100%" height="480"><a href="https://1-doomy.itch.io/karplus">Play Karplus on itch.io</a></iframe>
 
@@ -94,8 +97,6 @@ I haven't contributed[^contributing] to the engine itself in any capacity despit
 [^scripting]: I'm incredibly grateful to all the helpful people in the `bevy_mod_scripting` channel for their support getting set up. This is the first time I've built scripting support into *anything* and I owe all of my success to the knowledge shared in that community.
 
 [^bevy_audio]: Like with scripting, I'm incredibly grateful to the folks in Bevy's discord, chiefly BillyDM and Corvus Prudens for their help and patience with Firewheel and seedling.
-
-[^sim]: I also added modal synthesis, which you can try out by tapping the "m" and creating a rectangle.
 
 [^balls]: We're on number 4 now.
 
