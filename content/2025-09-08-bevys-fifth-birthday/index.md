@@ -26,7 +26,7 @@ In comparison, my previous entry "Bevy Blast Ultra" - only available as a downlo
 
 Bevy's UI system is limited, though that is improving with the addition of core widgets. Despite the complexities of figuring out reactivity, having no [`dyn Bundle`](https://github.com/bevyengine/bevy/pull/19761) to work with, and RA's tendency to just give up after a certain number of nested `children![]`, using an ECS-driven UI system is actually quite pleasant. Bevy's UI can be expressive, albeit not very ergonomic (yet). In the future, BSN[^bsn] will enable rapid iteration as UI descriptions can be described as assets and reloaded without recompilation, which solves most of my qualms. Recompiling for every UI change can get exhausting. I can only imagine how my poor computer feels about it.
 
-{{ loop(src="ui.mp4") }}
+{{ loop(src="ui.mp4", caption="A purple UI ribbon for Toppled's editor, with various icon buttons. The cursor hovers over each of the buttons and finally clicks the first one labeled 'Start the simulation', launching a ball and knocking over dominos in a chain reaction.") }}
 
 Bevy's UI is now my go-to for game interface, replacing the venerable `egui` in most cases. `egui` is still far better suited for UI-heavy games (or really anything that needs text input), but its design is seemingly always in conflict with ECS concepts.
 
@@ -36,10 +36,11 @@ I find it is currently easier to understand and work with my own scene represent
 
 ## Scripting with an ECS
 
-I've been developing an iOS game with Bevy[^app] for the past few months on and off - a combination of Peggle and Balatro. It's not at all original, but it's rather fun. Uninterestingly, this marks my 3rd game centered around physics balls, after Toppled and Bevy Blast Ultra.
+I've been developing an iOS game prototype with Bevy[^app] for the past few months on and off - a combination of Peggle and Balatro. It's not at all original, but it's rather fun. Uninterestingly, this marks my 3rd game centered around physics balls, after Toppled and Bevy Blast Ultra.
 
 This game, which I'll call Plinketto[^rlm], is the same setup as Peggle. Players fire a ball at pegs, with the goal of reaching an ever-increasing score. Players can also purchase addons to attach to balls and make them do weird things like reverse gravity, split apart, or connect pegs together with a line of more pegs. This sort of behavior would be laborious at best to work out in Rust, so I'm using the excellent `bevy_mod_scripting`[^scripting] to integrate `lua` and define behavior for any game item. For example, the following turns any hit peg into a ball of its own that can also score. This is relatively complex behavior, completely defined within lua and enabled by the emergent behavior natural to an ECS.
 
+*(Please forgive my lua, as the last time I wrote it was for Garrysmod SWEPs in 1998.)*
 
 ```lua
 function on_score(ball_entity, peg_entity, points)
@@ -57,12 +58,10 @@ end
 
 ```
 
-*(Please forgive my lua, as the last time I wrote it was for Garrysmod SWEPs in 1998.)*
-
-{{ loop(src="peglatro.mp4") }}
+{{ loop(src="peglatro.mp4", caption="Game footage showing the powerup in action. The first projectile is fired from the top of the screen and hits a peg, which itself becomes a projectile that scores other pegs.
+This is captured from a real device, which is not a flex, but a cry for help, as the `ios-sim` target is not working as of 0.16.") }}
 
 I think that's pretty powerful! I wrote code for this game *without* any thought of implementing an item like this one, but I was still able to easily extend with minimal changes by scripting and adding a few components.
-
 
 ## The future of Bevy's audio
 
@@ -104,12 +103,14 @@ I haven't contributed[^contributing] to the engine itself in any capacity despit
 
 [^doit]: Go ahead and contribute, it's fine. I promise I'll do it too, eventually. Probably.
 
-> Note on SubStates:
+---
+
+> #### Note on SubStates
 >
 > In [an older post here](/extending-states-in-bevy) I demonstrate how to override a state enum's `PartialEq` and `Hash` implementation to only consider the discriminant, assuming any contained data is equal. While this can still be useful in certain situations, I've moved to [`SubStates`](https://docs.rs/bevy/latest/bevy/state/state/trait.SubStates.html), which fit the needs of the vast, vast majority of projects, and are much easier to use.
 >
 > In general, the problem I was trying to solve is that it can be difficult to know when certain world information like resources are available. Instead of assuming a `Score` resource exists when loading a game save, overridden states can provide all the necessary state information in the transition itself, which can make reasoning about lifecycles far simpler. However, it comes at a cost of high maintience. You can start to devise some very clever (and complex) systems just to handle this sort of behavior, but I believe all of this is orthogonal to Bevy's usual design patterns.  `SubStates`, combined with scoped entities and systems operating on event transitions, are the idiomatic answer.
 
-#### Source
-
-Source code for the synthesizer simulation shown on this page [can be found in this repository](https://github.com/piedoom/karplus).
+> #### Source
+>
+> Source code for the synthesizer simulation shown on this page [can be found in this repository](https://github.com/piedoom/karplus).
