@@ -18,7 +18,7 @@ It's been a whole year since last year. Wow! Bevy is now 5 years old (and a fell
 
 This year's jam was the most successful Bevy jam to date, if the metric entries (98!). My submission [Toppled](https://itch.io/jam/bevy-jam-6/rate/3627478) placed 2nd overall and 1st in game design, which I'm rather pleased with[^flawed]! While I [once again have wasted copious amounts of time on random nonsense](https://doomy.org/bevy-jam-4#the-wretched-skybox-journey) and crammed a good portion of development time into a 36-hour-straight bender, I *did* manage to get a release up for web.
 
-<iframe frameborder="0" src="https://itch.io/embed/3627478?bg_color=343138&amp;fg_color=ffffff&amp;link_color=945bfa&amp;border_color=5c5960" width="100%" height="167"><a href="https://1-doomy.itch.io/toppled">Toppled by doomy</a></iframe>
+<iframe title="Link to play Toppled on itch.io" frameborder="0" src="https://itch.io/embed/3627478?bg_color=343138&amp;fg_color=ffffff&amp;link_color=945bfa&amp;border_color=5c5960" width="100%" height="167"><a href="https://1-doomy.itch.io/toppled">Toppled by doomy</a></iframe>
 
 In comparison, my previous entry "Bevy Blast Ultra" - only available as a downloadable executable - received just 7 ratings, contrast to Toppled's 33.
 
@@ -73,7 +73,7 @@ I've provided an example sandbox which implements a simple [*Karplus-Strong*](ht
 
 *Nothing* here is sampled - it's all generated in real time. If you want to experiment, switch the synthesis method of the next rectangle you draw by tapping the "k" or "m" button. "k" is for "Karplus-Strong", and "m" is for ["Modal synthesis"](https://ccrma.stanford.edu/~bilbao/booktop/node14.html), another physical modeling strategy.
 
-<iframe frameborder="0" src="https://itch.io/embed-upload/14905959?color=333333" allowfullscreen="" width="100%" height="480"><a href="https://1-doomy.itch.io/karplus">Play Karplus on itch.io</a></iframe>
+<iframe title="Physical modeling simulation synthesizer" frameborder="0" src="https://itch.io/embed-upload/14905959?color=333333" allowfullscreen="" width="100%" height="480"><a href="https://1-doomy.itch.io/karplus">Play Karplus on itch.io</a></iframe>
 
 I think it's pretty neat to get such a convincing and *reactive* sound from something so relatively simple in implementation, don't you agree? This kind of synthesis has many applications for games and interactive art. Imagine for a moment that you me, creating another game involving a rolling ball. Instead of downloading a few dozen `.wav` files, and hooking it up to a sampler, wouldn't it be neat to define material properties of your physics objects, and procedurally generate rolling noises based on just those details?
 
