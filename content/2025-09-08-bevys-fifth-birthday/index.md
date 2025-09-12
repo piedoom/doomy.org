@@ -104,9 +104,12 @@ I haven't contributed[^contributing] to the engine itself in any capacity despit
 
 [^doit]: Go ahead and contribute, it's fine. I promise I'll do it too, eventually. Probably.
 
-
 > Note on SubStates:
 >
 > In [an older post here](/extending-states-in-bevy) I demonstrate how to override a state enum's `PartialEq` and `Hash` implementation to only consider the discriminant, assuming any contained data is equal. While this can still be useful in certain situations, I've moved to [`SubStates`](https://docs.rs/bevy/latest/bevy/state/state/trait.SubStates.html), which fit the needs of the vast, vast majority of projects, and are much easier to use.
 >
 > In general, the problem I was trying to solve is that it can be difficult to know when certain world information like resources are available. Instead of assuming a `Score` resource exists when loading a game save, overridden states can provide all the necessary state information in the transition itself, which can make reasoning about lifecycles far simpler. However, it comes at a cost of high maintience. You can start to devise some very clever (and complex) systems just to handle this sort of behavior, but I believe all of this is orthogonal to Bevy's usual design patterns.  `SubStates`, combined with scoped entities and systems operating on event transitions, are the idiomatic answer.
+
+#### Source
+
+Source code for the synthesizer simulation shown on this page [can be found in this repository](https://github.com/piedoom/karplus).
