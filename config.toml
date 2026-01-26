@@ -25,7 +25,21 @@ style = "class"
 head = ""
 timezone = "America/New_York"
 cusdis_id = "aaae44f5-19b5-419e-88d9-9522e2617ece"
-social =  { url = "https://mastodon.social/@doomy", display = "@doomy@mastodon.social" }
+social = { url = "https://mastodon.social/@doomy", display = "@doomy@mastodon.social" }
+
+[[extra.feather.links]]
+title = "posts"
+url = "/"
+
+[[extra.feather.links]]
+title = "social"
+url = "https://mastodon.social/@doomy"
+target_blank = true
+
+[[extra.feather.links]]
+title = "games"
+url = "https://1-doomy.itch.io/"
+target_blank = true
 
 [extra.feather.analytics]
 goatcounter_id = "doomy-org"
