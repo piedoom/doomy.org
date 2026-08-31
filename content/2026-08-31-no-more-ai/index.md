@@ -34,10 +34,14 @@ I don't want AI pushers in my community for no other reason than *I just don't l
 
 ## The damage
 
-Let's run some unscientific numbers to illustrate why I'm checked out: let's go through the latest posts in `#showcase` and see how many are AI-generated. This is my blog, so I'm absolutely witch-hunting and checking each repo when source is available. Out of the past 30 showcase submissions, around 10 can be confirmed as AI generated. If source was unavailable, I erred on the side of "No AI".  That's a 1 in 3 chance of being exposed to content I actively hate. Those numbers might be even worse than some social media platforms. 
+Let's run some unscientific numbers to illustrate why I'm checked out: let's go through the latest posts in `#showcase` and see how many are AI-generated. This is my blog, so I'm absolutely witch-hunting and checking each repo when source is available [^3]. Out of the past 30 showcase submissions, around 10 can be confirmed as AI generated. If source was unavailable, I erred on the side of "No AI".  That's a 1 in 3 chance of being exposed to content I actively hate. Those numbers might be even worse than some social media platforms. 
 
 I don't want to see AI art. Artists don't want to see AI art. The forces that drove artists off of platforms pushing AI like DeviantArt and ArtStation remain consistent all the way down to small Discord communities. Creative communities die when AI pushers are allowed to take the same stage. Protect yours.
 
 [^1]: Insofar as to create a rule (which I am fairly certain is targeted at me specifically) prohibiting "unconstructive negative ... reactions in response to contributors or community members who disclose AI use", as I would often react with a robot emoji on AI generated showcase posts.
 
 [^2]: "Well done" slop is still slop. I'm as interested in nice looking AI clouds and grass as I am an AI generated shitstain. I don't really care what you create, you should keep it to yourself when around others, like a noxious fart.
+
+[^3]: I'm checking for fairness. In reality, distinguishing AI generated content is usually effortless unless the person sharing went through great lengths to rewrite their visuals, code, and docs. There are several tells with Bevy projects, the first being [^4] that the author has no idea how their code works and cannot explain it, the second being that Claude loves to abuse text UI for debug information.
+
+[^4]: The first tell is actually that it looks like uninspired shit, but I'm being nice.
