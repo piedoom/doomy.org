@@ -103,7 +103,7 @@ I would still love to see more tutorials in this space, specifically for `wgsl`.
 
 Gizmos, introduced in [0.11](https://bevyengine.org/news/bevy-0-11/#gizmos), are a selection of "immediate mode" drawing primitives useful in debugging and prototyping. Gizmos are perfect for prototyping quick ideas while avoiding the added complexity of assets. I wrote a modest but respectable ~3,000 line project visualizing with only Gizmos before moving on to proper models.
 
-{{mastodon(url="https://mastodon.social/@doomy/113095182170100748")}}
+{{ mastodon(host="https://mastodon.social" id="113095182170100748") }}
 
 ### Triggers and observers
 
@@ -312,7 +312,7 @@ It's a puzzle game with tetrominoes! [Simple as it is, I'm happy with how this t
 
 This project highlights a recurring theme for me: I don't like 2D. Whenever I'm a few hours into a project using sprites, I can only think of how much easier everything would be in 3D space. I don't want to deal with sprite ordering in an isometric 2D game. We live in the future. We have access to more dimensions now, even the 2D is 3D[^dimensions].
 
-{{mastodon(url="https://mastodon.social/@doomy/113095335789830890")}}
+{{ mastodon(host="https://mastodon.social" id="113095335789830890") }}
 
 ## [wordlrs](https://github.com/piedoom/wordlrs)
 
@@ -324,7 +324,7 @@ Not a Bevy project (nor a eurorack), modsynth is a naive model synthesis impleme
 
 I did, however, create a neat dynamically generated 3D scene using Bevy. It's exactly like "Lethal Company", except without any gameplay.
 
-{{ mastodon(url="https://mastodon.social/@doomy/111756628711521099") }}
+{{ mastodon(host="https://mastodon.social" id="111756628711521099") }}
 
 ## [bevy-planty](https://github.com/piedoom/bevy-planty)
 
@@ -332,7 +332,7 @@ It's an [L-system](https://en.wikipedia.org/wiki/L-system) visualizer! L-systems
 
 egui is great, but working on this project was an early encounter with its aforementioned pitfalls. There's more than a few broken buttons.
 
-{{ mastodon(url="https://mastodon.social/@doomy/113109695733994318") }}
+{{ mastodon(host="https://mastodon.social" id="113109695733994318") }}
 
 ## [bevy blast ultra](https://github.com/piedoom/bevy_blast_ultra)
 

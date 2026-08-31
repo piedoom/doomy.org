@@ -47,7 +47,7 @@ Using a single `.blend` file, I could edit all levels as different scenes, and
 create reusable prefabs. Most importantly, I could create any kind of level
 geometry that Blender could export.
 
-{{ mastodon(url="https://mastodon.social/@doomy/111526446179976498") }}
+{{ mastodon(host="https://mastodon.social", id="111526446179976498") }}
 
 > Early development footage
 
@@ -145,7 +145,7 @@ into my game.
 
 ![Marble on rails in game](rails.png)
 
-{{ mastodon(url="https://mastodon.social/@doomy/111543692817690564") }}
+{{ mastodon(host="https://mastodon.social/" id="111543692817690564") }}
 
 I've used Rapier almost exclusively in the past, and while it's matured nicely,
 it's still a library intended for general use. That means it needs the glue of
