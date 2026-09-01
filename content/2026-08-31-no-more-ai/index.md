@@ -13,7 +13,7 @@ Over the past year, I've done something mythical; make friends as an adult. It's
 
 It has been wonderful for me. Has been. And maybe it still will be. But it's no longer a place I want to promote or share endeavours I deem artistic, because of (who would have guessed) the tech we're currently referring to as "AI". Being inspired and making friends isn't easy when your community is chock full of antisocial technology.
 
-Earlier this summer, Bevy adopted a new (more permissive) AI policy. Instead of a full and complete ban, AI contributions to the engine are now allowed, given that the contributor marks it and understands the changes fully. This change was made because frankly, a full ban is impossible to enforce. AI contributions still make it into the engine, but the "don't ask don't tell" policy means investigating any suspect PRs is nearly impossible.
+Earlier this summer, Bevy adopted a new (more permissive) AI policy. Instead of a full and complete ban, AI contributions to the engine are now allowed, given that the contributor marks it and understands the changes fully. This change was made as the previous more aggressive ban was proving impossible to enforce. AI contributions still make it into the engine, but the murkiness of the policy means investigating any suspect PRs is nearly impossible.
 
 I like the new rules! I actively voiced concerns and saw them addressed in real-time. If I had a vote and could do it again, I'd still want the same outcome. This isn't because AI is inevitable, but because by the time new guidelines were *required*, AI pushers already had Bevy's community at gunpoint. They were already causing issues, flaming other members with concerns, and overusing moderation channels to carve out their space.
 
@@ -34,7 +34,7 @@ I don't want AI pushers in my community for no other reason than *I just don't l
 
 ## The damage
 
-Let's run some unscientific numbers to illustrate why I'm checked out: let's go through the latest posts in `#showcase` and see how many are AI-generated. This is my blog, so I'm absolutely witch-hunting and checking each repo when source is available [^3]. Out of the past 30 showcase submissions, around 10 can be confirmed as AI generated. If source was unavailable, I erred on the side of "No AI".  That's a 1 in 3 chance of being exposed to content I actively hate. Those numbers might be even worse than some social media platforms. 
+Let's run some unscientific numbers to illustrate why I'm checked out: let's go through the latest posts in `#showcase` and see how many are AI-generated. This is my blog, so I'm absolutely wasting my time and checking each repo when source is available [^3]. Out of the past 30 showcase submissions, around 10 can be confirmed as AI generated. If source was unavailable, I erred on the side of "No AI".  That's a 1 in 3 chance of being exposed to content I actively hate. Those numbers might be even worse than some social media platforms. 
 
 I don't want to see AI art. Artists don't want to see AI art. The forces that drove artists off of platforms pushing AI like DeviantArt and ArtStation remain consistent all the way down to small Discord communities. Creative communities die when AI pushers are allowed to take the same stage. Protect yours.
 
