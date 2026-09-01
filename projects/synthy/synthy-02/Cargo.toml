@@ -1,0 +1,15 @@
+[package]
+name = "synthy"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# add some dependencies here
+fundsp = "0.3.2"
+num-derive = "0.3"
+num-traits = "0.2"
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug", branch="feature/clap" }
+rand = "0.8"

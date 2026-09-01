@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>doomy</title>
+    <meta name="description" content="Bevy at 5: game jams, Bevy&#x27;s UI, Lua scripting, and real-time audio processing based on physical models.">
+
+    
+    
+
+    
+<meta property="og:title" content="Bevy&#x27;s 5th Birthday">
+<meta property="og:description" content="Bevy at 5: game jams, Bevy&#x27;s UI, Lua scripting, and real-time audio processing based on physical models.">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;bevys-fifth-birthday&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+<meta property="og:image" content="https:&#x2F;&#x2F;doomy.org/bevys-fifth-birthday/opengraph.jpg">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/giallo-light.css" media="screen and (prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="/giallo-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex vcenter gap-large">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                    
+                    <div class="flex fill gap-medium">
+                    
+                        <a href=&#x2F;  >posts</a>
+                    
+                        <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy  target="_blank"  >social</a>
+                    
+                        <a href=https:&#x2F;&#x2F;1-doomy.itch.io&#x2F;  target="_blank"  >games</a>
+                    
+                    </div>
+                    
+                </div>
+                <div class="flex fill"></div>
+                
+                <button class="theme-switcher" aria-label="Switch themes"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Bevy&#x27;s 5th Birthday</h2>
+			<div class="info">
+				<span>2025 Sep 08</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p>It's been a whole year since last year. Wow! Bevy is now 5 years old (and a fellow Leo). I'm not a professional developer of any capacity, but I've been a hobbyist for over a decade now (frightening to ponder!). At this point, I can confidently say the vast majority of my time programming has been with Bevy. So, what has been going on in this past year, from a humble library user?</p>
+<h2 id="bevy-s-5th-game-jam-toppled">Bevy's 5th Game Jam: Toppled</h2>
+<p>This year's jam was the most successful Bevy jam to date, if the metric entries (98!). My submission <a rel="noopener external" target="_blank" href="https://itch.io/jam/bevy-jam-6/rate/3627478">Toppled</a> placed 2nd overall and 1st in game design, which I'm rather pleased with<sup class="footnote-reference"><a href="#flawed">1</a></sup>! While I <a rel="noopener external" target="_blank" href="https://doomy.org/bevy-jam-4#the-wretched-skybox-journey">once again have wasted copious amounts of time on random nonsense</a> and crammed a good portion of development time into a 36-hour-straight bender, I <em>did</em> manage to get a release up for web.</p>
+<iframe title="Link to play Toppled on itch.io" frameborder="0" src="https://itch.io/embed/3627478?bg_color=343138&amp;fg_color=ffffff&amp;link_color=945bfa&amp;border_color=5c5960" width="100%" height="167"><a href="https://1-doomy.itch.io/toppled">Toppled by doomy</a></iframe>
+<p>In comparison, my previous entry "Bevy Blast Ultra" - only available as a downloadable executable - received just 7 ratings, contrast to Toppled's 33.</p>
+<h3 id="bevy-s-ui-is-extremely-promising">Bevy's UI is extremely promising</h3>
+<p>Bevy's UI system is limited, though that is improving with the addition of core widgets. Despite the complexities of figuring out reactivity, having no <a rel="noopener external" target="_blank" href="https://github.com/bevyengine/bevy/pull/19761"><code>dyn Bundle</code></a> to work with, and RA's tendency to just give up after a certain number of nested <code>children![]</code>, using an ECS-driven UI system is actually quite pleasant. Bevy's UI can be expressive, albeit not very ergonomic (yet). In the future, BSN<sup class="footnote-reference"><a href="#bsn">2</a></sup> will enable rapid iteration as UI descriptions can be described as assets and reloaded without recompilation, which solves most of my qualms. Recompiling for every UI change can get exhausting. I can only imagine how my poor computer feels about it.</p>
+<figure>
+    <video autoplay loop muted >
+        
+        
+        <source type="video/mp4" src="ui.mp4">
+        
+        </source>
+        <p>Your browser does not support the video element.</p>
+    </video>
+    <figcaption>A purple UI ribbon for Toppled&#x27;s editor, with various icon buttons. The cursor hovers over each of the buttons and finally clicks the first one labeled &#x27;Start the simulation&#x27;, launching a ball and knocking over dominos in a chain reaction.</figcaption>
+</figure>
+<p>Bevy's UI is now my go-to for game interface, replacing the venerable <code>egui</code> in most cases. <code>egui</code> is still far better suited for UI-heavy games (or really anything that needs text input), but its design is seemingly always in conflict with ECS concepts.</p>
+<h3 id="save-files-and-scenes-are-difficult">Save files and scenes are difficult</h3>
+<p>I find it is currently easier to understand and work with my own scene representation as opposed to Bevy's, especially when I need to know <em>what</em> is in a scene file before spawning. In Toppled, I built my own scene asset representation with an enum of possible game objects. These game objects, when inserted, build the necessary bundle via component hooks. This makes level editing fairly straightforward, which is important for a "bridge constructor" type game like Toppled. I'm hopeful that BSN can improve the ergonomics of world serialization and open up new possibilities in this area.</p>
+<h2 id="scripting-with-an-ecs">Scripting with an ECS</h2>
+<p>I've been developing an iOS game prototype with Bevy<sup class="footnote-reference"><a href="#app">3</a></sup> for the past few months on and off - a combination of Peggle and Balatro. It's not at all original, but it's rather fun. Uninterestingly, this marks my 3rd game centered around physics balls, after Toppled and Bevy Blast Ultra.</p>
+<p>This game, which I'll call Plinketto<sup class="footnote-reference"><a href="#rlm">4</a></sup>, is the same setup as Peggle. Players fire a ball at pegs, with the goal of reaching an ever-increasing score. Players can also purchase addons to attach to balls and make them do weird things like reverse gravity, split apart, or connect pegs together with a line of more pegs. This sort of behavior would be laborious at best to work out in Rust, so I'm using the excellent <code>bevy_mod_scripting</code><sup class="footnote-reference"><a href="#scripting">5</a></sup> to integrate <code>lua</code> and define behavior for any game item. For example, the following turns any hit peg into a ball of its own that can also score. This is relatively complex behavior, completely defined within lua and enabled by the emergent behavior natural to an ECS.</p>
+<p><em>(Please forgive my lua, as the last time I wrote it was for Garrysmod SWEPs in 1998.)</em></p>
+<pre class="giallo z-code"><code data-lang="lua"><span class="giallo-l"><span class="z-keyword">function</span><span class="z-entity z-name z-entity z-name z-function"> on_score</span><span class="z-meta z-parameter">(</span><span class="z-variable z-parameter z-function z-variable z-parameter">ball_entity</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-parameter z-function z-variable z-parameter"> peg_entity</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-parameter z-function z-variable z-parameter"> points</span><span class="z-meta z-parameter">)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">    --</span><span class="z-comment"> Only bonus pegs will turn into balls</span></span>
+<span class="giallo-l"><span class="z-keyword">    local</span><span class="z-variable z-other z-variable"> has_objective</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> world</span><span>.</span><span class="z-support z-support z-function">has_component</span><span>(</span><span class="z-variable z-other z-variable">peg_entity</span><span>, </span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">Bonus</span><span>);</span></span>
+<span class="giallo-l"><span class="z-keyword">    if</span><span class="z-variable z-other z-variable"> has_objective</span><span class="z-keyword"> then</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">        --</span><span class="z-comment"> Adds physics to the peg so it is affected by gravity</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">        world</span><span>.</span><span class="z-support z-support z-function">insert_component</span><span>(</span><span class="z-variable z-other z-variable">peg_entity</span><span>, </span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">RigidBody</span><span>, </span><span class="z-support z-support z-function">construct</span><span>(</span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">RigidBody</span><span>, { </span><span class="z-variable z-other z-variable">variant</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">Dynamic</span><span class="z-punctuation z-definition z-string z-string">&quot; </span><span>}));</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">        --</span><span class="z-comment"> Tells the ECS this peg can score other pegs</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">        world</span><span>.</span><span class="z-support z-support z-function">insert_component</span><span>(</span><span class="z-variable z-other z-variable">peg_entity</span><span>, </span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">Projectile</span><span>, </span><span class="z-support z-support z-function">construct</span><span>(</span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">Projectile</span><span>, {}));</span></span>
+<span class="giallo-l"><span class="z-keyword">        local</span><span class="z-variable z-other z-variable"> velocity</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> world</span><span>.</span><span class="z-support z-support z-function">get_component</span><span>(</span><span class="z-variable z-other z-variable">ball_entity</span><span>, </span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">LinearVelocity</span><span>).</span><span class="z-entity">_1</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">        world</span><span>.</span><span class="z-support z-support z-function">insert_component</span><span>(</span><span class="z-variable z-other z-variable">peg_entity</span><span>, </span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">LinearVelocity</span><span>, </span><span class="z-support z-support z-function">construct</span><span>(</span><span class="z-variable z-other z-variable">types</span><span>.</span><span class="z-entity">LinearVelocity</span><span>, { </span><span class="z-variable z-other z-variable">_1</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-keyword z-keyword z-operator"> -</span><span class="z-variable z-other z-variable">velocity</span><span> }))</span></span>
+<span class="giallo-l"><span class="z-keyword">    end</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span>
+<span class="giallo-l"></span></code></pre><figure>
+    <video autoplay loop muted >
+        
+        
+        <source type="video/mp4" src="peglatro.mp4">
+        
+        </source>
+        <p>Your browser does not support the video element.</p>
+    </video>
+    <figcaption>Game footage showing the powerup in action. The first projectile is fired from the top of the screen and hits a peg, which itself becomes a projectile that scores other pegs.
+This is captured from a real device, which is not a flex, but a cry for help, as the `ios-sim` target is not working as of 0.16.</figcaption>
+</figure>
+<p>I think that's pretty powerful! I wrote code for this game <em>without</em> any thought of implementing an item like this one, but I was still able to easily extend with minimal changes by scripting and adding a few components.</p>
+<h2 id="the-future-of-bevy-s-audio">The future of Bevy's audio</h2>
+<p>Besides game development, I <a rel="noopener external" target="_blank" href="https://doomy.org/creating-an-audio-plugin-with-rust-vst/">first was interested</a> in Rust for its potential in realtime audio processing. I've been hopeful that the RustAudio and Bevy servers would collide more, and I'm getting my wish with <a rel="noopener external" target="_blank" href="https://github.com/BillyDM/firewheel">Firewheel</a> and its Bevy integration, <a rel="noopener external" target="_blank" href="https://github.com/corvusprudens/bevy_seedling"><code>bevy_seedling</code></a>. This system is highly flexible and extensible, with access to an audio graph complete with effects and adjustable parameters. Additionally, buffers of audio can be directly manipulated. If you've developed an audio plugin before, you should feel at home creating a Firewheel node <sup class="footnote-reference"><a href="#bevy_audio">6</a></sup>.</p>
+<p>This opens up some intriging possibilities, including my nascient interest in physical modeling. Generative, physics-driven audio offers far greater control when compared to simple sample playback; sounds can be adjusted based on their physical model's properties.</p>
+<p>I've provided an example sandbox which implements a simple <a rel="noopener external" target="_blank" href="https://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis"><em>Karplus-Strong</em></a> synthesizer - a <em>very</em> simple physical model of an idealized stringed instrument. Use the left mouse to create rectangles. A ball<sup class="footnote-reference"><a href="#balls">7</a></sup> will pop out regularly, and create a tone for each rectangle it hits, taking into consideration the rectangle's size as a physical parameter to calculate the resulting pitch. Use the right mouse to remove rectangles. Press "R" to reset the simulation.</p>
+<p><em>Nothing</em> here is sampled - it's all generated in real time. If you want to experiment, switch the synthesis method of the next rectangle you draw by tapping the "k" or "m" button. "k" is for "Karplus-Strong", and "m" is for <a rel="noopener external" target="_blank" href="https://ccrma.stanford.edu/~bilbao/booktop/node14.html">"Modal synthesis"</a>, another physical modeling strategy.</p>
+<iframe title="Physical modeling simulation synthesizer" frameborder="0" src="https://itch.io/embed-upload/14905959?color=333333" allowfullscreen="" width="100%" height="480"><a href="https://1-doomy.itch.io/karplus">Play Karplus on itch.io</a></iframe>
+<p>I think it's pretty neat to get such a convincing and <em>reactive</em> sound from something so relatively simple in implementation, don't you agree? This kind of synthesis has many applications for games and interactive art. Imagine for a moment that you me, creating another game involving a rolling ball. Instead of downloading a few dozen <code>.wav</code> files, and hooking it up to a sampler, wouldn't it be neat to define material properties of your physics objects, and procedurally generate rolling noises based on just those details?</p>
+<p>Some may consider this unnecessary CPU usage, or a complex solution to a simple problem that would do just fine with traditional sampling. Or, perhaps it's simply art that makes you slightly warmer.</p>
+<h2 id="contributing-still-feels-daunting">Contributing still feels daunting</h2>
+<p>I haven't contributed<sup class="footnote-reference"><a href="#contributing">8</a></sup> to the engine itself in any capacity despite using Bevy for a while. While I am comfortable with the engine itself, even issues marked suitable for new contributors seem like they require a unattainable level of foundational knowledge. In reality, I know it's far more beneficial for maintainers in the long run to help others effectively contribute, but the potential to burden someone with a misguided PR no matter how kind and supportive they are is somewhat of a core and primal fear of mine. I don't have a solution to this one, it's squarely a "me" problem. But I'm sure this made someone out there feel seen<sup class="footnote-reference"><a href="#doit">9</a></sup>.</p>
+<hr />
+<div class="footnote-definition" id="flawed"><sup class="footnote-definition-label">1</sup>
+<p>Itch's ratings tend to punish games that have more votes. I can't lie - I'm happy to get Good Numbers, even though I more or less got lucky with the number of votes I received - but still, there are tons of <a rel="noopener external" target="_blank" href="https://itch.io/jam/bevy-jam-6/entries">incredible games deserving a playthrough</a>.</p>
+</div>
+<div class="footnote-definition" id="bsn"><sup class="footnote-definition-label">2</sup>
+<p>Interesting fact: "BSN" is pronounced "Bee Ess N".</p>
+</div>
+<div class="footnote-definition" id="app"><sup class="footnote-definition-label">3</sup>
+<p>I am the world's first person to start making an app and then write a blog about it.</p>
+</div>
+<div class="footnote-definition" id="rlm"><sup class="footnote-definition-label">4</sup>
+<p>Until either CBS or Mike Stoklasa send me a C&amp;D</p>
+</div>
+<div class="footnote-definition" id="scripting"><sup class="footnote-definition-label">5</sup>
+<p>I'm incredibly grateful to all the helpful people in the <code>bevy_mod_scripting</code> channel for their support getting set up. This is the first time I've built scripting support into <em>anything</em> and I owe all of my success to the knowledge shared in that community.</p>
+</div>
+<div class="footnote-definition" id="bevy_audio"><sup class="footnote-definition-label">6</sup>
+<p>Like with scripting, I'm incredibly grateful to the folks in Bevy's discord, chiefly BillyDM and Corvus Prudens for their help and patience with Firewheel and seedling.</p>
+</div>
+<div class="footnote-definition" id="balls"><sup class="footnote-definition-label">7</sup>
+<p>We're on number 4 now.</p>
+</div>
+<div class="footnote-definition" id="contributing"><sup class="footnote-definition-label">8</sup>
+<p>I've given reviews and feedback, and while those <em>are</em> contributions and (hopefully) helpful, they are not something I personally view as significant.</p>
+</div>
+<div class="footnote-definition" id="doit"><sup class="footnote-definition-label">9</sup>
+<p>Go ahead and contribute, it's fine. I promise I'll do it too, eventually. Probably.</p>
+</div>
+<hr />
+<blockquote>
+<h4 id="note-on-substates">Note on SubStates</h4>
+<p>In <a href="/extending-states-in-bevy">an older post here</a> I demonstrate how to override a state enum's <code>PartialEq</code> and <code>Hash</code> implementation to only consider the discriminant, assuming any contained data is equal. While this can still be useful in certain situations, I've moved to <a rel="noopener external" target="_blank" href="https://docs.rs/bevy/latest/bevy/state/state/trait.SubStates.html"><code>SubStates</code></a>, which fit the needs of the vast, vast majority of projects, and are much easier to use.</p>
+<p>In general, the problem I was trying to solve is that it can be difficult to know when certain world information like resources are available. Instead of assuming a <code>Score</code> resource exists when loading a game save, overridden states can provide all the necessary state information in the transition itself, which can make reasoning about lifecycles far simpler. However, it comes at a cost of high maintience. You can start to devise some very clever (and complex) systems just to handle this sort of behavior, but I believe all of this is orthogonal to Bevy's usual design patterns.  <code>SubStates</code>, combined with scoped entities and systems operating on event transitions, are the idiomatic answer.</p>
+</blockquote>
+<blockquote>
+<h4 id="source">Source</h4>
+<p>Source code for the synthesizer simulation shown on this page <a rel="noopener external" target="_blank" href="https://github.com/piedoom/karplus">can be found in this repository</a>.</p>
+</blockquote>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;bevys-fifth-birthday&#x2F;"
+				data-page-url="bevys-fifth-birthday"
+				data-page-title="Bevy&#x27;s 5th Birthday"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/giallo-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/giallo-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

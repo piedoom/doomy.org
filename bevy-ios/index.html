@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>doomy</title>
+    <meta name="description" content="Adding platform-specific functionality like Game Center for your Bevy 0.16 game can be tricky to setup. Here&#x27;s how to do it.">
+
+    
+    
+
+    
+<meta property="og:title" content="Using Game Center with Bevy on iOS to manage save files">
+<meta property="og:description" content="Adding platform-specific functionality like Game Center for your Bevy 0.16 game can be tricky to setup. Here&#x27;s how to do it.">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;bevy-ios&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/giallo-light.css" media="screen and (prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="/giallo-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex vcenter gap-large">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                    
+                    <div class="flex fill gap-medium">
+                    
+                        <a href=&#x2F;  >posts</a>
+                    
+                        <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy  target="_blank"  >social</a>
+                    
+                        <a href=https:&#x2F;&#x2F;1-doomy.itch.io&#x2F;  target="_blank"  >games</a>
+                    
+                    </div>
+                    
+                </div>
+                <div class="flex fill"></div>
+                
+                <button class="theme-switcher" aria-label="Switch themes"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Using Game Center with Bevy on iOS to manage save files</h2>
+			<div class="info">
+				<span>2025 Jul 31</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<blockquote>
+<p>Disclaimer: I am not an expert about iOS or XCode. I wanted to post this solution because I couldn't find any information about it online. Please <a rel="noopener external" target="_blank" href="https://github.com/piedoom/doomy.org/issues/new">file an issue</a> with any corrections.</p>
+</blockquote>
+<blockquote>
+<p>Note that the iOS sim is broken as of <code>0.16</code>. You will need a physical device for this to compile, otherwise you will get an error like <code>failed to run custom build command for tracing-oslog v0.2.0</code>. If you want to use Game Center, you will need an Apple developer account.</p>
+</blockquote>
+<p>If you're developing Bevy apps for release on Apple's store, at some point you'll probably want to integrate with <a rel="noopener external" target="_blank" href="https://github.com/rustunit/bevy_ios_gamecenter">Game Center</a>, or know the <a rel="noopener external" target="_blank" href="https://github.com/rustunit/bevy_ios_safearea">safe areas</a> of your window. These crates require Swift Package Manager (SPM) dependencies.</p>
+<h2 id="download-a-working-template">Download a working template</h2>
+<p>If you want to skip how to get here and just <a rel="noopener external" target="_blank" href="https://codeberg.org/doomy/bevy_ios_template">download a working iOS template with SPM dependencies included, check out this repository</a>. Note that Android is removed, as I do not currently know anything about Android development and can't provide a known working solution. Refer to the official Bevy examples for Android.</p>
+<h2 id="issues-with-the-0-16-mobile-template">Issues with the <code>0.16</code> mobile template</h2>
+<p>If you use the <code>0.16</code> mobile XCode template and build scripts, you're in for a terrible time, because the template has changed, and it is not possible to use SPM without using XCode to handle linking. This <em>is</em> how iOS builds were formerly handled in the <code>0.15</code> template, though (thank you to b.R. in Discord for pointing this out, I was about to give up after trying to make the <code>0.16</code> template work for 2 days straight!). If you are not very familiar with XCode like me and have an existing project on <code>0.16</code>, I recommend removing your XCode project files instead of trying to adapt, since many attributes have changed.</p>
+<h2 id="adapting-the-0-15-template">Adapting the <code>0.15</code> template</h2>
+<blockquote>
+<p>This tutorial assumes you already have the toolchain and dependencies required to use XCode and build an iOS application</p>
+</blockquote>
+<p>First, let's download <a rel="noopener external" target="_blank" href="https://github.com/bevyengine/bevy/archive/refs/heads/release-0.15.0.zip">Bevy <code>0.15</code></a> and grab the mobile project in <code>examples/mobile/</code> (I moved the entire folder to a new directory to make it a project). Open <code>bevy_mobile_example.xcodeproj</code> so we can make a few changes.</p>
+<p>Currently, our project is <code>bevy_mobile_example</code>, with targets <code>bevy_mobile_example</code> and <code>cargo_ios</code>. We'll add SPM dependencies to the <code>bevy_mobile_example</code> target.</p>
+<p>Because we're creating a new project from this example, we need to fix <code>Library Search Paths</code>. Go to the <code>bevy_mobile_example</code> target (not project), "Build Settings", and then scroll to "Search Paths". We need to remove the <code>../../</code> from each path.</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>../../target/aarch64-apple-ios-sim/debug</span></span>
+<span class="giallo-l"><span>../../target/aarch64-apple-ios/debug</span></span>
+<span class="giallo-l"><span>../../target/x86_64-apple-ios/debug</span></span>
+<span class="giallo-l"><span>../../target/aarch64-apple-ios-sim/release</span></span>
+<span class="giallo-l"><span>../../target/aarch64-apple-ios/release</span></span>
+<span class="giallo-l"><span>../../target/x86_64-apple-ios/release</span></span></code></pre>
+<p>It should now look like this:</p>
+<figure>
+    <img src="xcode-target.png" alt="XCode showing the corrected Library Search Paths"></img>
+    <figcaption>XCode showing the corrected Library Search Paths</figcaption>
+</figure>
+<h3 id="fixing-assets">Fixing assets</h3>
+<p>Let's look at the Project navigator. The <code>assets</code> directory is also broken because of relative links.</p>
+<figure>
+    <img src="xcode-assets.png" alt="XCode showing the Project navigator with the “assets” directory in red error text"></img>
+    <figcaption>XCode showing the Project navigator with the “assets” directory in red error text</figcaption>
+</figure>
+<p>We can fix this by selecting the <code>assets</code> directory in the Project navigator, and showing the Inspector with the top right icon on the XCode window. In this pane, under "Identity and Type" is "Location" with the value <code>../../../assets</code>. First, create the <code>assets</code> directory in your project root, and then change the location path to <code>../assets</code>.</p>
+<blockquote>
+<p>If you are using Git, you might want to add a <code>.gitkeep</code> in your assets directory if it's empty.</p>
+</blockquote>
+<h3 id="renaming-the-project">Renaming the project</h3>
+<p>We don't really want to publish an app called <code>bevy_mobile_example</code>, so lets select the project, select the <code>bevy_mobile_example</code> target, select the text again, and rename it to whatever we want. In my case, I'll choose <code>ios_template</code>, but you can name it whatever you want. Take note of the name you choose.</p>
+<p>We're going to need to change 1 more options in target Build Settings:</p>
+<ul>
+<li>Linking - General
+<ul>
+<li>Other Linker Flags
+<ul>
+<li>Existing value: <code>$(inherited) -lbevy_mobile_example -lc++abi</code></li>
+<li>New value: <code>$(inherited) -lios_template -lc++abi</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="cargo-toml-changes"><code>Cargo.toml</code> changes</h3>
+<blockquote>
+<p>If you have an existing <code>Cargo.toml</code> from a <code>0.16</code> project, you should be able to skip this section. Just note your library name matches what you just set!</p>
+</blockquote>
+<p>There are still a few issues with our project's <code>Cargo.toml</code>. Dependency paths don't exist as this is no longer an example project.</p>
+<div class='filename'>
+    <div>Cargo.toml</div>
+</div><pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span>[</span><span class="z-entity z-name">package</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">name</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">bevy_mobile_example</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">lib</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">name</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">bevy_mobile_example</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">crate-type</span><span class="z-punctuation z-separator"> =</span><span> [</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">staticlib</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-separator">,</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">cdylib</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">dependencies</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">bevy</span><span class="z-punctuation z-separator"> =</span><span> {</span><span class="z-variable z-other z-variable"> path</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">../../</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span> }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">target</span><span>.</span><span class="z-entity z-name">aarch64-apple-ios-sim</span><span>.</span><span class="z-entity z-name">dependencies</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">bevy</span><span class="z-punctuation z-separator"> =</span><span> {</span><span class="z-variable z-other z-variable"> path</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">../../</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-other z-variable"> features</span><span class="z-punctuation z-separator"> =</span><span> [</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">ios_simulator</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span><span> }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">lints</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">workspace</span><span class="z-punctuation z-separator"> =</span><span class="z-constant z-constant z-language"> true</span></span></code></pre>
+<p>Change your toml to the following. Realistically, you're probably going to want a different package name than default, so I'll change mine here too so we can follow along together. Let's also remove that workspace lint while we're here. Lastly, remove the whole <code>target.aarch64-apple-ios-sim.dependencies</code> section, as <a rel="noopener external" target="_blank" href="https://github.com/bevyengine/bevy/pull/17702">it's not needed in <code>0.16</code></a>.</p>
+<div class='filename'>
+    <div>Cargo.toml</div>
+</div><pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span class="z-invalid z-illegal z-invalid">...</span></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">package</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">name</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">ios_template</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">lib</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">name</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">ios_template</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">crate-type</span><span class="z-punctuation z-separator"> =</span><span> [</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">staticlib</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-separator">,</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">cdylib</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">dependencies</span><span>]</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">bevy</span><span class="z-punctuation z-separator"> =</span><span> {</span><span class="z-variable z-other z-variable"> version</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">0.16</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span> }</span></span></code></pre>
+<blockquote>
+<p>You're probably going to want some debug optimization here too so your game doesn't take up 200% CPU</p>
+</blockquote>
+<h3 id="adjusting-lib-rs">Adjusting <code>lib.rs</code></h3>
+<p>At line <code>22</code> of <code>lib.rs</code>, the <code>#[bevy_main]</code> macro is used. It appears that the code this generates has changed from <code>0.15</code> to <code>0.16</code> leading to compilation errors, so remove the <code>#[bevy_main]</code> line entirely, and add a new function:</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span>#</span><span>[</span><span class="z-keyword">unsafe</span><span>(</span><span>no_mangle</span><span>)</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">unsafe</span><span class="z-storage z-type z-storage"> extern</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">C</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-entity z-name z-function"> main_rs</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">    main</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="signing-the-app">Signing the app</h3>
+<p>Back in XCode, ensure that a physical device is targeted, then build and run the application. If this is your first time running the application, you might see something like this:</p>
+<figure>
+    <img src="xcode-unsigned.png" alt="XCode dialog with the title “The executable is not codesigned.” and text “Sign the executable with a valid certificate and provisioning profile.”"></img>
+    <figcaption>XCode dialog with the title “The executable is not codesigned.” and text “Sign the executable with a valid certificate and provisioning profile.”</figcaption>
+</figure>
+<p>To solve this, go back to your project settings. Go to your newly-named target, go to "Signing &amp; Capabilities", enable "Automatically manage signing",  then select the desired value under "Team".</p>
+<h2 id="running-the-app">Running the app</h2>
+<blockquote>
+<p>Ensure your device is in developer mode</p>
+</blockquote>
+<p>At this point, you can build and run the application for your physical device. It should successfully build and display the default scene.</p>
+<figure>
+    <img src="bevy-default.jpeg" alt="The default bevy mobile example scene from 0.15"></img>
+    <figcaption>The default bevy mobile example scene from 0.15</figcaption>
+</figure>
+<h2 id="adding-spm-dependencies">Adding SPM dependencies</h2>
+<p>Now that we have everything working with the <code>0.15</code> template, let's take advantage by adding in packages that rely on SPM dependencies. Let's add <a rel="noopener external" target="_blank" href="https://lib.rs/crates/bevy_ios_gamecenter"><code>bevy_ios_gamecenter</code></a> into our Rust project.</p>
+<div class='filename'>
+    <div>Cargo.toml</div>
+</div><pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span class="z-invalid z-illegal z-invalid">...</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>[</span><span class="z-entity z-name">dependencies</span><span>]</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">bevy_ios_gamecenter</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">=0.4.0</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span></code></pre>
+<blockquote>
+<p>If you want Android and desktop builds, make sure you're using feature flags.</p>
+</blockquote>
+<p>According to the project docs, we also need to <a rel="noopener external" target="_blank" href="https://github.com/rustunit/bevy_ios_gamecenter?tab=readme-ov-file#1-add-to-xcode">add a package in XCode</a>, so do that now. It is recommended to keep it on the "Exact version"</p>
+<figure>
+    <img src="xcode-gamecenter.png" alt="A dialog for choosing which dependency to add a package to. Ensure that your custom named target is selected."></img>
+    <figcaption>A dialog for choosing which dependency to add a package to. Ensure that your custom named target is selected.</figcaption>
+</figure>
+<p>Depending on the package you're using, this might be all you need! Linking should work correctly and you can continue developing as normal. However, certain features require permissions and other setup, including Game Center.</p>
+<h2 id="setting-up-game-center">Setting up Game Center</h2>
+<p>At this point, we'll need to create a developer account with Apple, and (create a new app to publish)[https://appstoreconnect.apple.com/apps]. In the main settings for the app, ensure that Game Center is checked. We'll also need to associate the newly created app with the existing bundle under your account. If you don't have one set up, create that now, and ensure Game Center is enabled.</p>
+<figure>
+    <img src="apple-bundle-identifier.png" alt="A webpage showing app ID registration. Take note of your bundle identifier and ensure Game Center is enabled."></img>
+    <figcaption>A webpage showing app ID registration. Take note of your bundle identifier and ensure Game Center is enabled.</figcaption>
+</figure>
+<figure>
+    <img src="apple-new-app.png" alt="A dialog for creating a new app with the previously created bundle selected."></img>
+    <figcaption>A dialog for creating a new app with the previously created bundle selected.</figcaption>
+</figure>
+<figure>
+    <img src="apple-enable-game-center.png" alt="The newly created app page. Ensure that Game Center is enabled here, it&#x27;s easy to miss."></img>
+    <figcaption>The newly created app page. Ensure that Game Center is enabled here, it&#x27;s easy to miss.</figcaption>
+</figure>
+<p>Back in XCode, ensure that the Bundle Identifier matches the one you just created.</p>
+<figure>
+    <img src="xcode-bundle.png" alt="The XCode bundle is modified to match my newly created bundle identifier."></img>
+    <figcaption>The XCode bundle is modified to match my newly created bundle identifier.</figcaption>
+</figure>
+<h3 id="permissions">Permissions</h3>
+<p>We'll need to add a few capabilities for GameCenter to work. In Signing &amp; Capabilities, click the "+ Capability" button, and add Game Center.</p>
+<figure>
+    <img src="xcode-gamecenter-priv.png" alt="Adding the Game Center capability"></img>
+    <figcaption>Adding the Game Center capability</figcaption>
+</figure>
+<p>If you're taking advantage of game saves and other storage, you'll also need iCloud. If you enable iCloud, ensure "iCloud Documents" is enabled and assigned to a Container.</p>
+<figure>
+    <img src="xcode-icloud.png" alt="Both capabilities with necessary settings"></img>
+    <figcaption>Both capabilities with necessary settings</figcaption>
+</figure>
+<h3 id="using-game-center-in-rust">Using Game Center in Rust</h3>
+<p>It's finally time to stop fiddling with XCode and dive back into Rust. Here's what we're going to add to the mobile starter:</p>
+<ol>
+<li>The app should automatically sign in to Game Center</li>
+<li>When the camera view changes, its transform settings should be saved</li>
+<li>If a save file is present, it should be loaded and applied to the camera</li>
+</ol>
+<p>First, lets add <code>serde</code> and <code>ron</code> so we can serialize and deserialize to a format.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">cargo</span><span class="z-string"> add</span><span class="z-string"> ron</span><span class="z-string"> serde</span></span></code></pre>
+<p>Next, ensure that Bevy has the <code>serialize</code> feature enabled.</p>
+<div class='filename'>
+    <div>Cargo.toml</div>
+</div><pre class="giallo z-code"><code data-lang="toml"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">bevy</span><span class="z-punctuation z-separator"> =</span><span> {</span><span class="z-variable z-other z-variable"> version</span><span class="z-punctuation z-separator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">0.16</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-other z-variable"> features</span><span class="z-punctuation z-separator"> =</span><span> [</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">serialize</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span><span> }</span></span></code></pre>
+<p>While we can directly serialize the <code>Transform</code> to a file, in real scenarios we'll likely want a struct with all save information. We can add that to our <code>lib.rs</code>. Let's also add a loading state, since we'll need to wait on Game Center to load, and for our scene to spawn.</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span>#</span><span>[</span><span>derive</span><span>(</span><span>serde</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Serialize</span><span>,</span><span> serde</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Deserialize</span><span>,</span><span class="z-entity z-name"> Resource</span><span>)</span><span>]</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">struct</span><span class="z-entity z-name"> SaveFile</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    pub</span><span>(</span><span class="z-keyword">crate</span><span>)</span><span class="z-variable z-other z-variable"> camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Transform</span><span>,</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name"> Default</span><span class="z-keyword"> for</span><span class="z-entity z-name"> SaveFile</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    fn</span><span class="z-entity z-name z-entity z-name z-function"> default</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator"> -&gt;</span><span class="z-variable z-language"> Self</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">        //</span><span class="z-comment"> Match the mobile example default transform</span></span>
+<span class="giallo-l"><span class="z-variable z-language">        Self</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Transform</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">from_xyz</span><span>(</span><span class="z-keyword z-keyword z-operator">-</span><span class="z-constant z-constant z-numeric">2</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>,</span><span class="z-constant z-constant z-numeric"> 2</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">5</span><span>,</span><span class="z-constant z-constant z-numeric"> 5</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">looking_at</span><span>(</span><span class="z-entity z-name">Vec3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">ZERO</span><span>,</span><span class="z-entity z-name"> Vec3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Y</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>#</span><span>[</span><span>derive</span><span>(</span><span class="z-entity z-name">States</span><span>,</span><span class="z-entity z-name"> Clone</span><span>,</span><span class="z-entity z-name"> PartialEq</span><span>,</span><span class="z-entity z-name"> Eq</span><span>,</span><span class="z-entity z-name"> Hash</span><span>,</span><span class="z-entity z-name"> Debug</span><span>,</span><span class="z-entity z-name"> Default</span><span>)</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage z-type z-storage"> enum</span><span class="z-entity z-name"> GameState</span><span> {</span></span>
+<span class="giallo-l"><span>    #</span><span>[</span><span>default</span><span>]</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    Loading</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    Main</span><span>,</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> Ensure this is after `DefaultPlugins` are registered</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">init_state</span><span class="z-keyword z-keyword z-operator">::</span><span>&lt;</span><span class="z-entity z-name">GameState</span><span>&gt;</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">init_resource</span><span class="z-keyword z-keyword z-operator">::</span><span>&lt;</span><span class="z-entity z-name">SaveFile</span><span>&gt;</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
+<p>Also in <code>main</code>, replace all <code>add_systems</code> calls so that it uses states:</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">add_systems</span><span>(</span><span class="z-entity z-name z-entity z-name z-function">OnEnter</span><span>(</span><span class="z-entity z-name">GameState</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Main</span><span>)</span><span>,</span><span> (</span><span class="z-variable z-other z-variable">setup_scene</span><span>,</span><span class="z-variable z-other z-variable"> setup_music</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">add_systems</span><span>(</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    Update</span><span>,</span></span>
+<span class="giallo-l"><span>    (</span><span class="z-variable z-other z-variable">touch_camera</span><span>,</span><span class="z-variable z-other z-variable"> button_handler</span><span>,</span><span class="z-variable z-other z-variable"> handle_lifetime</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">run_if</span><span>(</span><span class="z-entity z-name z-entity z-name z-function">in_state</span><span>(</span><span class="z-entity z-name">GameState</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Main</span><span>)</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
+<p>Now, let's create a system that signs into Game Center, checks for any save, loads it, and then transitions to the main state.</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name z-entity z-name z-function"> load_gamecenter</span><span>(</span><span class="z-storage">mut</span><span class="z-variable z-other z-variable"> gc</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">BevyIosGamecenter</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">    use</span><span class="z-entity z-name"> bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-keyword z-keyword z-operator">*</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">    info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Authenticating with GameCenter...</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">    gc</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">authenticate</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">        .</span><span class="z-entity z-name z-entity z-name z-function">on_response</span><span>(</span><span class="z-keyword z-keyword z-operator">|</span><span class="z-variable z-other z-variable">trigger</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Trigger</span><span>&lt;</span><span class="z-entity z-name">IosGCAuthResult</span><span>&gt;</span><span>,</span><span class="z-storage">  mut</span><span class="z-variable z-other z-variable"> gc</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">BevyIosGamecenter</span><span class="z-keyword z-keyword z-operator">|</span><span class="z-keyword"> match</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-variable z-other z-variable">trigger</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">event</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            IosGCAuthResult</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">IsAuthenticated</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Successfully authenticated GameCenter</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Fetching saved games...</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">                gc</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">fetch_save_games</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">on_response</span><span>(</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">                    |</span><span class="z-variable z-other z-variable">trigger</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Trigger</span><span>&lt;</span><span class="z-variable z-other z-variable">bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">IosGCSaveGamesResponse</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">                     mut</span><span class="z-variable z-other z-variable"> gc</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">BevyIosGamecenter</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">                     mut</span><span class="z-variable z-other z-variable"> next_state</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> ResMut</span><span>&lt;</span><span class="z-entity z-name">NextState</span><span>&lt;</span><span class="z-entity z-name">GameState</span><span>&gt;</span><span>&gt;</span><span class="z-keyword z-keyword z-operator">|</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">                        match</span><span class="z-variable z-other z-variable"> trigger</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">event</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                            IosGCSaveGamesResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Done</span><span>(</span><span class="z-variable z-other z-variable">saved_games</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Successfully fetched saved games</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">                                let</span><span class="z-variable z-other z-variable"> save</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> saved_games</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-constant z-constant z-numeric">0</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">first</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">                                match</span><span class="z-variable z-other z-variable"> save</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">cloned</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                    Some</span><span>(</span><span class="z-variable z-other z-variable">save</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                        info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Loading save...</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">                                        gc</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">load_game</span><span>(</span><span class="z-variable z-other z-variable">save</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">on_response</span><span>(</span></span>
+<span class="giallo-l"><span class="z-keyword">                                            move</span><span class="z-keyword z-keyword z-operator"> |</span><span class="z-variable z-other z-variable">trigger</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Trigger</span><span>&lt;</span><span class="z-entity z-name">IosGCLoadGamesResponse</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">                                                mut</span><span class="z-variable z-other z-variable"> save_file</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> ResMut</span><span>&lt;</span><span class="z-entity z-name">SaveFile</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">                                                mut</span><span class="z-variable z-other z-variable"> next_state</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> ResMut</span><span>&lt;</span><span class="z-entity z-name">NextState</span><span>&lt;</span><span class="z-entity z-name">GameState</span><span>&gt;</span><span>&gt;</span><span class="z-keyword z-keyword z-operator">|</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">                                                match</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-variable z-other z-variable">trigger</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">event</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                                    IosGCLoadGamesResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Done</span><span>(</span><span>(</span><span class="z-variable z-other z-variable">_save_game</span><span>,</span><span class="z-variable z-other z-variable"> data</span><span>)</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                                        info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Successfully loaded save file</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">                                                        if</span><span class="z-storage z-type z-storage"> let</span><span class="z-entity z-name"> Some</span><span>(</span><span class="z-variable z-other z-variable">bytes</span><span>)</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> data</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">                                                            //</span><span class="z-comment"> Process the most recent save data</span></span>
+<span class="giallo-l"><span class="z-keyword">                                                            match</span><span class="z-entity z-name"> ron</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">de</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">from_bytes</span><span class="z-keyword z-keyword z-operator">::</span><span>&lt;</span><span class="z-entity z-name">SaveFile</span><span>&gt;</span><span>(</span><span class="z-variable z-other z-variable">bytes</span><span>)</span></span>
+<span class="giallo-l"><span>                                                            {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                                                Ok</span><span>(</span><span class="z-variable z-other z-variable">save_data</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">                                                                    //</span><span class="z-comment"> Successfully deserialized</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                                                    info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Save file loaded and ready!</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">                                                                    *</span><span class="z-variable z-other z-variable">save_file</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> save_data</span><span>;</span></span>
+<span class="giallo-l"><span>                                                                }</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                                                Err</span><span>(</span><span class="z-variable z-other z-variable">e</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                                                    error!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Failed to deserialize save file: </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>,</span><span class="z-variable z-other z-variable"> e</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                                                                }</span></span>
+<span class="giallo-l"><span>                                                            }</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">                                                            next_state</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">set</span><span>(</span><span class="z-entity z-name">GameState</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Main</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                                                        }</span></span>
+<span class="giallo-l"><span>                                                    }</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                                    IosGCLoadGamesResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Unknown</span><span>(</span><span class="z-variable z-other z-variable">_ios_gcsave_game</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                                        info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Couldn&#39;t find any save files</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">                                                        next_state</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">set</span><span>(</span><span class="z-entity z-name">GameState</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Main</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                                                    }</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                                    IosGCLoadGamesResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Error</span><span>(</span><span class="z-variable z-other z-variable">e</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                                        error!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Error loading save file: </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>,</span><span class="z-variable z-other z-variable"> e</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                                                    }</span></span>
+<span class="giallo-l"><span>                                                }</span></span>
+<span class="giallo-l"><span>                                            }</span><span>,</span></span>
+<span class="giallo-l"><span>                                        )</span><span>;</span></span>
+<span class="giallo-l"><span>                                    }</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                                    None</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                        info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">No saves.</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">                                        next_state</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">set</span><span>(</span><span class="z-entity z-name">GameState</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Main</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                                    }</span><span>,</span></span>
+<span class="giallo-l"><span>                                }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>                            }</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                            IosGCSaveGamesResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Error</span><span>(</span><span class="z-variable z-other z-variable">err</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                error!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Error fetching save games: </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>,</span><span class="z-variable z-other z-variable"> err</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                            }</span></span>
+<span class="giallo-l"><span>                        }</span></span>
+<span class="giallo-l"><span>                    }</span><span>,</span></span>
+<span class="giallo-l"><span>                )</span><span>;</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            IosGCAuthResult</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">LoginPresented</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span><span>}</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            IosGCAuthResult</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Error</span><span>(</span><span class="z-variable z-other z-variable">e</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span class="z-entity z-name z-entity z-name z-function"> error!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">auth error: </span><span class="z-string">{</span><span class="z-string">e</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>        }</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>That's a lot! Most of this system is just messages for diagnosing issues, but the important flow is as follows:</p>
+<ol>
+<li>When this system is called, Game Center will attempt to authenticate.</li>
+<li>When authenticated, a list of save files for this app will be retrieved</li>
+<li>After the list is retrieved, we select a specific filename to load</li>
+<li>After loading the save file data, we set the <code>SaveFile</code> resource to that data and transition states</li>
+</ol>
+<p>We need to add this system and the Game Center plugins in our app.</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">add_systems</span><span>(</span><span class="z-entity z-name z-entity z-name z-function">OnEnter</span><span>(</span><span class="z-entity z-name">GameState</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Loading</span><span>)</span><span>,</span><span class="z-variable z-other z-variable"> load_gamecenter</span><span>)</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span></code></pre><div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-variable z-other z-variable">app</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">add_plugins</span><span>(</span><span>(</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">IosGamecenterPlugin</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-constant z-constant z-language">true</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    DefaultPlugins</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">    //</span><span class="z-comment"> ...</span></span></code></pre>
+<p>Because of an issue with winit, I also recommend setting the log level to error to prevent log spam.</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">set</span><span>(</span><span class="z-entity z-name">LogPlugin</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">    //</span><span class="z-comment"> This will show some log events from Bevy to the native logger.</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">    level</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Level</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">DEBUG</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">    filter</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">wgpu=error,bevy_render=info,bevy_ecs=trace,winit=error</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">to_string</span><span>(</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">    ..</span><span class="z-entity z-name">Default</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">default</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>}</span><span>)</span></span></code></pre>
+<p>Now, we'll pass the <code>SaveFile</code> resource into our scene setup. Modify the following system:</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">fn</span><span class="z-entity z-name z-entity z-name z-function"> setup_scene</span><span>(</span></span>
+<span class="giallo-l"><span class="z-storage">    mut</span><span class="z-variable z-other z-variable"> commands</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Commands</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">    mut</span><span class="z-variable z-other z-variable"> meshes</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> ResMut</span><span>&lt;</span><span class="z-entity z-name">Assets</span><span>&lt;</span><span class="z-entity z-name">Mesh</span><span>&gt;</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">    mut</span><span class="z-variable z-other z-variable"> materials</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> ResMut</span><span>&lt;</span><span class="z-entity z-name">Assets</span><span>&lt;</span><span class="z-entity z-name">StandardMaterial</span><span>&gt;</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">    save_file</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Res</span><span>&lt;</span><span class="z-entity z-name">SaveFile</span><span>&gt;</span><span>,</span><span class="z-punctuation z-definition z-comment z-comment"> //</span><span class="z-comment"> Add this line</span></span>
+<span class="giallo-l"><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
+<p>And use the save file in the system for the camera transform:</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> camera</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">commands</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">spawn</span><span>(</span><span>(</span><span class="z-entity z-name">Camera3d</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">default</span><span>(</span><span>)</span><span>,</span><span class="z-variable z-other z-variable"> save_file</span><span class="z-keyword z-keyword z-operator">.</span><span>camera_transform</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> ...</span></span></code></pre>
+<p>Finally, hook up the button to save the current camera transform.</p>
+<div class='filename'>
+    <div>lib.rs</div>
+</div><pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> Test ui</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">commands</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">    .</span><span class="z-entity z-name z-entity z-name z-function">spawn</span><span>(</span><span>(</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Button</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Node</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            justify_content</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> JustifyContent</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Center</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            align_items</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> AlignItems</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Center</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            position_type</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> PositionType</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Absolute</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            left</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Val</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Px</span><span>(</span><span class="z-constant z-constant z-numeric">50</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            right</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Val</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Px</span><span>(</span><span class="z-constant z-constant z-numeric">50</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            bottom</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Val</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Px</span><span>(</span><span class="z-constant z-constant z-numeric">50</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">            ..</span><span class="z-entity z-name z-entity z-name z-function">default</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>        }</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">    .</span><span class="z-entity z-name z-entity z-name z-function">with_child</span><span>(</span><span>(</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        Text</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Save</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        TextFont</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            font_size</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-constant z-constant z-numeric"> 30</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>,</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">            ..</span><span class="z-entity z-name z-entity z-name z-function">default</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>        }</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        TextColor</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">BLACK</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        TextLayout</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new_with_justify</span><span>(</span><span class="z-entity z-name">JustifyText</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Center</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">    .</span><span class="z-entity z-name z-entity z-name z-function">observe</span><span>(</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">        //</span><span class="z-comment"> Save the camera position on click</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">        |</span><span class="z-variable z-other z-variable">_</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Trigger</span><span>&lt;</span><span class="z-entity z-name">Pointer</span><span>&lt;</span><span class="z-entity z-name">Click</span><span>&gt;</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Single</span><span>&lt;</span><span class="z-keyword z-keyword z-operator">&amp;</span><span class="z-entity z-name">Transform</span><span>,</span><span class="z-entity z-name"> With</span><span>&lt;</span><span class="z-entity z-name">Camera</span><span>&gt;</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">            mut</span><span class="z-variable z-other z-variable"> gc</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">BevyIosGamecenter</span><span class="z-keyword z-keyword z-operator">|</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">            let</span><span class="z-variable z-other z-variable"> save_data</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-entity z-name"> ron</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">to_string</span><span>(</span><span class="z-keyword z-keyword z-operator">&amp;</span><span class="z-entity z-name">SaveFile</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">                camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> *</span><span class="z-keyword z-keyword z-operator">*</span><span class="z-variable z-other z-variable">camera_transform</span><span>,</span></span>
+<span class="giallo-l"><span>            }</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">            .</span><span class="z-entity z-name z-entity z-name z-function">unwrap</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">            gc</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">save_game</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">save.ron</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">to_string</span><span>(</span><span>)</span><span>,</span><span class="z-variable z-other z-variable"> save_data</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">as_bytes</span><span>(</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">                .</span><span class="z-entity z-name z-entity z-name z-function">on_response</span><span>(</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">                    |</span><span class="z-variable z-other z-variable">trigger</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Trigger</span><span>&lt;</span><span class="z-variable z-other z-variable">bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">IosGCSavedGameResponse</span><span>&gt;</span><span class="z-keyword z-keyword z-operator">|</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">                        match</span><span class="z-variable z-other z-variable"> trigger</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">event</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                            bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">IosGCSavedGameResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Done</span><span>(</span><span class="z-variable z-other z-variable">_save_game</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                info!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Game saved successfully!</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                            }</span></span>
+<span class="giallo-l"><span class="z-entity z-name">                            bevy_ios_gamecenter</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">IosGCSavedGameResponse</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">Error</span><span>(</span><span class="z-variable z-other z-variable">e</span><span>)</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">                                error!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Failed to save game: </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>,</span><span class="z-variable z-other z-variable"> e</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>                            }</span></span>
+<span class="giallo-l"><span>                        }</span></span>
+<span class="giallo-l"><span>                    }</span><span>,</span></span>
+<span class="giallo-l"><span>                )</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span><span>;</span></span></code></pre>
+<p>And that's it! We can now boot up the app, move the camera around, and save the position. When we re-open the app, the position is loaded from our save file and applied to our scene!</p>
+<figure>
+    <video autoplay loop muted >
+        
+        
+        <source type="video/webm" src="save.webm">
+        
+        </source>
+        <p>Your browser does not support the video element.</p>
+    </video>
+    <figcaption>Saving the game state</figcaption>
+</figure>
+<figure>
+    <video autoplay loop muted >
+        
+        
+        <source type="video/webm" src="load.webm">
+        
+        </source>
+        <p>Your browser does not support the video element.</p>
+    </video>
+    <figcaption>Loading the game state</figcaption>
+</figure>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;bevy-ios&#x2F;"
+				data-page-url="bevy-ios"
+				data-page-title="Using Game Center with Bevy on iOS to manage save files"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/giallo-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/giallo-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

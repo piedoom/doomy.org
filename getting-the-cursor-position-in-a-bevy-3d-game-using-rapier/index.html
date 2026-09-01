@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>doomy</title>
+    <meta name="description" content="Getting the cursor world position in Bevy with the Rapier physics engine in 3D space">
+
+    
+    
+
+    
+<meta property="og:title" content="Getting the cursor world position in a Bevy 3D game with Rapier">
+<meta property="og:description" content="Getting the cursor world position in Bevy with the Rapier physics engine in 3D space">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;getting-the-cursor-position-in-a-bevy-3d-game-using-rapier&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/giallo-light.css" media="screen and (prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="/giallo-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex vcenter gap-large">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                    
+                    <div class="flex fill gap-medium">
+                    
+                        <a href=&#x2F;  >posts</a>
+                    
+                        <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy  target="_blank"  >social</a>
+                    
+                        <a href=https:&#x2F;&#x2F;1-doomy.itch.io&#x2F;  target="_blank"  >games</a>
+                    
+                    </div>
+                    
+                </div>
+                <div class="flex fill"></div>
+                
+                <button class="theme-switcher" aria-label="Switch themes"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Getting the cursor world position in a Bevy 3D game with Rapier</h2>
+			<div class="info">
+				<span>2021 Apr 25</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p>There's a few ways already out there to capture the cursor in <a rel="noopener external" target="_blank" href="https://bevyengine.org">Bevy</a> . If you're making a game in 2D space with an orthographic camera, there's some <a rel="noopener external" target="_blank" href="https://bevy-cheatbook.github.io/cookbook/cursor2world.html#2d-games">code in the Bevy Cheat Book</a>. If you're creating a game in 3D space, and need to select entities, there is <a rel="noopener external" target="_blank" href="https://lib.rs/crates/bevy_mod_picking">bevy_mod_picking</a>.</p>
+<p>I needed the world coordinates of my mouse, not a picker. I'm also using <a rel="noopener external" target="_blank" href="https://rapier.rs">Rapier</a>. The prospect using Rapier's physics system - instead of including another library - looked compelling.</p>
+<h2 id="caveats">Caveats</h2>
+<p>This method might not work depending on how your game is set up. I've only tested in a 3D perspective camera world. Additionally, the cursor position will only update when moved on the client-side. This can be an issue if the camera moves. The world position of the cursor may change without the device moving, but no update event will send.</p>
+<h2 id="ray-extension-traits">Ray extension traits</h2>
+<p>To get the mouse position, we need to cast a ray from our camera.</p>
+<p>I'm using <a rel="noopener external" target="_blank" href="https://rust-lang.github.io/rfcs/0445-extension-trait-conventions.html">extension traits</a> to add some new functionality to Rapier's <code>Ray</code> type. I adapted some code from a <a rel="noopener external" target="_blank" href="https://github.com/bevyengine/bevy/pull/615/files#diff-b8d1b19c39cd5204a806524463a0dd17a744079b4ffae0819b9056d6eb718533R11">Bevy PR</a> by <a rel="noopener external" target="_blank" href="https://github.com/bevyengine/bevy/pull/615#issue-496846792">MarekLg</a> to do this. (Thanks!)</p>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage z-type z-storage"> trait</span><span class="z-entity z-name"> RayExt</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">   fn</span><span class="z-entity z-name z-entity z-name z-function"> from_window</span><span>(</span><span class="z-variable z-other z-variable">window</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Window</span><span>,</span><span class="z-variable z-other z-variable"> camera</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Camera</span><span>,</span><span class="z-variable z-other z-variable"> camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">GlobalTransform</span><span>)</span><span class="z-keyword z-keyword z-operator"> -&gt;</span><span class="z-variable z-language"> Self</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">   fn</span><span class="z-entity z-name z-entity z-name z-function"> from_mouse_position</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       mouse_position</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Vec2</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       window</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Window</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       camera</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Camera</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">GlobalTransform</span><span>,</span></span>
+<span class="giallo-l"><span>   )</span><span class="z-keyword z-keyword z-operator"> -&gt;</span><span class="z-variable z-language"> Self</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">impl</span><span class="z-entity z-name"> RayExt</span><span class="z-keyword"> for</span><span class="z-entity z-name"> Ray</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">   fn</span><span class="z-entity z-name z-entity z-name z-function"> from_window</span><span>(</span><span class="z-variable z-other z-variable">window</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Window</span><span>,</span><span class="z-variable z-other z-variable"> camera</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Camera</span><span>,</span><span class="z-variable z-other z-variable"> camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">GlobalTransform</span><span>)</span><span class="z-keyword z-keyword z-operator"> -&gt;</span><span class="z-variable z-language"> Self</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-language">       Self</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">from_mouse_position</span><span>(</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">           &amp;</span><span class="z-variable z-other z-variable">window</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">cursor_position</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">unwrap</span><span>(</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">           window</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">           camera</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">           camera_transform</span><span>,</span></span>
+<span class="giallo-l"><span>       )</span></span>
+<span class="giallo-l"><span>   }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">   fn</span><span class="z-entity z-name z-entity z-name z-function"> from_mouse_position</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       mouse_position</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Vec2</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       window</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Window</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       camera</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Camera</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">       camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">GlobalTransform</span><span>,</span></span>
+<span class="giallo-l"><span>   )</span><span class="z-keyword z-keyword z-operator"> -&gt;</span><span class="z-variable z-language"> Self</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">       if</span><span class="z-variable z-other z-variable"> window</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">id</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator"> !=</span><span class="z-variable z-other z-variable"> camera</span><span class="z-keyword z-keyword z-operator">.</span><span>window </span><span>{</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">           panic!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">Generating Ray from Camera with wrong Window</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>       }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> x</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-constant z-constant z-numeric"> 2</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span class="z-keyword z-keyword z-operator"> *</span><span> (</span><span class="z-variable z-other z-variable">mouse_position</span><span class="z-keyword z-keyword z-operator">.</span><span>x </span><span class="z-keyword z-keyword z-operator">/</span><span class="z-variable z-other z-variable"> window</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">width</span><span>(</span><span>)</span><span class="z-keyword"> as</span><span class="z-entity z-name"> f32</span><span>)</span><span class="z-keyword z-keyword z-operator"> -</span><span class="z-constant z-constant z-numeric"> 1</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> y</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-constant z-constant z-numeric"> 2</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span class="z-keyword z-keyword z-operator"> *</span><span> (</span><span class="z-variable z-other z-variable">mouse_position</span><span class="z-keyword z-keyword z-operator">.</span><span>y </span><span class="z-keyword z-keyword z-operator">/</span><span class="z-variable z-other z-variable"> window</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">height</span><span>(</span><span>)</span><span class="z-keyword"> as</span><span class="z-entity z-name"> f32</span><span>)</span><span class="z-keyword z-keyword z-operator"> -</span><span class="z-constant z-constant z-numeric"> 1</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> camera_inverse_matrix</span><span class="z-keyword z-keyword z-operator"> =</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">           camera_transform</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">compute_matrix</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator"> *</span><span class="z-variable z-other z-variable"> camera</span><span class="z-keyword z-keyword z-operator">.</span><span>projection_matrix</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">inverse</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> near</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> camera_inverse_matrix</span><span class="z-keyword z-keyword z-operator"> *</span><span class="z-entity z-name"> Vec3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-variable z-other z-variable">x</span><span>,</span><span class="z-variable z-other z-variable"> y</span><span>,</span><span class="z-constant z-constant z-numeric"> 0</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">extend</span><span>(</span><span class="z-constant z-constant z-numeric">1</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> far</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> camera_inverse_matrix</span><span class="z-keyword z-keyword z-operator"> *</span><span class="z-entity z-name"> Vec3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-variable z-other z-variable">x</span><span>,</span><span class="z-variable z-other z-variable"> y</span><span>,</span><span class="z-constant z-constant z-numeric"> 1</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">extend</span><span>(</span><span class="z-constant z-constant z-numeric">1</span><span class="z-constant z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">0</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> near</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> near</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">truncate</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator"> /</span><span class="z-variable z-other z-variable"> near</span><span class="z-keyword z-keyword z-operator">.</span><span>w</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> far</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> far</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">truncate</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator"> /</span><span class="z-variable z-other z-variable"> far</span><span class="z-keyword z-keyword z-operator">.</span><span>w</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> dir</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Vec3</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> far</span><span class="z-keyword z-keyword z-operator"> -</span><span class="z-variable z-other z-variable"> near</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">       let</span><span class="z-variable z-other z-variable"> origin</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-entity z-name"> Point3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-variable z-other z-variable">near</span><span class="z-keyword z-keyword z-operator">.</span><span>x</span><span>,</span><span class="z-variable z-other z-variable"> near</span><span class="z-keyword z-keyword z-operator">.</span><span>y</span><span>,</span><span class="z-variable z-other z-variable"> near</span><span class="z-keyword z-keyword z-operator">.</span><span>z</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-variable z-language">       Self</span><span> {</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">           origin</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">           dir</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-variable z-other z-variable"> dir</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">to_vector3</span><span>(</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>       }</span></span>
+<span class="giallo-l"><span>   }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Now we have some methods (mainly <code>from_window</code>) that we can call to get a rapier <code>Ray</code>. We can use this to check for collisions.</p>
+<p>While optional, I took inspiration from <a rel="noopener external" target="_blank" href="https://github.com/aevyrie/bevy_mod_raycast/blob/8b2ee7d015b9bb886684d7ad7796e404944bd5dd/src/primitives.rs#L95">some code</a> in <a rel="noopener external" target="_blank" href="https://lib.rs/crates/bevy_mod_raycast"><code>bevy_mod_raycast</code></a> to create a Ray creation helper function.</p>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-keyword">pub</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-entity z-name z-function"> screen_to_world</span><span>(</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">   windows</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Res</span><span>&lt;</span><span class="z-entity z-name">Windows</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">   camera</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">Camera</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">   camera_transform</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">GlobalTransform</span><span>,</span></span>
+<span class="giallo-l"><span>)</span><span class="z-keyword z-keyword z-operator"> -&gt;</span><span class="z-entity z-name"> Ray</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">   let</span><span class="z-variable z-other z-variable"> window</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> windows</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">       .</span><span class="z-entity z-name z-entity z-name z-function">get</span><span>(</span><span class="z-variable z-other z-variable">camera</span><span class="z-keyword z-keyword z-operator">.</span><span>window</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">       .</span><span class="z-entity z-name z-entity z-name z-function">unwrap_or_else</span><span>(</span><span class="z-keyword z-keyword z-operator">|</span><span class="z-keyword z-keyword z-operator">|</span><span class="z-entity z-name z-entity z-name z-function"> panic!</span><span>(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">WindowId </span><span class="z-string">{</span><span class="z-string">}</span><span class="z-string"> does not exist</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>,</span><span class="z-variable z-other z-variable"> camera</span><span class="z-keyword z-keyword z-operator">.</span><span>window</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-entity z-name">   Ray</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">from_window</span><span>(</span><span class="z-variable z-other z-variable">window</span><span>,</span><span class="z-variable z-other z-variable"> camera</span><span>,</span><span class="z-variable z-other z-variable"> camera_transform</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="getting-the-cursor">Getting the cursor</h2>
+<p>In my case, I needed to get the cursor's position projected on a 2D plane (parallel to the camera's view). To do this in Rapier, we can use a <a rel="noopener external" target="_blank" href="https://docs.rs/rapier3d/0.8.0/rapier3d/geometry/struct.HalfSpace.html"><code>HalfSpace</code></a>.</p>
+<p>I also wanted to save these coordinates in a resource to access in my other systems.</p>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span>#</span><span>[</span><span>derive</span><span>(</span><span class="z-entity z-name">Default</span><span>)</span><span>]</span></span>
+<span class="giallo-l"><span class="z-keyword">pub</span><span class="z-storage z-type z-storage"> struct</span><span class="z-entity z-name"> CursorPosition</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">   pub</span><span class="z-variable z-other z-variable"> screen</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Vec2</span><span>,</span></span>
+<span class="giallo-l"><span class="z-keyword">   pub</span><span class="z-variable z-other z-variable"> world</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Vec3</span><span>,</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">pub</span><span class="z-keyword"> fn</span><span class="z-entity z-name z-entity z-name z-function"> update_cursor_position</span><span>(</span></span>
+<span class="giallo-l"><span class="z-storage">   mut</span><span class="z-variable z-other z-variable"> cursor_moved</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> EventReader</span><span>&lt;</span><span class="z-entity z-name">CursorMoved</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">   camera</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Query</span><span>&lt;</span><span>(</span><span class="z-keyword z-keyword z-operator">&amp;</span><span class="z-entity z-name">Camera</span><span>,</span><span class="z-keyword z-keyword z-operator"> &amp;</span><span class="z-entity z-name">GlobalTransform</span><span>)</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">   windows</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> Res</span><span>&lt;</span><span class="z-entity z-name">Windows</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span class="z-storage">   mut</span><span class="z-variable z-other z-variable"> cursor_position</span><span class="z-keyword z-keyword z-operator">:</span><span class="z-entity z-name"> ResMut</span><span>&lt;</span><span class="z-entity z-name">CursorPosition</span><span>&gt;</span><span>,</span></span>
+<span class="giallo-l"><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">   if</span><span class="z-storage z-type z-storage"> let</span><span class="z-entity z-name"> Some</span><span>(</span><span class="z-variable z-other z-variable">screen_position</span><span>)</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> cursor_moved</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">iter</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">last</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">map</span><span>(</span><span class="z-keyword z-keyword z-operator">|</span><span class="z-variable z-other z-variable">f</span><span class="z-keyword z-keyword z-operator">|</span><span class="z-variable z-other z-variable"> f</span><span class="z-keyword z-keyword z-operator">.</span><span>position</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword">       if</span><span class="z-storage z-type z-storage"> let</span><span class="z-entity z-name"> Ok</span><span>(</span><span>(</span><span class="z-variable z-other z-variable">camera</span><span>,</span><span class="z-variable z-other z-variable"> camera_transform</span><span>)</span><span>)</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> camera</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">single</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">           let</span><span class="z-variable z-other z-variable"> ray</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-entity z-name z-entity z-name z-function"> screen_to_world</span><span>(</span><span class="z-keyword z-keyword z-operator">&amp;</span><span class="z-variable z-other z-variable">windows</span><span>,</span><span class="z-variable z-other z-variable"> camera</span><span>,</span><span class="z-variable z-other z-variable"> camera_transform</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">           let</span><span class="z-variable z-other z-variable"> plane</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-entity z-name"> HalfSpace</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-entity z-name">Unit</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new_normalize</span><span>(</span><span class="z-entity z-name">Vec3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name">Z</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">to_vector3</span><span>(</span><span>)</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">           if</span><span class="z-storage z-type z-storage"> let</span><span class="z-entity z-name"> Some</span><span>(</span><span class="z-variable z-other z-variable">toi</span><span>)</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> plane</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">cast_local_ray</span><span>(</span><span class="z-keyword z-keyword z-operator">&amp;</span><span class="z-variable z-other z-variable">ray</span><span>,</span><span class="z-entity z-name"> Real</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">MAX</span><span>,</span><span class="z-constant z-constant z-language"> false</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-storage z-type z-storage">               let</span><span class="z-variable z-other z-variable"> r</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable"> ray</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">point_at</span><span>(</span><span class="z-variable z-other z-variable">toi</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">               cursor_position</span><span class="z-keyword z-keyword z-operator">.</span><span>screen </span><span class="z-keyword z-keyword z-operator">=</span><span class="z-variable z-other z-variable"> screen_position</span><span>;</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">               cursor_position</span><span class="z-keyword z-keyword z-operator">.</span><span>world </span><span class="z-keyword z-keyword z-operator">=</span><span class="z-entity z-name"> Vec3</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span><span class="z-variable z-other z-variable">r</span><span class="z-keyword z-keyword z-operator">.</span><span>x</span><span>,</span><span class="z-variable z-other z-variable"> r</span><span class="z-keyword z-keyword z-operator">.</span><span>y</span><span>,</span><span class="z-variable z-other z-variable"> r</span><span class="z-keyword z-keyword z-operator">.</span><span>z</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>           }</span></span>
+<span class="giallo-l"><span>       }</span></span>
+<span class="giallo-l"><span>   }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="going-beyond">Going beyond</h2>
+<p>We don't have to test on a <code>HalfSpace</code>, we can use any shape with any transform. (If you are applying a transform, use <code>.cast_ray</code> instead of <code>.cast_local_ray</code>.) We can also use this rapier <code>Ray</code> to test for collisions on entities, and create a simple picker.</p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;getting-the-cursor-position-in-a-bevy-3d-game-using-rapier&#x2F;"
+				data-page-url="getting-the-cursor-position-in-a-bevy-3d-game-using-rapier"
+				data-page-title="Getting the cursor world position in a Bevy 3D game with Rapier"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/giallo-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/giallo-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

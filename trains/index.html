@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>doomy</title>
+    <meta name="description" content="Exploring DCC signals using Rust and ESP32 microcontrollers">
+
+    
+    
+
+    
+<meta property="og:title" content="Building a model locomotive controller with embedded Rust">
+<meta property="og:description" content="Exploring DCC signals using Rust and ESP32 microcontrollers">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;trains&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+<meta property="og:image" content="https:&#x2F;&#x2F;doomy.org/trains/opengraph.jpg">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/giallo-light.css" media="screen and (prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="/giallo-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex vcenter gap-large">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                    
+                    <div class="flex fill gap-medium">
+                    
+                        <a href=&#x2F;  >posts</a>
+                    
+                        <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy  target="_blank"  >social</a>
+                    
+                        <a href=https:&#x2F;&#x2F;1-doomy.itch.io&#x2F;  target="_blank"  >games</a>
+                    
+                    </div>
+                    
+                </div>
+                <div class="flex fill"></div>
+                
+                <button class="theme-switcher" aria-label="Switch themes"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Building a model locomotive controller with embedded Rust</h2>
+			<div class="info">
+				<span>2025 Jul 22</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p>Do you have too many electronic components? Do you have a drawer full of $1 microcontroller dev boards? And, critically, do you have a 3D printer and nothing to print? Congratulations! You're going to put everything to good use by getting <em>really</em> into model railways.</p>
+<h2 id="dc-controlled-locomotives">DC controlled locomotives</h2>
+<p>Conventional model trains use DC power of variable voltage controlling speed. It's not very interesting. It actually kind of sucks. Running a loco <sup class="footnote-reference"><a href="#loco">1</a></sup> at very low speeds means very low voltage. Corroded connections and decades of rail gunk leads inconsistent power. These are workable issues - for permanent installations, adding multiple connection points, or running a wire in parallel to the track connecting at every segment can help. But, can multiple trains run at once? On a traditional system with no modifications, two locos cannot receive independent controls <sup class="footnote-reference"><a href="#blocks">2</a></sup>.</p>
+<figure>
+    <img src="hexie.jpg" alt="A tiny N-scale (1:160) model Diesel HXD3B locomotive with Chinese writing on the side."></img>
+    <figcaption>This N-scale (1:160) loco I want to control is especially susceptible to track dirt and poor connections</figcaption>
+</figure>
+<h2 id="dcc">DCC</h2>
+<p>DCC (Digital Command Control) is one solution to this problem. It uses digital signals, instead of variable voltage, to control locomotive speed, accessories, and other functions. Consistent power helps eliminate reliability issues due to low voltage, and digital control enables each loco or accessory to receive independent instructions.</p>
+<p>DCC sends commands to locomotives and accessories without the need for a third data rail; the signal is comprised of pulses of variable widths. A short pulse is a <code>1</code>, and a longer pulse is a <code>0</code>. The microcontroller generates these pulses, which are then powered by a motor driver at ~12V. The signal of one rail is inverted in order to create a consistent electric potential.</p>
+<h2 id="building-a-controller">Building a controller</h2>
+<p>There's already billion DCC-compatible controllers on the market, but we're trying to use up all of our spare components, so we're building our own. The first thing we'll need to do is buy some more components: a motor controller and a power supply.</p>
+<h3 id="motor-controller">Motor controller</h3>
+<p>I purchased <a rel="noopener external" target="_blank" href="https://www.aliexpress.us/item/3256806295638204.html">this module</a> for about $2. It's important to understand that no motors are directly controlled with this module; the part I care about is the H-bridge <sup class="footnote-reference"><a href="#protection">3</a></sup>.</p>
+<figure>
+    <img src="motor.png" alt="The L298N motor driver board"></img>
+    <figcaption>The L298N motor driver board</figcaption>
+</figure>
+<p>Following the guide on <a rel="noopener external" target="_blank" href="https://dcc-ex.com/reference/hardware/motorboards/L298N-motor-board-setup.html#gsc.tab=0">dcc-ex.com</a>, I added a couple current sense resistors. These are helpful for detecting shorts or stuck motors, shutting off the driver to prevent damage <sup class="footnote-reference"><a href="#railcom">4</a></sup>. I found that a combination of clipping the pins on the top of the board and soldering wires to pads on the back was easy enough. The guide also instructs to remove the jumpers keeping the <code>enable</code> pins high, so that we can control them manually via our MCU. It also instructs to remove the jumper from the power regulator if over 12V, however, after looking up the data sheet for my board, it appears the regulator IC used in my specific module is the LM76M05, and it can handle <a rel="noopener external" target="_blank" href="https://web.archive.org/web/20250416013002/http://www.ti.com/lit/ds/symlink/lm78m05-mil.pdf">2 to 35V</a> input, so I kept the jumper on and used it to power the MCU.</p>
+<blockquote>
+<p>Make sure your board's regulator can handle the voltage you're throwing at it, or remove the power regulator jumper.</p>
+</blockquote>
+<h4 id="motor-channels-and-programming-tracks">Motor channels and programming tracks</h4>
+<p>The L298N is a 2 channel motor driver, meaning we can drive two separate tracks at once. If you wanted double the advertised 2A per channel, you could common each input and output. I thought this would be a good idea, but learned that DCC utilizes something called a "programming" track, and an "operations" track, so 2 <em>separate</em> channels is actually useful if we want to be able to program locos while a normal operations track is also running.</p>
+<p>Each channel has two input bit pins, with the following truth table <sup class="footnote-reference"><a href="#motor-bit-source">5</a></sup>:</p>
+<table><thead><tr><th>Input 1</th><th>Input 2</th><th>Direction</th></tr></thead><tbody>
+<tr><td><code>0</code></td><td><code>0</code></td><td>Off</td></tr>
+<tr><td><code>1</code></td><td><code>0</code></td><td>Forward</td></tr>
+<tr><td><code>0</code></td><td><code>1</code></td><td>Backward</td></tr>
+<tr><td><code>1</code></td><td><code>1</code></td><td>Off</td></tr>
+</tbody></table>
+<h3 id="power-supply">Power supply</h3>
+<p>I also picked up this very small <a rel="noopener external" target="_blank" href="https://www.aliexpress.us/item/3256806674848290.html">power supply</a> and regulator, which has the important trait of current limiting so that I'm not relying solely on software to prevent catastrophic failure. A rail layout is essentially a long route of unshielded wires; a short is very likely, if not unavoidable. (Adding some additional protection like a fuse or software shutoff probably wouldn't be a terrible idea either).</p>
+<figure>
+    <img src="power.png" alt="Power supply with the screen on. Note how both the voltage and amperage are adjustable."></img>
+    <figcaption>Power supply with the screen on. Note how both the voltage and amperage are adjustable.</figcaption>
+</figure>
+<h3 id="hooking-up-the-modules">Hooking up the modules</h3>
+<p>TrainElectronics.com helpfully includes a <a rel="noopener external" target="_blank" href="http://www.trainelectronics.com/DCC_Arduino/DCC_Booster/images/schematic.gif">schematic</a>, albeit with a different motor driver. I adopted this to my own schematic based on the ESP32-C3, and eventually the C6. The ESP-C boards are fun and relatively inexpensive, but the C3 has a few clones with limited GPIO. I ended up purchasing a replacement ESP32-C6 board with several more pins that I'll be transitioning to later on, but the difference between the two is seemingly very negligible for my use case.</p>
+<figure>
+    <img src="groundspam.jpg" alt="An ESP32-C3 board with all pins that are non-IO highlighted"></img>
+    <figcaption>This board has way too many power inputs. The MCU itself does have more pins left unconnected, and they are actually hooked up on some other clones.</figcaption>
+</figure>
+<p>I use a circuit to invert the signal <sup class="footnote-reference"><a href="#invert">6</a></sup>, as opposed to inverting using software with 2 separate pins (this is an option with DCC-EX). However, I don't see the benefit to doing this. It's a super simple circuit to create, allows for a simpler software implementation, and frees up an extra pin. It's not super clear by looking at it, but it appears that inputs <code>1</code> and <code>3</code> get the inverted signal, whereas <code>2</code> and <code>4</code> get the original signal <sup class="footnote-reference"><a href="#audio">7</a></sup>.</p>
+<figure>
+    <img src="inverter-schema.png" alt="Schematic for the DCC signal inverter circuit"></img>
+    <figcaption>Schematic for the DCC signal inverter circuit</figcaption>
+</figure>
+<figure>
+    <img src="inverter.jpg" alt="DCC signal inverter for both channels with chunky through-hole components"></img>
+    <figcaption>DCC signal inverter for both channels with chunky through-hole components</figcaption>
+</figure>
+<h2 id="digging-into-dcc">Digging into DCC</h2>
+<p>Before we can transmit anything, we need a way to build and serialize DCC data. Thankfully, a DCC crate called <code>dcc-rs</code> <a rel="noopener external" target="_blank" href="https://github.com/sciguy16/dcc-rs">already exists</a>, albeit on an outdated version of <code>hal</code>. This is easily remedied with a <a rel="noopener external" target="_blank" href="https://github.com/piedoom/dcc-rs">few quick updates</a>. Now we just need a way to spit the data out to our motor controller.</p>
+<p>DCC bits are distinguished based on the length of their pulse. At first, I attempted a bitbang solution with the dcc-rs library, but my timing was always too slow or completely off when taking a look in Pulseview. I tried changing timing, adding manual delays, and other hacks, but was never getting consistent results. Thankfully, the ESP32-C3 and C6 offer a hardware peripheral called "Remote Control Transceiver" or RMT that can help. IR remotes use a similar method of transmitting bits, and we can use this device to generate the signal we want quickly<sup class="footnote-reference"><a href="#fastled">8</a></sup>. Using this method, I was able to successfully decode within Pulseview and send a signal to a commercial DCC decoder.</p>
+<pre class="giallo z-code"><code data-lang="rust"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> Building a pulse sequence and transmitting with the RMT peripheral</span></span>
+<span class="giallo-l"><span class="z-keyword">for</span><span> (</span><span class="z-variable z-other z-variable">bit</span><span>,</span><span class="z-variable z-other z-variable"> pulse</span><span>)</span><span class="z-keyword"> in</span><span class="z-variable z-other z-variable"> new_data</span><span>[</span><span class="z-keyword z-keyword z-operator">..</span><span class="z-variable z-other z-variable">len</span><span>]</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">iter</span><span>(</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">zip</span><span>(</span><span class="z-variable z-other z-variable">pulse_buffer</span><span>[</span><span class="z-keyword z-keyword z-operator">..</span><span class="z-variable z-other z-variable">len</span><span>]</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">iter_mut</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span class="z-keyword z-keyword z-operator">    *</span><span class="z-variable z-other z-variable">pulse</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-keyword"> match</span><span class="z-keyword z-keyword z-operator"> *</span><span class="z-variable z-other z-variable">bit</span><span> {</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">        true</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span class="z-entity z-name"> PulseCode</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">            false</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            dcc_rs</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">ONE_MICROS</span><span class="z-keyword"> as</span><span class="z-entity z-name"> u16</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">            true</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            dcc_rs</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">ONE_MICROS</span><span class="z-keyword"> as</span><span class="z-entity z-name"> u16</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">        false</span><span class="z-keyword z-keyword z-operator"> =&gt;</span><span class="z-entity z-name"> PulseCode</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-entity z-name z-entity z-name z-function">new</span><span>(</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">            false</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            dcc_rs</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">ZERO_MICROS</span><span class="z-keyword"> as</span><span class="z-entity z-name"> u16</span><span>,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">            true</span><span>,</span></span>
+<span class="giallo-l"><span class="z-entity z-name">            dcc_rs</span><span class="z-keyword z-keyword z-operator">::</span><span class="z-constant z-constant z-other">ZERO_MICROS</span><span class="z-keyword"> as</span><span class="z-entity z-name"> u16</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span><span>,</span></span>
+<span class="giallo-l"><span>    }</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable">rmt</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">transmit</span><span>(</span><span class="z-keyword z-keyword z-operator">&amp;</span><span class="z-variable z-other z-variable">pulse_buffer</span><span>[</span><span class="z-keyword z-keyword z-operator">..</span><span class="z-variable z-other z-variable">len</span><span class="z-keyword z-keyword z-operator"> +</span><span class="z-constant z-constant z-numeric"> 1</span><span>]</span><span>)</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-keyword">await</span><span class="z-keyword z-keyword z-operator">.</span><span class="z-entity z-name z-entity z-name z-function">unwrap</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">//</span><span class="z-comment"> Much easier than trying to juggle timers!</span></span></code></pre><figure>
+    <video autoplay loop muted >
+        
+        
+        <source type="video/webm" src="initial-test.webm">
+        
+        </source>
+        <p>Your browser does not support the video element.</p>
+    </video>
+    <figcaption>An early test. The MCU sends forward commands to address 03 (the default for this decoder) immediately on boot. I also have the loco motor power wired backwards, oops.</figcaption>
+</figure>
+<h4 id="note-receiving-data">Note: Receiving data</h4>
+<blockquote>
+<p>I didn't end up with a working solution for <em>receiving</em> DCC data, but did learn a few things about optoisolators. I've used these previously to decode MIDI data from keboards and synthesizers, using a <code>6N138</code>. It turns out that this is a little too slow for our applications, and the <code>6N137</code> is more commonly recommended as it is faster. The info around all this stuff, like MIDI, is pretty dated, and apparently nowadays digital isolators exist that are superior.</p>
+</blockquote>
+<h4 id="note-why-not-wireless">Note: Why not wireless?</h4>
+<blockquote>
+<p>Why even go through this trouble when wireless communication exists? That is an excellent question - especially when the ESP32 boards I'm using support wireless, and even have mesh network support. I wanted to write this in Rust, which didn't have great <a rel="noopener external" target="_blank" href="https://github.com/esp-rs/esp-hal/issues/1615">support</a> for what I was looking for at the time of writing. Plus, using DCC grants a ton of compatibility with commercial accessories and locomotives, as many come "DCC ready". If you are interested in mesh network control of locos, <a rel="noopener external" target="_blank" href="https://loco.engineering/docs/wcc-protocol/">someone's already done that!</a>.</p>
+</blockquote>
+<h2 id="display">Display</h2>
+<p>I bought an OLED screen labeled <code>SSD1322</code>. Despite being grayscale, it's relatively large, extremely bright, and has excellent support with the <code>ssd1322_rs</code> crate. The units I found on Aliexpress needed to be converted to "4 wire" SPI by soldering some bridges. Note that I was unable to get it working with the advertised 3 wire mode, (even though we aren't using MISO).</p>
+<figure>
+    <img src="oled-trace.jpg" alt="Back of the OLED module with bridged connections"></img>
+    <figcaption>Back of the OLED module with bridged connections</figcaption>
+</figure>
+<h2 id="housing">Housing</h2>
+<p>Before this project, I used SolveSpace - a relatively simple parametric CAD program. However, around this time, FreeCAD 1.0 was released with a ton of improvements that made it much more stable and all-around sort-of-usable, so I decided to give it a go. I was able to create a simple housing and print a successful fit after a few attempts.</p>
+<figure>
+    <img src="freecad.jpg" alt="Transmitter housing in FreeCAD"></img>
+    <figcaption>Transmitter housing in FreeCAD</figcaption>
+</figure>
+<p>FreeCAD is still very rough around the edges, but it's usable, and much more powerful than SolveSpace. The normal thing to do would be to just use SolidWorks, but I'm too cheap.</p>
+<h2 id="putting-everything-together">Putting everything together</h2>
+<figure>
+    <img src="transmitter-schema.png" alt="Transmitter schematic"></img>
+    <figcaption>Transmitter schematic</figcaption>
+</figure>
+<figure>
+    <img src="enclosure.jpg" alt="Testing the USB fit and stuffing cables into the enclosure"></img>
+    <figcaption>Testing the USB fit and stuffing cables into the enclosure</figcaption>
+</figure>
+<figure>
+    <video autoplay loop muted controls>
+        
+        
+        <source type="video/webm" src="working.webm">
+        
+        </source>
+        <p>Your browser does not support the video element.</p>
+    </video>
+    <figcaption>The working minimal prototype. Fed up with the relatively dirty signal of my generic rotary encoders, I added a huge jogwheel using an optical rotary encoder, which was extremely unnecessary, but kind of cool.</figcaption>
+</figure>
+<p>I used a very neat library for the UI called <a rel="noopener external" target="_blank" href="https://github.com/Yandrik/kolibri">Kolibri</a>. I'm surprised how seemingly relative few people are working in the Rust embedded graphics/UI space, since these projects are a lot of fun. Kolibri does not yet support <a rel="noopener external" target="_blank" href="https://github.com/Yandrik/kolibri/issues/5">devices without a pointer</a>, so I achieved my effect with a "virtual pointer" that moves a set distance to each interactive element on the UI.</p>
+<h2 id="rust-on-embedded">Rust on embedded</h2>
+<p><a rel="noopener external" target="_blank" href="https://codeberg.org/doomy/dcc-controller">The source code for this project, including the KiCAD and FreeCAD files, is freely available</a>.</p>
+<p>A few thoughts after approaching a larger embedded project:</p>
+<ul>
+<li>Embassy makes embedded development much more approachable, even more than RTIC, which was my previous go-to.</li>
+<li>Espressif and STM chips seem to be among the best supported by embedded Rust, and getting set up is far simpler than it used to be.</li>
+<li>The Rust embedded ecosystem is relatively small compared to something like its game development scene, but it's still full of highly knowledgable, helpful, and friendly people who help make this language both approachable and powerful.</li>
+</ul>
+<h2 id="footnotes">Footnotes</h2>
+<div class="footnote-definition" id="loco"><sup class="footnote-definition-label">1</sup>
+<p>This seems to be the right lingo but I wish I could just say "train".</p>
+</div>
+<div class="footnote-definition" id="blocks"><sup class="footnote-definition-label">2</sup>
+<p>Some people set up blocks of DC control but honestly that seems like such a hassle, and I'm pretty sure I'd burn down my house.</p>
+</div>
+<div class="footnote-definition" id="protection"><sup class="footnote-definition-label">3</sup>
+<p>It also probably has some protection built in for driving inductive loads which is helpful.</p>
+</div>
+<div class="footnote-definition" id="railcom"><sup class="footnote-definition-label">4</sup>
+<p>I didn't explore it yet, but current sense is also used in a bi-directional extension to DCC called Railcom.</p>
+</div>
+<div class="footnote-definition" id="motor-bit-source"><sup class="footnote-definition-label">5</sup>
+<p>Source: <a rel="noopener external" target="_blank" href="https://web.archive.org/web/20250722213649/https://lastminuteengineers.com/l298n-dc-stepper-driver-arduino-tutorial/">https://lastminuteengineers.com/l298n-dc-stepper-driver-arduino-tutorial/</a></p>
+</div>
+<div class="footnote-definition" id="invert"><sup class="footnote-definition-label">6</sup>
+<p>Source: <a rel="noopener external" target="_blank" href="https://web.archive.org/web/20250722210640/https://dcc-ex.com/reference/hardware/motorboards/L298N-motor-board-setup.html">https://dcc-ex.com/reference/hardware/motorboards/L298N-motor-board-setup.html</a></p>
+</div>
+<div class="footnote-definition" id="audio"><sup class="footnote-definition-label">7</sup>
+<p>This upsets me greatly as an audio person who percieves the first channel as left and default.</p>
+</div>
+<div class="footnote-definition" id="fastled"><sup class="footnote-definition-label">8</sup>
+<p>The popular <a rel="noopener external" target="_blank" href="https://github.com/FastLED/FastLED">FastLED library</a> for Arduino also works by utilizing the RMT device.</p>
+</div>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;trains&#x2F;"
+				data-page-url="trains"
+				data-page-title="Building a model locomotive controller with embedded Rust"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/giallo-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/giallo-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>

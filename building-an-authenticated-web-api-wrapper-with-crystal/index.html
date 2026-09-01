@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>doomy</title>
+    <meta name="description" content="Building an authenticated web API wrapper for Twitter using the Crystal programming language">
+
+    
+    
+
+    
+<meta property="og:title" content="Building an authenticated web API wrapper with Crystal">
+<meta property="og:description" content="Building an authenticated web API wrapper for Twitter using the Crystal programming language">
+<meta property="og:url" content="https:&#x2F;&#x2F;doomy.org&#x2F;building-an-authenticated-web-api-wrapper-with-crystal&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="doomy">
+
+
+
+    <!-- css -->
+    <noscript>
+        <style>
+            .theme-switcher {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <link rel="stylesheet" href="/reset.css">
+    <link rel="stylesheet" href="/feather.css">
+    
+    
+    <link rel="stylesheet" href="/giallo-light.css" media="screen and (prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="/giallo-dark.css" media="screen and (prefers-color-scheme: dark)" />
+    
+    
+
+    <link rel="stylesheet" id="syntax" />
+
+    
+    <script data-goatcounter=https://doomy-org.goatcounter.com/count async src="//gc.zgo.at/count.js"></script>
+    
+
+    
+
+    
+    
+</head>
+
+<body >
+    <div class="root">
+
+        <nav>
+            <div class="flex padded">
+                <div class="flex vcenter gap-large">
+                    <a href="/">
+                        <h4>doomy</h4>
+                    </a>
+                    
+                    <div class="flex fill gap-medium">
+                    
+                        <a href=&#x2F;  >posts</a>
+                    
+                        <a href=https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy  target="_blank"  >social</a>
+                    
+                        <a href=https:&#x2F;&#x2F;1-doomy.itch.io&#x2F;  target="_blank"  >games</a>
+                    
+                    </div>
+                    
+                </div>
+                <div class="flex fill"></div>
+                
+                <button class="theme-switcher" aria-label="Switch themes"></button>
+                
+            </div>
+            
+            <div class='header-image' style='background-image: url(/theme_images/default.gif);'>
+            </div>
+            
+        </nav>
+
+
+
+        
+<div class='container'>
+	<section class="post">
+		<div class="title-and-info">
+			<h2>Building an authenticated web API wrapper with Crystal</h2>
+			<div class="info">
+				<span>2016 Sep 20</span>
+
+				
+                    <span class='divider' />
+                    <a href="https:&#x2F;&#x2F;mastodon.social&#x2F;@doomy" target="_blank">@doomy@mastodon.social</a>
+				
+
+				
+			</div>
+		</div>
+		<article>
+			
+			
+			
+			
+
+			
+
+
+			<p><a rel="noopener external" target="_blank" href="https://crystal-lang.org/">Crystal</a> is an up-and-coming language very similar to Ruby, but compiled.  It's still very young, and it's changing all the time, but I've been having some fun playing around with it.  I started writing an <a rel="noopener external" target="_blank" href="https://github.com/piedoom/tumblr-crystal">API wrapper for Tumblr</a> (which has basically become my "Hello World" now...).  Unfortunately, the documentation for some parts of Crystal doesn't yet exist, so I learned a ton from the community.  Because there aren't really any tutorials on how to do this sort of thing yet, I'd like to share what I've learned.</p>
+<p>Big special thanks to <a rel="noopener external" target="_blank" href="https://github.com/asterite">Asterite</a> and the group <a rel="noopener external" target="_blank" href="https://gitter.im/crystal-lang/crystal">Gitter chat</a> for all of their help!</p>
+<h3 id="preface">Preface</h3>
+<p>This tutorial is for beginner / moderate skill level with programming.  If you know Ruby or even Python, you'll find this super-easy.  If you're stuck on something, send me a message and I'll try to clear it up!</p>
+<h3 id="installing">Installing</h3>
+<p>Because it's very possible that you've just heard of Crystal for the first time, you're probably going to need to install the library.  Detailed instructions on how to do this are available on the <a rel="noopener external" target="_blank" href="https://crystal-lang.org/docs/installation/index.html">Crystal docs website.</a></p>
+<blockquote>
+<p>Note: As of September 2016, Crystal does <em>not</em> have strategy for installing on Windows computers.  If you don't have access to a *nix or MacOS machine, consider using a virtual machine.</p>
+</blockquote>
+<h3 id="creating-a-crystal-project">Creating a Crystal Project</h3>
+<p>Once installed, it's easy to create a new Crystal project.  Let's create ours and name it <code>twitter-wrapper-test</code>.</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>crystal init lib twitter-wrapper-test</span></span></code></pre>
+<p>This will create a few files we'll use to bootstrap our project for use with Shards.  Speaking of Shards... what are they?</p>
+<h3 id="getting-started-with-shards">Getting Started with Shards</h3>
+<p>Shards is Crystal's dependency manager, similar to Rubygems, NPM, and NuGet.  Crystalshards is decentralized in a way, where adding a dependency is basically just adding a git URI.  As of now, however, almost all repositories are hosted on GitHub.  You can search them with <a rel="noopener external" target="_blank" href="https://github.com/f">Fatih Kadir Akın's</a> excellent <a rel="noopener external" target="_blank" href="http://crystalshards.xyz/">Crystalshards.xyz</a>.</p>
+<p>Let's open up our <code>shard.yml</code> (which is similar to a Ruby project's <code>Gemfile</code>).</p>
+<pre class="giallo z-code"><code data-lang="yaml"><span class="giallo-l"><span class="z-entity z-name z-tag">n</span><span class="z-entity z-name z-tag">ame</span><span class="z-punctuation z-separator">:</span><span class="z-string"> t</span><span class="z-string">witter-wrapper-test</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">v</span><span class="z-entity z-name z-tag">ersion</span><span class="z-punctuation z-separator">:</span><span class="z-constant z-constant z-numeric"> 0.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">a</span><span class="z-entity z-name z-tag">uthors</span><span class="z-punctuation z-separator">:</span></span>
+<span class="giallo-l"><span>  -</span><span class="z-string"> d</span><span class="z-string">oomy &lt;myemail@email.com&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">l</span><span class="z-entity z-name z-tag">icense</span><span class="z-punctuation z-separator">:</span><span class="z-string"> M</span><span class="z-string">IT</span></span></code></pre>
+<p>When a project is created, it initializes some basic information like the license, authors, and version.  Change these to your liking.  For this project, we don't need any dependencies.  Everything we need is built into the standard library!  (Awesome, right?)</p>
+<h3 id="getting-started-with-twitter">Getting started with Twitter</h3>
+<p>Although I'm using Twitter, feel free to follow along with another service as you see fit.  Keep in mind, however, that I'm using OAuth 1.0 in this tutorial.  You can use 2.0 with Crystal, but the process is a bit different.</p>
+<p>Anyways, let's create a new Twitter application.  Sign in or create your Twitter account, and then click <a rel="noopener external" target="_blank" href="https://apps.twitter.com/app/new">here</a> to generate a new app.  Don't worry about the callback URL for now, we don't need it.  Once that's finished, go to your new application's page, and click the "Keys and Access Tokens" tab.  At the bottom, click "Create my access token".  Great!  This will create everything we need to test our API wrapper - a <code>Consumer Key</code>, <code>Consumer Secret</code>, <code>Access Token Secret</code>, and <code>Access Token</code>.</p>
+<h3 id="setting-up-some-environment-variables">Setting up some environment variables</h3>
+<p>These keys we've created are <strong>extremely</strong> sensitive and should be treated as you would a password.  This means that hardcoding them in our new Crystal application is a huge no-no.  Because we're using a *nix system, we can set an environment variable.  Open up your shell's <code>.rc</code> file (in most cases, <code>~/.bashrc</code>) and append the following lines:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-storage">export</span><span class="z-variable z-other z-variable"> TWITTER_CONSUMER_KEY</span><span class="z-keyword z-keyword z-operator">=</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">your-key-here</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-storage">export</span><span class="z-variable z-other z-variable"> TWITTER_CONSUMER_SECRET</span><span class="z-keyword z-keyword z-operator">=</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">your-key-here</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-storage">export</span><span class="z-variable z-other z-variable"> TWITTER_ACCESS_TOKEN</span><span class="z-keyword z-keyword z-operator">=</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">your-key-here</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-storage">export</span><span class="z-variable z-other z-variable"> TWITTER_ACCESS_TOKEN_SECRET</span><span class="z-keyword z-keyword z-operator">=</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">your-key-here</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span></code></pre>
+<p>Where <code>your-key-here</code> is replaced with the corresponding value from your Twitter app.  Save and close your editor, and then open up a new terminal, or type <code>source ~/.[your shell]rc</code> (most likely <code>source ~/.bashrc</code>).</p>
+<blockquote>
+<p>Do we have to name our variables <code>TWITTER_CONSUMER_KEY</code>?</p>
+</blockquote>
+<p>No, not really.  You can name these variables anything you like, but <code>TWITTER_CONSUMER_KEY</code> offers a lot of clarity!</p>
+<h3 id="building-our-wrapper">Building our wrapper</h3>
+<p>Time to do some coding.  Open up our <code>src/twitter-wrapper-test/</code> directory, and create a new file called <code>client.cr</code>.  Before we write any code, let's explain <em>how</em> and <em>why</em> we're going to structure the project like we are.</p>
+<h5 id="static-classes-vs-instantiation">Static Classes vs. Instantiation</h5>
+<p>We're going to instantiate the <code>client</code> class in order to perform requests.  Although we could definitely use a <code>static</code> class, it would have to be stateful and remember OAuth credentials.  Stateful static classes aren't very clear when implemented, so we're going to simply instatiate a new <code>client</code> object.</p>
+<h3 id="setting-up-an-http-object-with-oauth">Setting up an HTTP object with OAuth</h3>
+<p>Crystal provides OAuth support in its standard library.  Neat!  Let's open up our <code>client.cr</code> file and add a few <code>require</code> statements.  Let's also make a <code>module</code> that's the same name as our library.  (Notice that our <code>init</code> automatically created <code>Twitter::Wrapper::Test</code> because of the dashes.  This actually should probably be <code>TwitterWrapperTest</code>, so feel free to change all occurrences if you'd like.  For simplicity's sake, I'll just use what it generated).</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-keyword">require</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">oauth</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-keyword">require</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">http/client</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-keyword">require</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">uri</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">module</span><span class="z-entity z-name"> Twitter::Wrapper</span><span class="z-entity z-name z-punctuation z-separator">::</span><span class="z-entity z-name">Test</span></span>
+<span class="giallo-l"><span>  </span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>Inside our module, we're going to create a new client class, with an initialize.</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-keyword">class</span><span class="z-entity z-name"> Client</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-variable z-other z-constant z-variable">  Host</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">api.twitter.com</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">  #</span><span class="z-comment"> create a new client with oauth support</span></span>
+<span class="giallo-l"><span class="z-keyword">  def</span><span class="z-entity z-name z-entity z-name z-function"> initialize</span><span>(</span><span class="z-variable z-parameter z-function z-variable z-parameter">consumer_key</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-parameter z-function z-variable z-parameter"> consumer_secret</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-parameter z-function z-variable z-parameter"> oauth_token</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-parameter z-function z-variable z-parameter"> oauth_token_secret</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">    #</span><span class="z-comment"> create our OAuth consumer and token with the built in library!</span></span>
+<span class="giallo-l"><span class="z-variable">    consumer</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-support z-support z-class"> OAuth</span><span class="z-punctuation z-separator">::</span><span class="z-support z-support z-class">Consumer</span><span class="z-punctuation z-separator">.</span><span class="z-keyword">new</span><span class="z-punctuation z-section">(</span><span class="z-variable z-other z-constant z-variable">Host</span><span class="z-punctuation z-separator">,</span><span> consumer_key</span><span class="z-punctuation z-separator">,</span><span> consumer_secret</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"><span class="z-variable">    token</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-support z-support z-class"> OAuth</span><span class="z-punctuation z-separator">::</span><span class="z-support z-support z-class">AccessToken</span><span class="z-punctuation z-separator">.</span><span class="z-keyword">new</span><span class="z-punctuation z-section">(</span><span>oauth_token</span><span class="z-punctuation z-separator">,</span><span> oauth_token_secret</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">    #</span><span class="z-comment"> create an instance of the HTTP client using HTTPS</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-variable z-other z-readwrite">    @</span><span class="z-variable z-other z-variable z-other z-readwrite">http_client</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-support z-support z-class"> HTTP</span><span class="z-punctuation z-separator">::</span><span class="z-support z-support z-class">Client</span><span class="z-punctuation z-separator">.</span><span class="z-keyword">new</span><span class="z-punctuation z-section">(</span><span class="z-variable z-other z-constant z-variable">Host</span><span class="z-punctuation z-separator">,</span><span class="z-constant z-constant z-language"> tls</span><span class="z-constant z-constant z-language">:</span><span class="z-constant z-constant z-language"> true</span><span class="z-punctuation z-separator">,</span><span class="z-constant z-constant z-language"> port</span><span class="z-constant z-constant z-language">:</span><span class="z-constant z-constant z-numeric"> 443</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">    #</span><span class="z-comment"> use the `authenticate` method on our consumer variable to authenticate our HTTP client with each request.  Neat!</span></span>
+<span class="giallo-l"><span>    consumer</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">authenticate</span><span class="z-punctuation z-section">(</span><span class="z-variable z-other z-variable z-other z-readwrite">@</span><span class="z-variable z-other z-variable z-other z-readwrite">http_client</span><span class="z-punctuation z-separator">,</span><span> token</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"><span class="z-keyword">  end</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>And that's just about it!  One of the most painless OAuth implementations in history :)</p>
+<h3 id="getting-information-from-an-endpoint">Getting information from an endpoint</h3>
+<p>Twitter provides multiple endpoints for fetching JSON data.  For this tutorial, we're just going to search for some tweets.  You can read more about it's specification <a rel="noopener external" target="_blank" href="https://dev.twitter.com/rest/reference/get/search/tweets">here</a>.  Twitter provides some awesome API docs.</p>
+<p>In our client, let's add a new method called <code>tweet_search</code>.</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-keyword">def</span><span class="z-entity z-name z-entity z-name z-function"> tweet_search</span><span>(</span><span class="z-variable z-parameter z-function z-variable z-parameter">query</span><span class="z-punctuation z-separator"> :</span><span class="z-variable z-other z-constant z-variable"> String</span><span>)</span></span>
+<span class="giallo-l"><span class="z-variable">  response</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-entity z-name z-entity z-name z-function"> get</span><span class="z-punctuation z-section">(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">/1.1/search/tweets.json</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-separator">,</span><span class="z-punctuation z-section"> {</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">q</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-separator"> =&gt;</span><span> query</span><span class="z-punctuation z-section">}</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>Simple enough, right?  Well, if we tried to run this right now, we'd get a compiler error because our <code>get</code> method doesn't yet exist.  Let's create that, and a few other useful methods in our client class.</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> generic function for getting JSON</span></span>
+<span class="giallo-l"><span class="z-keyword">private</span><span class="z-keyword"> def</span><span class="z-entity z-name z-entity z-name z-function"> get</span><span>(</span><span class="z-variable z-parameter z-function z-variable z-parameter">path</span><span class="z-punctuation z-separator"> :</span><span class="z-variable z-other z-constant z-variable"> String</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-parameter z-function z-variable z-parameter"> params</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-punctuation z-section"> {</span><span class="z-punctuation z-section">}</span><span> of </span><span class="z-variable z-other z-constant z-variable">String</span><span class="z-punctuation z-separator"> =&gt;</span><span class="z-variable z-other z-constant z-variable"> String</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">  #</span><span class="z-comment"> add parameters to our string</span></span>
+<span class="giallo-l"><span class="z-variable">  path</span><span class="z-keyword z-keyword z-operator"> +=</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">?</span><span class="z-string z-punctuation z-section z-embedded">#{</span><span class="z-entity z-name z-entity z-name z-function">to_query_params</span><span class="z-string z-punctuation z-section">(</span><span class="z-string z-meta z-embedded">params</span><span class="z-string z-punctuation z-section">)</span><span class="z-string z-punctuation z-section z-embedded">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-keyword">  unless</span><span> params</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">empty?</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">  #</span><span class="z-comment"> finally, get our response</span></span>
+<span class="giallo-l"><span class="z-variable">  response</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-variable z-other z-variable z-other z-readwrite"> @</span><span class="z-variable z-other z-variable z-other z-readwrite">http_client</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">get</span><span class="z-punctuation z-section">(</span><span>path</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">  #</span><span class="z-comment"> handle the response properly and check for errors</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-entity z-name z-function">  handle_response</span><span class="z-punctuation z-section">(</span><span>response</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">private</span><span class="z-keyword"> def</span><span class="z-entity z-name z-entity z-name z-function"> handle_response</span><span>(</span><span class="z-variable z-parameter z-function z-variable z-parameter">response</span><span class="z-punctuation z-separator"> :</span><span class="z-support z-support z-class"> HTTP</span><span class="z-punctuation z-separator">::</span><span class="z-support z-support z-class">Client</span><span class="z-punctuation z-separator">::</span><span class="z-variable z-other z-constant z-variable">Response</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">  case</span><span> response</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">status_code</span></span>
+<span class="giallo-l"><span class="z-keyword">  when</span><span class="z-constant z-constant z-numeric"> 200</span><span class="z-punctuation z-separator">.</span><span class="z-punctuation z-separator">.</span><span class="z-constant z-constant z-numeric">299</span></span>
+<span class="giallo-l"><span>    response</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">body</span></span>
+<span class="giallo-l"><span class="z-keyword">  else</span></span>
+<span class="giallo-l"><span class="z-keyword">    raise</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string z-punctuation z-section z-embedded">#{</span><span class="z-string z-meta z-embedded">response</span><span class="z-string z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">status_code</span><span class="z-string z-punctuation z-section z-embedded">}</span><span class="z-string"> - </span><span class="z-string z-punctuation z-section z-embedded">#{</span><span class="z-string z-meta z-embedded">response</span><span class="z-string z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">body</span><span class="z-string z-punctuation z-section z-embedded">}</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-keyword">  end</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment z-comment">#</span><span class="z-comment"> returns a URL encoded string used for query parameters</span></span>
+<span class="giallo-l"><span class="z-keyword">private</span><span class="z-keyword"> def</span><span class="z-entity z-name z-entity z-name z-function"> to_query_params</span><span>(</span><span class="z-variable z-parameter z-function z-variable z-parameter">params</span><span class="z-punctuation z-separator"> :</span><span class="z-variable z-other z-constant z-variable"> Hash</span><span class="z-punctuation z-section">(</span><span class="z-variable z-other z-constant z-variable">String</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-other z-constant z-variable"> String</span><span class="z-punctuation z-section">)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-support z-support z-class">  HTTP</span><span class="z-punctuation z-separator">::</span><span class="z-support z-support z-class">Params</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">build</span><span class="z-keyword"> do</span><span class="z-punctuation z-separator"> |</span><span class="z-variable z-other z-variable">form_builder</span><span class="z-punctuation z-separator">|</span></span>
+<span class="giallo-l"><span>    params</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">each</span><span class="z-keyword"> do</span><span class="z-punctuation z-separator"> |</span><span class="z-variable z-other z-variable">key</span><span class="z-punctuation z-separator">,</span><span class="z-variable z-other z-variable"> value</span><span class="z-punctuation z-separator">|</span></span>
+<span class="giallo-l"><span>      form_builder</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">add</span><span class="z-punctuation z-section">(</span><span>key</span><span class="z-punctuation z-separator">,</span><span> value</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"><span class="z-keyword">    end</span></span>
+<span class="giallo-l"><span class="z-keyword">  end</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>These methods are pretty self explanatory.  I also have to admit, I almost entirely ripped these from <a rel="noopener external" target="_blank" href="https://github.com/sferik/twitter-crystal/blob/master/src/twitter/rest/client.cr">sferik's source code</a>. There's some great examples in that repo if you like reading source.  Unfortunately, there's no documentation for it yet :(</p>
+<h3 id="testing">Testing</h3>
+<p>Now that we have everything we need to make a simple request, let's see if our library works.</p>
+<p>Open up <code>src/twitter-wrapper-test.cr</code>.  Let's write some code in the module block.</p>
+<blockquote>
+<p>Note: Usually, you're NEVER going to want to write app-specific code inside of a <code>lib</code> package.  Currently, there is no REPL in Crystal, so projects can't really be tested without making another Crystal application that consumes your custom library.  In order to avoid doing this for simplicity sake, we can write stuff directly in our <code>twitter-wrapper-test.cr</code> file.  Just remember to delete it before sharing!</p>
+</blockquote>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-variable">client</span><span class="z-keyword z-keyword z-operator"> =</span><span class="z-support z-support z-class"> Client</span><span class="z-punctuation z-separator">.</span><span class="z-keyword">new</span><span class="z-punctuation z-section">(</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-constant z-variable">    ENV</span><span>[</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">TWITTER_CONSUMER_KEY</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span><span class="z-punctuation z-separator">,</span><span> </span></span>
+<span class="giallo-l"><span class="z-variable z-other z-constant z-variable">    ENV</span><span>[</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">TWITTER_CONSUMER_SECRET</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span><span class="z-punctuation z-separator">,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-constant z-variable">    ENV</span><span>[</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">TWITTER_ACCESS_TOKEN</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span><span class="z-punctuation z-separator">,</span></span>
+<span class="giallo-l"><span class="z-variable z-other z-constant z-variable">    ENV</span><span>[</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">TWITTER_ACCESS_TOKEN_SECRET</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span>]</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-support z-support z-function">puts</span><span> client</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">tweet_search</span><span class="z-punctuation z-section">(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">@crystal-lang</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-section">)</span></span></code></pre>
+<p>Basically, we're creating a new client with our OAuth environment variables, and then searching for tweets with the string "@crystal-lang".  Let's test our application.</p>
+<p><code>crystal src/twitter-wrapper-test.cr</code></p>
+<p>If all goes to plan, we should get a huge strin of JSON.  This means our API authentication is working properly.</p>
+<h3 id="deseralizing-json-with-crystal">Deseralizing JSON with Crystal</h3>
+<p>Crystal provides some awesome, magical ways to deseralize JSON easily.  So let's get started!  Create a new file, <code>src/twitter-wrapper-test/tweet.cr</code>.</p>
+<p>We need to deserialize JSON that looks like <a rel="noopener external" target="_blank" href="https://dev.twitter.com/rest/reference/get/search/tweets">this</a> (scroll down to the bottom for JSON examples).  There's a LOT of different properties for each tweet.  Let's just keep it basic and parse the <code>text</code>, <code>id</code>, and <code>user</code> properties.</p>
+<p>In our <code>tweet.cr</code>...</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-keyword">require</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">json</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">module</span><span class="z-entity z-name"> Twitter::Wrapper</span><span class="z-entity z-name z-punctuation z-separator">::</span><span class="z-entity z-name">Test</span></span>
+<span class="giallo-l"><span class="z-keyword">  class</span><span class="z-entity z-name"> Tweet</span></span>
+<span class="giallo-l"><span class="z-support z-support z-class">    JSON</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">mapping</span><span class="z-punctuation z-section">(</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">      text</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-section"> {</span><span class="z-constant z-constant z-language">type</span><span class="z-constant z-constant z-language">:</span><span class="z-variable z-other z-constant z-variable"> String</span><span class="z-punctuation z-section">}</span><span class="z-punctuation z-separator">,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">      id</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-section"> {</span><span class="z-constant z-constant z-language">type</span><span class="z-constant z-constant z-language">:</span><span class="z-variable z-other z-constant z-variable"> Int64</span><span class="z-punctuation z-section">}</span><span class="z-punctuation z-separator">,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">      user</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-section"> {</span><span class="z-constant z-constant z-language">type</span><span class="z-constant z-constant z-language">:</span><span class="z-variable z-other z-constant z-variable"> User</span><span class="z-punctuation z-section">}</span></span>
+<span class="giallo-l"><span class="z-punctuation z-section">    )</span></span>
+<span class="giallo-l"><span class="z-keyword">  end</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>The <code>JSON.mapping</code> macro is an easy way for Crystal to figure out what properties of an object will be accessible, and how to deserialize/serialize the object to and from JSON.</p>
+<p>You might notice that our <code>user</code> property has a type that isn't already defined.  We need to make a new <code>User</code> class.  Create a new file as <code>src/twitter-wrapper-test/user.cr</code>. Again, there's a ton of properties given to us over JSON, so let's just take a few - <code>id</code>, <code>description</code>, and <code>screen_name</code>.</p>
+<p>In our <code>user.cr</code>...</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-keyword">require</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">json</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">module</span><span class="z-entity z-name"> Twitter::Wrapper</span><span class="z-entity z-name z-punctuation z-separator">::</span><span class="z-entity z-name">Test</span></span>
+<span class="giallo-l"><span class="z-keyword">  class</span><span class="z-entity z-name"> User</span></span>
+<span class="giallo-l"><span class="z-support z-support z-class">    JSON</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">mapping</span><span class="z-punctuation z-section">(</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">      description</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-section"> {</span><span class="z-constant z-constant z-language">type</span><span class="z-constant z-constant z-language">:</span><span class="z-variable z-other z-constant z-variable"> String</span><span class="z-punctuation z-section">}</span><span class="z-punctuation z-separator">,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">      name</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-section"> {</span><span class="z-constant z-constant z-language">type</span><span class="z-constant z-constant z-language">:</span><span class="z-variable z-other z-constant z-variable"> String</span><span class="z-punctuation z-separator">,</span><span class="z-constant z-constant z-language"> key</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">screen_name</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-section">}</span><span class="z-punctuation z-separator">,</span></span>
+<span class="giallo-l"><span class="z-constant z-constant z-language">      id</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-section"> {</span><span class="z-constant z-constant z-language">type</span><span class="z-constant z-constant z-language">:</span><span class="z-variable z-other z-constant z-variable"> Int64</span><span class="z-punctuation z-section">}</span></span>
+<span class="giallo-l"><span class="z-punctuation z-section">    )</span></span>
+<span class="giallo-l"><span class="z-keyword">  end</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>For our <code>name</code> property, I passed in a <code>key</code> parameter with the value of "screen_name".  You can use this whenever your property name doesn't match up with the JSON</p>
+<h3 id="finishing-up">Finishing Up</h3>
+<p>Let's reopen our <code>client.cr</code> file so we can use our new JSON enabled classes.  At the end of our <code>tweet_search</code> method, add the following:</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-keyword">return</span><span class="z-variable z-other z-constant z-variable"> Array</span><span class="z-punctuation z-section">(</span><span class="z-variable z-other z-constant z-variable">Tweet</span><span class="z-punctuation z-section">)</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">from_json</span><span class="z-punctuation z-section">(</span><span>response</span><span class="z-punctuation z-separator">,</span><span class="z-constant z-constant z-language"> root</span><span class="z-constant z-constant z-language">:</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string">statuses</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-section">)</span></span></code></pre>
+<p>This will tell Crystal to use our JSON mappings to get an Array of Tweet objects in the root "statuses" (as defined in our JSON).</p>
+<p>Let's switch back to our <code>twitter-wrapper-test.cr</code> file and replace the <code>puts ...</code> line with the following:</p>
+<pre class="giallo z-code"><code data-lang="ruby"><span class="giallo-l"><span class="z-variable">tweets</span><span class="z-keyword z-keyword z-operator"> =</span><span> client</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">tweet_search</span><span class="z-punctuation z-section">(</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-string">@crystal-lang</span><span class="z-punctuation z-definition z-string z-string">&quot;</span><span class="z-punctuation z-section">)</span></span>
+<span class="giallo-l"><span>tweets</span><span class="z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">each</span><span class="z-keyword"> do</span><span class="z-punctuation z-separator"> |</span><span class="z-variable z-other z-variable">tweet</span><span class="z-punctuation z-separator">|</span></span>
+<span class="giallo-l"><span class="z-support z-support z-function">  puts</span><span class="z-punctuation z-definition z-string z-string"> &quot;</span><span class="z-string z-punctuation z-section z-embedded">#{</span><span class="z-string z-meta z-embedded">tweet</span><span class="z-string z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">user</span><span class="z-string z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">name</span><span class="z-string z-punctuation z-section z-embedded">}</span><span class="z-string"> - </span><span class="z-string z-punctuation z-section z-embedded">#{</span><span class="z-string z-meta z-embedded">tweet</span><span class="z-string z-punctuation z-separator">.</span><span class="z-entity z-name z-entity z-name z-function">text</span><span class="z-string z-punctuation z-section z-embedded">}</span><span class="z-constant z-constant z-character"> \n</span><span class="z-constant z-constant z-character">\n</span><span class="z-punctuation z-definition z-string z-string">&quot;</span></span>
+<span class="giallo-l"><span class="z-keyword">end</span></span></code></pre>
+<p>And run <code>crystal src/twitter-wrapper-test.cr</code></p>
+<p>We should get this!</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>GaryAsh1969 - @burgerbecky i’ve been tracking this https://t.co/dMAPThdMuH since using Ruby </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>ysbaddaden - I uploaded the long overdue FreeBSD tarballs for Crystal 0.19.0 up to 0.19.2 https://t.co/vTACMU98Mv </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>piedoomy - RT @CrystalLanguage: Fund Crystal and help it become production-ready! https://t.co/AeBEGvw2TW </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>MattStudies - Great post from the Crystal Team https://t.co/OgczM0lcEN </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Benchmarks are so frustratingly hard. </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>versiontracker - Crystal 0.19.2 released. https://t.co/4NXtqAh1Lc #compiler #ruby #developers #programming_language #c https://t.co/OrZxr8Rxwv </span></span></code></pre>
+<p>Cool.</p>
+<h3 id="for-the-future-conclusion">For the future &amp; Conclusion</h3>
+<p>This is a very simple wrapper, and it doesn't implement everything Twitter has to offer.  Feel free to fully implement your client and push it to GitHub as a shard!</p>
+<p>Crystal is constantly changing, so if you notice an issue with any of this code, please let me know so I can update it.  I am also just learning Crystal, so if you have an idea on how to do something better, please let me know.</p>
+<h3 id="donate">Donate</h3>
+<p>In lieu of donating to me, please consider funding Crystal on Bountysource so they can become production ready!</p>
+<p><a rel="noopener external" target="_blank" href="https://www.bountysource.com/teams/crystal-lang/fundraisers/702-crystal-language"><img src="https://api.bountysource.com/badge/team?team_id=89730&amp;style=raised" alt="Bountysource" /></a></p>
+<p>Also, have my this Crystal Cat I made.</p>
+<p><img src="https://doomy.org/building-an-authenticated-web-api-wrapper-with-crystal/crystalcat-02.png" alt="" /></p>
+
+			
+
+
+		</article>
+	</section>
+	
+	<div id="cusdis">
+		
+				<div id="cusdis_thread"
+				style="background: none !important;"
+				data-host="https://cusdis.com"
+				data-app-id="aaae44f5-19b5-419e-88d9-9522e2617ece"
+				data-page-id="https:&#x2F;&#x2F;doomy.org&#x2F;building-an-authenticated-web-api-wrapper-with-crystal&#x2F;"
+				data-page-url="building-an-authenticated-web-api-wrapper-with-crystal"
+				data-page-title="Building an authenticated web API wrapper with Crystal"
+				data-theme="auto"
+				></div>
+				<script async defer src="/js/cusdis.es.js"></script>
+		
+	</div>
+</div>
+
+
+        <footer>
+            
+            <p>
+                Feather theme by <a href="https://doomy.org">doomy</a>&nbsp;&nbsp;-&nbsp;&nbsp; Built with <a
+                    href="https://getzola.org">Zola</a>
+            </p>
+            
+        </footer>
+    </div>
+    
+    <script>
+        function change_theme(theme) {
+            if (theme == "light") {
+                document.body.classList.remove("dark");
+                document.body.classList.add("light");
+                document.querySelector('#syntax').href = '/giallo-light.css';
+            } else if (theme == "dark") {
+                document.body.classList.add("dark");
+                document.body.classList.remove("light");
+                document.querySelector('#syntax').href = '/giallo-dark.css';
+            }
+            localStorage.setItem("theme", theme);
+        }
+
+        window.addEventListener('load', () => {
+            // Select the button
+            const theme = (function () {
+                const stored = localStorage.getItem("theme");
+                if (stored == "null") {
+                    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                        return "dark";
+                    } else {
+                        return "light";
+                    }
+                } else {
+                    return stored;
+                }
+            })();
+
+            change_theme(theme);
+
+            // Listen for a click on the button
+            document.querySelector(".theme-switcher").addEventListener("click", function () {
+                if (!document.body.classList.contains("dark")) {
+                    change_theme("dark");
+                } else {
+                    change_theme("light");
+                }
+            });
+
+        });
+    </script>
+    
+    <script src="/js/footnote.js"></script>
+</body>
+
+</html>
